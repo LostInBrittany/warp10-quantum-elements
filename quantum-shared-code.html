@@ -1,0 +1,107 @@
+<!--
+@author Horacio Gonzalez (@lostinbrittany)
+@copyright (c) 2016 Cityzen Data
+@license Apache 2.0
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href=" ../iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../warp10-iron/warp10-looseJSON.html">
+
+<link rel="import" href="../granite-spinner/granite-spinner.html">
+
+<dom-module is="quantum-shared-code">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 15px;
+        --app-primary-color: var(--google-blue-500);
+        --app-secondary-color: black;
+        --app-background-color: white;
+        --app-on-background-color: white;
+        min-height: 300px;
+      }      
+    </style>
+
+    <h2 class="title">Recovering shared code...</h2>
+
+    <granite-spinner
+        active="code" 
+        size="200"
+        hover></granite-spinner>
+
+    <iron-ajax
+      id="getSharedCodeRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
+      content-type="application/x-www-form-urlencoded; charset=UTF-8"
+      method='POST' body='{{warpscript}}'
+      handle-as="text"  on-response="_handleGetSharedCodeResponse" on-error="_handleGetSharedCodeError"
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}" 
+      ></iron-ajax>        
+
+  </template>
+  <script>
+    Polymer({
+      is: "quantum-shared-code",
+      behaviors: [
+        QuantumModule
+      ],
+      properties: {
+        /**
+         * The module name
+         */
+        name: {
+          type: String,
+          value: "shared-code"
+        },
+        /**
+         * The name of the currently selected module
+         */
+        selected: {
+          type: String
+        },
+        /**
+         * The snapshot id used to recover the code
+         */
+        snapshotId: {
+          type: String,
+          observer: "_onSnapshotIdChanged"
+        },
+      },
+
+      /* ************************************************************************/
+      /* Lifecycle methods                                                      
+      /* ************************************************************************/
+      ready: function() {
+
+      },
+
+      /* ************************************************************************/
+      /* Observers                                                              
+      /* ************************************************************************/ 
+      _onSnapshotIdChanged: function() {
+        if (!this.snapshotId || this.selected !== this.name) return;
+        this.getSharedCode();
+      },
+
+      /* ************************************************************************/
+      /* Event listeners                                                              
+      /* ************************************************************************/
+      _handleGetSharedCodeResponse: function(evt, ironRequest) {
+        var code = '// Snapshot Id: '+this.snapshotId
+            +'\n// '+ "'"+ this.snapshotId+"' @orbit/snapshot/load EVAL" +'\n\n'+looseJSON.parse(ironRequest.response)[0]               
+        console.debug("[quantum-shared-code] _handleGetSharedCodeResponse",code );
+        this.fire('shared-code', code);
+      },
+
+      /* ************************************************************************/
+      /* Instance methods                                                              
+      /* ************************************************************************/
+      getSharedCode: function() {        
+        this.warpscript = "'"+ this.snapshotId+"' @orbit/snapshot/load EVAL";
+        this.$.getSharedCodeRequest.generateRequest();    
+      },
+    })
+  </script>  
+</dom-module>

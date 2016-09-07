@@ -1,0 +1,217 @@
+<!--
+@author Horacio Gonzalez (@lostinbrittany)
+@copyright (c) 2016 Cityzen Data
+@license Apache 2.0
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="./quantum-module-behavior.html">
+
+<script>
+  Polymer({
+    is: "quantum-permalink-decoder",
+
+    behaviors: [
+      QuantumModule
+    ],
+
+    properties: {
+      encodedPayload: {
+        type: String
+      },
+      encodedBackend:{
+        type: String,
+      },
+      decodedPayload: {
+        type:String,
+        computed: "_decodePayload(encodedPayload)",
+        observer: "_decodedPayloadChanged",
+        notify: true
+      },
+      decodedBackend: {
+        type: String,
+        computed: "_decodeBackend(encodedBackend)",
+        observer: "_decodedBackendChanged",
+        notify: true
+      }
+    },
+
+    /**************************************************************************/
+    /* Computed properties                                                    */
+    /**************************************************************************/    
+    /** 
+     * Decodes payload from permalink
+     * Fires 'payload-change' event 
+     */
+    _decodePayload: function(){
+      // console.debug("[quantum-permalink-decoder] decodePayload - encodedPayload :", this.encodedPayload);
+      try {
+        var decoded = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedPayload).replace(/_/g, '/'))));
+        console.debug("[quantum-permalink-decoder] decodePayload - decode :", {encodedPayload: this.encodedPayload, payload: decoded });
+        return decoded;
+      } catch  (e) {
+      }
+    }, 
+    /** 
+     * Decodes backend from permalink
+     * Fires 'backend-change' event 
+     */
+    _decodeBackend: function(){
+      // console.debug([quantum-permalink-decoder] decodeBackend - encodedBackend :", this.encodedBackend);
+      var self = this;
+      var fields = ['url', 'execEndpoint', 'findEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      var decoded;
+
+      try {
+        var decodedString = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
+        try {
+          decoded = JSON.parse(decodedString);        
+        } catch (e) {
+          decoded = {
+            "url": decodedString
+          }
+        }
+        fields.forEach(function(field){ 
+          if (!decoded[field]) decoded[field] = self.defaultBackend[field];
+        });         
+        console.debug("[quantum-permalink-decoder] decodeBackend - decode :", { encodedBackend: this.encodedBackend, backend: decoded});
+        return decoded;
+      } catch  (e) {        
+      }      
+    },
+
+    /**************************************************************************/
+    /* Observers                                                              */
+    /**************************************************************************/  
+    _decodedPayloadChanged: function(decodedPayload) {
+      console.debug("[quantum-permalink-decoder] _decodePayloadChanged", decodedPayload);
+      this.fire("payload-decoded", decodedPayload)
+    },
+    _decodedBackendChanged: function(decodedBackend) {
+      console.debug("[quantum-permalink-decoder] _decodeBackendChanged", decodedBackend);
+      this.fire("backend-decoded", decodedBackend)
+    },
+    
+  });
+</script>
+
+
+<dom-module id="quantum-permalink-generator">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .top-10 { margin-top:10px; }
+    </style>
+
+    <div class="top-10">
+      <b>Permalink:</b> <a href="#/warpscript/{{permalink}}">{{croppedPermalink}}</a>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "quantum-permalink-generator",
+    behaviors: [
+      QuantumModule
+    ],
+    properties: {
+      warpscript: {
+        type: String,
+        value: ""
+      },
+      backend: {
+        type: String,
+        value: ""
+      },
+      permalink: {
+        type: String,
+        notify: true,
+        computed: "_generatePermalink(warpscript, backend)"
+      },
+      croppedPermalink: {
+        type: String,
+        computed: "_cropPermalink(permalink)"
+      },
+      _maxDisplayLength: {
+        type: Number
+      }
+    },
+
+
+    /**************************************************************************/
+    /* Lifecycle methods                                                      */
+    /**************************************************************************/
+    created: function(){
+      this._maxDisplayLength = 60;
+      // console.debug("[quantum-permalink] created called", this._maxDisplayLength);
+    },
+
+
+    /**************************************************************************/
+    /* Computed properties                                                    */
+    /**************************************************************************/
+    /**
+     * Crops the permalink to get a display-friendly version
+     */
+    _cropPermalink: function() {
+      // console.debug("[quantum-permalink] _cropPermalink",this._maxDisplayLength);
+      if (this.permalink.length > this._maxDisplayLength) {
+        return this.permalink.slice(0, this._maxDisplayLength)+"...";
+      }
+      return this.permalink;
+    },
+    /**
+     * Generates the permalink
+     * @return {string} the permalink
+     */
+    _generatePermalink: function(){
+      console.debug("[quantum-permalink] _generatePermalink ws/backend", "/"+this._encodeWarpscript()+"/"+this._encodeBackend());
+      return this._encodeWarpscript()+"/"+this._encodeBackend();
+    },
+
+    /**************************************************************************/
+    /* Other methods                                                          */
+    /**************************************************************************/
+    /**
+     * Updates the location according to the permalink
+     */
+    updateLocation: function(application) {
+      console.debug("[quantum-permalink] updateLocation called",{application:application, permalink:this.permalink});
+      window.history.pushState({}, null, '#/'+application+"/"+this.permalink);
+      window.dispatchEvent(new CustomEvent('location-changed'));
+    },
+    /**
+     * Encodes Warpscript code into UrlEncoded Base64 
+     * @return {string} the encoded warpscript
+     */
+    _encodeWarpscript: function() {
+      return encodeURIComponent(btoa(unescape(encodeURIComponent(this.warpscript))).replace(/\//g, '_'));
+    },
+    /**
+     * Encodes backend object, in UrlEncoded Base64.
+     * Only encodes backend fields that differs from the default backend 
+     * @return {string} the encoded backend
+     */
+    _encodeBackend: function() {
+      // console.debug("[quantum-permalink] _encodeBackend", this.backend);
+      
+      var self = this;
+
+      if (!this.backend) return;
+      
+      var backendToEncode = {};
+      var fields = ['url', 'execEndpoint', 'findEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];     
+
+      fields.forEach(function(field){ 
+        if (self.backend[field] !== self.defaultBackend[field]) {
+          backendToEncode[field] = self.backend[field];  
+        }
+      });      
+      console.debug("[quantum-permalink] _encodeBackend - backendToEncode", backendToEncode);
+      return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
+    }
+  });
+</script>

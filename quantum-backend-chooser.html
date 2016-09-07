@@ -1,0 +1,522 @@
+<!--
+@author Horacio Gonzalez (@lostinbrittany)
+@copyright (c) 2016 Cityzen Data
+@license Apache 2.0
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+
+<link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../paper-styles/color.html">
+
+<link rel="import" href="../warp10-iron/warp10-backend-validator.html">
+
+<link rel="import" href="./quantum-module-behavior.html">
+
+<dom-module id="quantum-backend-chooser">
+
+  <template>
+
+    <style>
+
+      :host {
+        display: block;
+        --app-primary-color: var(--google-blue-500);
+        --app-secondary-color: black;
+        --app-background-color: white;
+        --app-on-background-color: white;
+        padding: 15px;
+      }
+
+      paper-button {
+        background-color: var(--app-primary-color);
+        color: var( --app-on-background-color);
+      }
+
+      paper-button[disabled] {
+        background-color: var(--google-grey-200) !important;
+      }
+
+
+      paper-material {
+        margin: 10px;
+        padding:15px;
+        background-color: var(--app-background-color);
+      }
+
+      .more_info_label {
+        float: right;
+        cursor: pointer;
+
+      }
+      .more_info:after {
+          content:'';
+          display:block;
+          clear: both;
+      }
+      .horizontal_flex {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-justified);
+      }
+      .edit_button {
+        color: var(--app-primary-color);
+        cursor: pointer;
+      }
+      .item { 
+        margin-top: 8px; 
+        margin-bottom: 8px; 
+      } 
+
+      .item_name { 
+        color: var(--paper-grey-600); 
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        font-size: 12px; 
+        font-weight: 400; 
+        letter-spacing: 0.011em; 
+        line-height: 20px; 
+      } 
+
+      .item_value { 
+        @apply(--layout-horizontal); 
+        @apply(--layout-center); 
+        @apply(--layout-wrap); 
+      } 
+    </style>
+
+
+    <h4>{{ localize('chooseYourBackend') }}</h4>
+
+    <template is="dom-if" if="{{_hasConfiguredBackends}}">
+      <paper-radio-group id="backendRadioGroup" on-iron-select="_backendChoosen">
+        <template is="dom-repeat" items="{{configuredBackends}}" as="item">
+          <paper-radio-button
+              id$="backend_{{item.id}}"
+              checked="{{item.checked}}"
+              name$="backend_{{item.id}}" 
+              data-backend$="{{item}}">
+            {{item.label}}
+          </paper-radio-button>
+        </template>
+        <paper-radio-button 
+            name="chooseAltBackend" checked="{{_chooseAltBackendSelected}}">
+          Choose another backend
+        </paper-radio-button>
+      </paper-radio-group>
+    </template>
+
+    <template is="dom-if" if="{{_chooseAltBackendSelected}}">
+      <paper-material elevation="1">
+
+
+        <template is="dom-if" if="{{_altBackendValidation}}">        
+          <div class="horizontal_flex">
+            <div>{{ localize('validAltBackend') }} </div>
+            <div>
+              <iron-icon 
+                  class="edit_button" 
+                  icon="create"
+                  on-tap="_editAltBackend"></iron-icon>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item_name">
+              {{ localize('backendUrl')}}
+            </div>
+            <div class="item_value">
+              {{_altBackendUrl}}
+            </div>
+          </div>  
+
+          <div class="more_info">  
+            <div class="more_info_label" on-tap="_toggleOtherParamState">
+              <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
+              {{ localize('otherParams') }}
+            </div>
+          </div>
+          <template is="dom-if" if="{{_otherParamsOpen}}">
+
+            <div class="item">
+              <div class="item_name">
+                {{ localize('headerName')}}
+              </div>
+              <div class="item_value">
+                {{_altBackendHeaderName}}
+              </div>
+            </div>  
+            <div class="item">
+              <div class="item_name">
+                {{ localize('execEndpoint')}}
+              </div>
+              <div class="item_value">
+                {{_altBackendExecEndpoint}}
+              </div>
+            </div>  
+            <div class="item">
+              <div class="item_name">
+                {{ localize('findEndpoint')}}
+              </div>
+              <div class="item_value">
+                {{_altBackendFindEndpoint}}
+              </div>
+            </div>  
+            <div class="item">
+              <div class="item_name">
+                {{ localize('updateEndpoint')}}
+              </div>
+              <div class="item_value">
+                {{_altBackendUpdateEndpoint}}
+              </div>
+            </div>  
+            <div class="item">
+              <div class="item_name">
+                {{ localize('deleteEndpoint')}}
+              </div>
+              <div class="item_value">
+                {{_altBackendDeleteEndpoint}}
+              </div>
+            </div>  
+          </template>  
+        </template>
+
+
+        <template is="dom-if" if="{{!_altBackendValidation}}">        
+          <div>{{ localize('configAltBackend') }}</div>
+
+          <paper-input
+              auto-validate
+              prevent-invalid-input 
+              name="altBackendUrl" 
+              label="{{ localize('backendUrl')}}"
+              type="text" 
+              value="{{_altBackendUrl}}"
+              validator="warp10-backend-validator"
+              maxlength="256"
+              required ></paper-input>
+          <div class="more_info">  
+            <div class="more_info_label" on-tap="_toggleOtherParamState">
+              <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
+              {{ localize('otherParams') }}
+            </div>
+          </div>
+          <template is="dom-if" if="{{_otherParamsOpen}}">
+            <div>            
+              <paper-input
+                name="altBackendHeader" label="{{ localize('headerName')}}"
+                type="text" value="{{_altBackendHeaderName}}"
+                required maxlength="64"></paper-input>
+              <paper-input
+                name="altBackendExecEndpoint" label="{{ localize('execEndpoint')}}"
+                type="text" value="{{_altBackendExecEndpoint}}"
+                required maxlength="64"></paper-input>  
+              <paper-input
+                name="altBackendFindEndpoint" label="{{ localize('findEndpoint')}}"
+                type="text" value="{{_altBackendFindEndpoint}}"
+                required maxlength="64"></paper-input>    
+              <paper-input
+                name="altBackendUpdateEndpoint" label="{{ localize('updateEndpoint')}}"
+                type="text" value="{{_altBackendUpdateEndpoint}}"
+                required maxlength="64"></paper-input>   
+              <paper-input
+                name="altBackendDeleteEndpoint" label="{{ localize('deleteEndpoint')}}"
+                type="text" value="{{_altBackendDeleteEndpoint}}"
+                required maxlength="64"></paper-input>  
+            </div>  
+          </template>  
+
+          <paper-button  
+              name="validateAltBackend" on-tap="_validateAltBackend"
+              disabled="{{_invalidAltBackend}}"
+              raised>
+              <iron-icon icon="done"></iron-icon>
+          </paper-button>
+        </template>
+      </paper-material>     
+    </template>  
+
+
+
+    
+   <warp10-backend-validator></warp10-backend-validator>
+
+
+  </template>
+
+
+  <script>
+    Polymer({
+      is: "quantum-backend-chooser",    
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior, 
+        QuantumModule     
+      ],
+
+      properties: {
+
+
+        /**
+         *  An array of pre-configured `backend` objects.
+         *  Example:
+         *
+         *    [
+         *      {
+         *        "id": "dist",
+         *        "label": "Distributed Warp",
+         *        "url": "https://warp.cityzendata.net/dist/api/v0",
+         *        "execEndpoint": "/exec",
+         *        "findEndpoint": "/find",
+         *        "updateEndpoint": "/update",
+         *        "deleteEndpoint": "/delete",
+         *        "headerName": "Warp10"
+         *        }
+         *   ]
+         *
+         */
+        configuredBackends: {
+          type: Array,
+          observer: "_setInitialBackend",
+          value: function() {
+            return [ ];
+          }
+        },
+
+        _altBackend: {
+          type: Object,
+          return: function() {
+            return {};
+          }
+        },
+
+        _otherParamsOpen: {
+          type: Boolean,
+          value: false
+        },
+        _otherParamsStateIcon: {
+          type: String,
+          computed: "_getOtherParamsStateIcon(_otherParamsOpen)"
+        },
+
+        _altBackendUrl: {
+          type: String,
+          value: "http://127.0.0.1:8080/api/v0"
+        },
+        _altBackendHeaderName: {
+          type: String,
+          value: "Warp10"
+        },
+        _altBackendExecEndpoint: {
+          type: String,
+          value: "/exec"
+        },
+        _altBackendFindEndpoint: {
+          type: String,
+          value: "/find"
+        },
+        _altBackendUpdateEndpoint: {
+          type: String,
+          value: "/update"
+        },
+        _altBackendDeleteEndpoint: {
+          type: String,
+          value: "/delete"
+        },
+        _invalidAltBackend: {
+          type: Boolean,
+          computed: "_isInvalidAltBackend(_altBackendUrl,_altBackendHeaderName,_altBackendExecEndpoint,_altBackendFindEndpoint,_altBackendUpdateEndpoint,_altBackendDeleteEndpoint)"
+        },
+        _altBackendValidation: {
+          type: Boolean,
+          value: false
+        },
+        _hasConfiguredBackends: {
+          type: Boolean,
+          computed: "_getHasConfiguredBackends(configuredBackends)"
+        }, 
+        _chooseAltBackendSelected: {
+          type: Boolean,
+          value: false,
+          observer: "_altBackendStatusChanged" 
+        },  
+        /* Overriden from AppLocalizeBehavior */
+        language: {
+          value: 'en'
+        },     
+        /* Overriden from AppLocalizeBehavior */
+        resources: {
+          type: Object,
+          value: function() {
+            return {
+              'en': { 
+                'chooseYourBackend': 'Choose your backend',
+                'backendUrl': 'Backend URL',
+                'otherParams': 'Other backend configuration parameters',
+                'headerName': "HTTP header root",
+                'execEndpoint': "'Exec' endpoint", 
+                'findEndpoint': "'Find' endpoint",
+                'updateEndpoint': "'Update' endpoint",  
+                'deleteEndpoint': "'Delete' endpoint",
+                'configAltBackend': "Configure backend",
+                'validAltBackend': "Backend configurated"
+              },
+            }
+          }
+        },           
+
+      },
+      observers: [
+        "_backendChanged(backend,configuredBackends)"
+      ],
+
+      /* ************************************************************************/
+      /* Computed properties                                                    
+      /* ************************************************************************/
+      _getHasConfiguredBackends: function() {
+        return (this.configuredBackends.length > 0);
+      },
+
+      /* ************************************************************************/
+      /* Observers                                                              
+      /* ************************************************************************/
+      _altBackendStatusChanged: function() {
+        if (this._chooseAltBackendSelected) {
+          for (i in this.configuredBackends) {
+            this.set(['configuredBackends',i,'checked'],false);
+          }
+        }
+      },
+      _backendChanged: function() {
+       console.debug("[quantum-backend-chooser] _backendChanged - backend ", this.backend)
+       console.debug("[quantum-backend-chooser] _backendChanged - configuredBackends ", this.configuredBackends)
+        if (!this.backend) {
+          return;
+        }
+        var preconfiguredBackend = false;
+        
+        for (i in this.configuredBackends) {
+          console.debug("[quantum-backend-chooser] _backendChanged - currentBackend", {conf: this.configuredBackends[i].url, backend: this.backend.url});
+          if (this.configuredBackends[i].url == this.backend.url) {
+            this.set(['configuredBackends',i,'checked'],true);
+            preconfiguredBackend = true;
+            console.debug("[quantum-backend-chooser] _backendChanged - default backend found: ", this.configuredBackends[i] )
+          } else {           
+            this.set(['configuredBackends',i,'checked'],false);
+            console.debug("[quantum-backend-chooser] _backendChanged - unselect backend: ",  this.configuredBackends[i] )
+          }
+        }
+        if (!preconfiguredBackend) {
+          this._chooseAltBackendSelected = true;
+          this._altBackendUrl = this.backend.url;
+          this._altBackendHeaderName = this.backend.headerName;
+          this. _altBackendExecEndpoint = this.backend.execEndpoint;
+          this._altBackendFindEndpoint = this.backend.findEndpoint;
+          this._altBackendUpdateEndpoint = this.backend.updateEndpoint;
+          this._altBackendDeleteEndpoint = this.backend.deleteEndpoint;     
+          
+          this._altBackendValidation = true;
+        } else {
+         // console.debug("[quantum-backend-chooser] _backendChanged - preconfiguredBackend"); 
+          this._chooseAltBackendSelected = false;
+        }
+         console.debug("[quantum-backend-chooser] _backendChanged - configurated backends", this.configuredBackends); 
+      },
+      _setInitialBackend: function() {     
+        if (!this._isAttached) return;
+           
+        if (!this.backend) {
+          if (this.configuredBackends.length > 0) {
+            this.backend = this.configuredBackends[0];
+          } else {
+            this.backend = this.defaultBackend;
+          }  
+        }   
+        console.debug("[quantum-backend-chooser] _setInitialBackend - preconfiguredBackend", this.backend);   
+      },
+
+      // Computed properties
+      _getOtherParamsStateIcon: function() {
+        if (!this._otherParamsOpen) {
+          return "arrow-drop-down";
+        }
+        return "arrow-drop-up";
+      },
+      _isInvalidAltBackend: function(){ 
+        console.debug("[quantum-backend-chooser] _isInvalidAltBackend");
+        if (!this._altBackendUrl) return true;
+        if (!this._altBackendHeaderName) return true;
+        if (!this._altBackendExecEndpoint) return true;
+        if (!this._altBackendFindEndpoint) return true;
+        if (!this._altBackendUpdateEndpoint) return true;
+        if (!this._altBackendDeleteEndpoint) return true;
+
+        var endpoints = [ 
+          this._altBackendExecEndpoint, 
+          this._altBackendFindEndpoint,
+          this._altBackendUpdateEndpoint,
+          this._altBackendDeleteEndpoint
+          ];
+        var unique = function(val, index, self) { 
+          return index === self.indexOf(val);
+        }  
+        var uniqueEndpoints = endpoints.filter(unique);
+               
+        if (uniqueEndpoints.length != 4) return true;
+
+        return false;
+      },
+
+      // Action listeners
+      _toggleOtherParamState: function(evt) {
+        this._otherParamsOpen = !this._otherParamsOpen;
+      },
+
+      _validateAltBackend: function(evt) {
+        this._altBackend = {
+          url: this._altBackendUrl,
+          headerName: this._altBackendHeaderName,
+          execEndpoint:this. _altBackendExecEndpoint,
+          findEndpoint: this._altBackendFindEndpoint,
+          updateEndpoint: this._altBackendUpdateEndpoint,
+          deleteEndpoint: this._altBackendDeleteEndpoint
+        }
+       console.debug("[quantum-backend-chooser] _validateAltBackend", this._altBackend);
+        this.backend = this._altBackend;    
+        this._altBackendValidation = true;     
+        this.fire("backend-choosen", this.backend);
+      },
+
+      _editAltBackend: function() {
+        this._altBackendValidation = false;     
+      },
+
+      // Event listeners
+      _backendChoosen: function(evt, model) {
+        var backend = JSON.parse(model.item.getAttribute('data-backend'));
+        console.debug("[quantum-backend-chooser] _backendChoosen", backend );
+        if (backend) {
+          this.backend = backend;
+          console.debug("[quantum-backend-chooser] _backendChoosen - backend", this.backend );
+        }
+        this.fire("backend-choosen", this.backend);
+      },
+
+      // Lifecycle methods
+      attached: function() {
+        this._isAttached = true;
+        this._setInitialBackend();
+      },
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,258 @@
+<!--
+@author Horacio Gonzalez (@lostinbrittany)
+@copyright (c) 2016 Cityzen Data
+@license Apache 2.0
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../bower_components/ace-widget/ace-widget.html">
+
+<link rel="import" href="../bower_components/granite-alert/granite-alert.html">
+
+<link rel="import" href="../bower_components/granite-spinner/granite-spinner.html">
+
+<link rel="import" href="./quantum-module-behavior.html">
+
+<!--
+Warp update widget
+
+
+    <quantum-update
+      choose-backend  backend="{{backend}}">
+    </quantum-update>
+-->
+<dom-module id="quantum-update">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 15px;
+        --app-primary-color: var(--google-blue-500);
+        --app-secondary-color: black;
+        --app-background-color: white;
+        --app-on-background-color: white;
+      }
+      .top-10 { margin-top:10px; }
+
+      .right {
+        float: right;
+      }
+
+      #editor {
+        min-height: 300px;
+        font-size: 14px;
+      }
+      #token {
+        width: 100%;
+      }
+      h4 {
+        font-weight: bold;
+      }
+      granite-alert[hidden] {
+        display: none;
+      }
+      paper-button {
+        background-color: var(--app-primary-color);
+        color: var(--app-on-background-color)
+      }
+      granite-spinner {
+        z-index: 100;
+      }
+    </style>
+
+    <style>      
+      .item { 
+        margin-top: 8px; 
+        margin-bottom: 8px; 
+      } 
+
+      .item_name { 
+        color: var(--paper-grey-600); 
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        font-size: 12px; 
+        font-weight: 400; 
+        letter-spacing: 0.011em; 
+        line-height: 20px; 
+      } 
+
+      .item_value { 
+        @apply(--layout-horizontal); 
+        @apply(--layout-center); 
+        @apply(--layout-wrap); 
+      } 
+      .clearfix:before,
+      .clearfix:after {
+        content: " "; /* 1 */
+        display: table; /* 2 */
+      }
+      .clearfix:after {
+        clear: both;
+      }    
+      .title {
+        text-transform: capitalize;
+      }
+    </style>
+
+    <h2 class="title">{{name}}</h2>
+
+    <granite-spinner
+        active="{{loading}}" 
+        size="200"
+        hover></granite-spinner>
+
+    <div class="top-10">          
+      <paper-input
+        auto-validate
+        prevent-invalid-input 
+        always-float-label
+        name="token" 
+        label="Write token"
+        type="text" 
+        value="{{token}}"
+        required ></paper-input>
+    </div>
+    <div class="item">
+      <div class="item_name">
+        Data to push:
+      </div>
+      <div  class="top-10">
+        <ace-widget
+          id="ingresseditor" theme="ace/theme/eclipse" mode="ace/mode/snippets"
+          softtabs="true" wrapmode="true" value="{{content}}">Type your code here... </ace-widget>
+      </div>
+    </div>
+    <div  class="top-10">
+      <div class="right">
+        <paper-button
+          id="btn_execute"
+          class="btn btn-primary btn-lg"
+          on-click="execute"
+          disabled$="{{_disabled}}">
+          Execute!
+        </paper-button>
+      </div>
+    </div>
+    <div class="clearfix"> </div>
+    <div  class="top-10">
+      <granite-alert level="danger" hidden$="{{!_hasAnError}}">
+        {{errorMsg}}
+      </granite-alert>
+      <granite-alert level="success" hidden$="{{!_hasAResponse}}">
+        {{data}}
+      </granite-alert>
+    </div>
+
+    <iron-ajax
+      id="xhr"
+      url="{{_baseUrl}}"
+      method='POST'
+      loading='{{loading}}'
+      body='{{content}}'
+      handle-as="json"
+      on-response="_handleResponse"
+      on-error="_handleError"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: "quantum-update",
+      behaviors: [
+        QuantumModule
+      ],
+      properties: {
+        /**
+         * A WRITE token valable for the GTS to be updated
+         */
+        token: {
+          type: String,
+          value: ""
+        },
+        /**
+         * The GTS datapoints to be updated
+         */
+        content: {
+          type: String,
+          value: ""
+        },
+          
+        _baseUrl: {
+          type: String,
+          computed: "_getBaseUrl(backend)"
+        },
+
+        _disabled: {
+          type: Boolean,
+          computed: "_isDisabled(token, content)"
+        },
+      },
+
+      /**************************************************************************/
+      /* Lifecycle methods                                                      */
+      /**************************************************************************/     
+      ready: function() {
+        this._hasAnError = 0;
+        this._hasAResponse = 0;
+      },
+      attached: function() {
+        editor = this.$.ingresseditor;
+        editor.addEventListener('editor-content', this._editorChangeAction.bind(this));
+      },
+
+      /**************************************************************************/
+      /* Computed porperties                                                    */
+      /**************************************************************************/     
+      _getBaseUrl: function() {
+        console.debug('[quantum-update] _getBaseUrl', this.backend);
+        return this.backend.url + this.backend.updateEndpoint;
+      },
+      _isDisabled: function() {
+        // console.debug('[quantum-update] _isDisabled', (!this.token || !this.content))
+        if (!this.token || !this.content) {
+          return true;
+        }
+        return false;
+      },
+
+      /**************************************************************************/
+      /* Action Listeners                                                       */
+      /**************************************************************************/      
+      execute: function() {
+        var header = this.backend.headerName;
+        this.$.xhr.headers = {}
+        this.$.xhr.headers[header] = this.token;
+        console.debug("[quantum-update] _doCall - headers", this.$.xhr.headers);
+        this.$.xhr.generateRequest();
+      },
+
+      /**************************************************************************/
+      /* Event Listeners                                                        */
+      /**************************************************************************/
+      _editorChangeAction: function(value, oldValue) {
+        this.fire('editor-content', {value: value, oldValue: oldValue});
+        this.content = value.detail.value;
+        // console.debug("[quantum-update] Ide content changed", this.content);
+      },
+      _handleResponse: function(event, ironRequest) {
+        // console.debug("[quantum-update] _handleResponse - Updated!", ironRequest.response);
+        this._hasAResponse = true;
+        this._hasAnError = false;
+        this.data = ironRequest.response;
+      },
+      _handleError: function(event, ironRequest) {
+        console.debug("[quantum-update] _handleError - Updated!", ironRequest);
+        this._hasAResponse = false;
+        this._hasAnError = true;      
+        this.data = null;
+        this.errorMsg = ironRequest.request.statusText || "Unkown error"
+      }
+    });
+  </script>
+</dom-module>
