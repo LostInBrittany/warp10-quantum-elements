@@ -13,6 +13,7 @@
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="../warp10-iron/warp10-gts-tools.html">
 <link rel="import" href="../warp10-iron/warp10-simple-overlay.html">
@@ -41,7 +42,7 @@ Warp plot widget
 
 <dom-module id="quantum-plot">
   <template>
-    <style>
+  <style is="custom-style">
       :host {
         display: block;
         padding: 15px;
@@ -104,31 +105,49 @@ Warp plot widget
         background-color: var(--app-primary-color);
         color: var(--app-on-background-color)
       }
+      paper-toggle-button {
+        margin-left: 10px;
+        margin-right: 10px;
+        --paper-toggle-button-checked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-ink-color: var(--app-primary-color);
+        --paper-toggle-button-unchecked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-ink-color: var(--app-primary-color);
+      }
     </style>
 
     <style>
-      .item { 
-        margin-top: 8px; 
-        margin-bottom: 8px; 
-      } 
+      .item_list {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+      }
+      .item:not(:first-child) {
+        margin-left: 30px;
+      }
+      .item {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
 
-      .item_name { 
-        color: var(--paper-grey-600); 
+      .item_name {
+        color: var(--paper-grey-600);
         font-family: 'Roboto', 'Noto', sans-serif;
-        -webkit-font-smoothing: antialiased; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        font-size: 12px; 
-        font-weight: 400; 
-        letter-spacing: 0.011em; 
-        line-height: 20px; 
-      } 
-      .item_value { 
-        @apply(--layout-horizontal); 
-        @apply(--layout-center); 
-        @apply(--layout-wrap); 
-      } 
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.011em;
+        line-height: 20px;
+      }
+      .item_value {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+      }
       .clearfix:before,
       .clearfix:after {
         content: " "; /* 1 */
@@ -136,7 +155,7 @@ Warp plot widget
       }
       .clearfix:after {
         clear: both;
-      }      
+      }
       .title {
         text-transform: capitalize;
       }
@@ -180,47 +199,54 @@ Warp plot widget
         <p><span class="hotkey-key">n</span> Select none</p>
         <p><span class="hotkey-key">/</span> Select by regex</p>
       </div>
-    </warp10-simple-overlay> 
+    </warp10-simple-overlay>
 
 
     <quantum-image-overlay id="image-overlay"></quantum-image-overlay>
 
     <granite-spinner
-        active="{{loading}}" 
+        active="{{loading}}"
         size="200"
         hover></granite-spinner>
 
-    <div class="item">
-      <div class="item_name">Interpolation</div>
-      <paper-radio-group 
-        id="interpolationRadioGroup" 
-        selected="{{interpolationMode}}">
-        <paper-radio-button
-            id="interpolation_linear"
-            name="linear">
-          Linear
-        </paper-radio-button>
-        <paper-radio-button
-            id="interpolation_step"
-            name="step-before">
-          Step
-        </paper-radio-button>
-        <!--
-        <paper-radio-button
-            id="interpolation_cardinal"
-            name="cardinal">
-          Cardinal
-        </paper-radio-button>
-        -->
-      </paper-radio-group>
+    <div class="item_list">
+      <div class="item ">
+        <div class="item_name">Interpolation</div>
+        <paper-radio-group
+          id="interpolationRadioGroup"
+          selected="{{interpolationMode}}">
+          <paper-radio-button
+              id="interpolation_linear"
+              name="linear">
+            Linear
+          </paper-radio-button>
+          <paper-radio-button
+              id="interpolation_step"
+              name="step-before">
+            Step
+          </paper-radio-button>
+          <!--
+          <paper-radio-button
+              id="interpolation_cardinal"
+              name="cardinal">
+            Cardinal
+          </paper-radio-button>
+          -->
+        </paper-radio-group>
+      </div>
+      <div class="item">
+        <div class="item_name">X-axis scale</div>
+        <div class="item_value">Date <paper-toggle-button checked="{{timestamps}}"></paper-toggle-button>Timestamp</div>
+      </div>
     </div>
 
-   <quantum-gts-tree 
-      id="gts-tree" 
-      data="{{data}}" 
+
+   <quantum-gts-tree
+      id="gts-tree"
+      data="{{data}}"
       plotted-changed={{changed}}></quantum-gts-tree>
 
-    
+
     <div id="vertGuide"></div>
 
     <quantumviz-annotations
@@ -233,7 +259,7 @@ Warp plot widget
       selected-timestamp="{{annotationsSelectedTimestamp}}"
       >
     </quantumviz-annotations>
-    
+
 
 
     <warp10-display-chart
@@ -244,8 +270,9 @@ Warp plot widget
         current-values="{{currentValues}}"
         time-bounds="{{timeBounds}}"
         chart-area="{{chartArea}}"
+        timestamps="{{timestamps}}"
         ></warp10-display-chart>
-    
+
 
     <warp10-simple-overlay id="gts-select-overlay">
       <div class="overlayGtsSelectorBox">
@@ -261,7 +288,7 @@ Warp plot widget
       </div>
     </warp10-simple-overlay>
 
-    <warp10-simple-overlay 
+    <warp10-simple-overlay
         id="gtsRegexOverlay"
         on-iron-overlay-opened="_onRegexOverlayOpened"
         on-iron-overlay-closed="_onRegexOverlayClosed">
@@ -269,9 +296,9 @@ Warp plot widget
         <div class="overlayGtsRegex">
           <h2>Regex selector</h2>
           <paper-input
-              id="regexInput" 
+              id="regexInput"
               label="Regex"
-              type="text" 
+              type="text"
               value="{{_currentRegex}}"></paper-input>
           <paper-button
               id="btn_execute"
@@ -298,7 +325,7 @@ Warp plot widget
       behaviors: [
         QuantumModule
       ],
-      properties: { 
+      properties: {
         /**
          * The data to plot
          */
@@ -308,7 +335,7 @@ Warp plot widget
         },
         /**
          * The WarpScript generating the data to plot
-         */        
+         */
         warpscript: {
           type: String
         },
@@ -357,8 +384,8 @@ Warp plot widget
         _baseUrl: {
           type: String,
           computed: "_getBaseUrl(backend)"
-        },  
-      },   
+        },
+      },
 
       listeners: {
         'plotted-changed': '_onPlottedChanged'
@@ -368,13 +395,13 @@ Warp plot widget
       /* Lifecycle methods                                                      */
       /**************************************************************************/
       ready: function() {
-      },      
+      },
       attached: function() {
         console.debug("[quantum-warpscript-plot] attached - target", this._target)
         this.init();
         this.dataToPlot = [];
-        console.debug("[quantum-warpscript-plot] attached - this", this) 
-        
+        console.debug("[quantum-warpscript-plot] attached - this", this)
+
         // console.debug("[quantum-warpscript-plot] attached - width", this.offsetWidth)
         this._displayWidth = this.offsetWidth;
       },
@@ -409,9 +436,9 @@ Warp plot widget
       _onCurrentRegexChanged: function() {
       },
       _onSelectedChanged: function(selected) {
-        
+
         if (selected === this.name) {
-          this._target = document.body;          
+          this._target = document.body;
         } else {
           this._target = null;
         }
@@ -421,23 +448,23 @@ Warp plot widget
       _onInterpolationModeChanged: function() {
          console.debug("[quantum-warpscript-plot] _onInterpolationModeChanged", this.interpolationMode);
          this.fire('plotted-changed', plottingTools);
-      },    
+      },
 
       /**************************************************************************/
       /* Event Listeners                                                        */
       /**************************************************************************/
-      _handleResponse: function(event, response) {      
-        console.debug("[quantum-warpscript-plot] _handleResponse - response",response );    
+      _handleResponse: function(event, response) {
+        console.debug("[quantum-warpscript-plot] _handleResponse - response",response );
         if (!response.stack ||
           !response.stack instanceof Array ) {
           this.data = null;
           return;
-        }      
+        }
         this.data = gtsTools.gtsFromJSONList(response.stack);
-        console.debug("[quantum-warpscript-plot] _handleResponse",this.data );        
-      }, 
-      _onPlottedChanged: function(evt) {        
-        this.dataToPlot = [{ 
+        console.debug("[quantum-warpscript-plot] _handleResponse",this.data );
+      },
+      _onPlottedChanged: function(evt) {
+        this.dataToPlot = [{
           gts: evt.detail.data,
           params: evt.detail.params,
           globalParams: {
@@ -445,12 +472,12 @@ Warp plot widget
           }
         }];
         console.debug("[quantum-warpscript-plot] plottedChanged", this.dataToPlot);
-        
-        
+
+
         // this.$$('#warp10-display-chart').dataChanged();
         // this.$$("#warp10-quantumviz-annotations").dataChanged();
         // console.debug("[quantum-warpscript-plot] plottedChanged", e.detail);
-      },  
+      },
 
       _showSelectionOverlay: function(evt) {
         this.selectedMode = true;
@@ -476,7 +503,7 @@ Warp plot widget
       },
       _onRegexOverlayClosed: function(evt) {
         this._regexMode = false;
-      },             
+      },
 
       /**************************************************************************/
       /* Other methods                                                          */
@@ -487,7 +514,7 @@ Warp plot widget
         this.stackedGtsListHalfLimit = 3;
 
         if (!this.data) {
-          this.$.warpscriptcaller.generateRequest();   
+          this.$.warpscriptcaller.generateRequest();
         } else {
           this._onDataChanged(this.data);
         }
@@ -506,7 +533,7 @@ Warp plot widget
         }.bind(this);
 
 
-      },  
+      },
 
       getStackedGtsListSlidingWindow: function() {
         var windowEnd, windowInit;
@@ -549,8 +576,8 @@ Warp plot widget
 
       /**************************************************************************/
       /* Hotkeys                                                                */
-      /**************************************************************************/  
-        
+      /**************************************************************************/
+
       _hotkeyEdit: function(e) {
         // console.debug("[quantum-warpscript-plot] _hotkey edit", this.warpscript);
         if (!this._regexMode) {
@@ -648,7 +675,7 @@ Warp plot widget
       _hotkeyReload: function(e) {
         if (!this._regexMode) {
           // console.debug([quantum-warpscript-plot] _hotkey r");
-          this.$.warpscriptcaller.generateRequest();    
+          this.$.warpscriptcaller.generateRequest();
         }
       },
       _hotkeyHelp: function(e) {
@@ -659,9 +686,9 @@ Warp plot widget
             this.$$("#warpscript-plot-keyboard-shortcuts-overlay").open();
           } else {
             this.$$("#warpscript-plot-keyboard-shortcuts-overlay").close();
-          }          
+          }
         }
-      }, 
+      },
 
 
     });
