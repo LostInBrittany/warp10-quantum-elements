@@ -33,7 +33,7 @@
 <script src="../ace-builds/src-min-noconflict/theme-eclipse.js"></script>
 <script src="../ace-builds/src-min-noconflict/snippets/text.js"></script>
 
-<dom-module id="quantum-warpscript">  
+<dom-module id="quantum-warpscript">
   <template>
     <style>
       :host {
@@ -98,28 +98,28 @@
     </style>
 
     <style>
-      .item { 
-        margin-top: 8px; 
-        margin-bottom: 8px; 
-      } 
+      .item {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
 
-      .item_name { 
-        color: var(--paper-grey-600); 
+      .item_name {
+        color: var(--paper-grey-600);
         font-family: 'Roboto', 'Noto', sans-serif;
-        -webkit-font-smoothing: antialiased; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        font-size: 12px; 
-        font-weight: 400; 
-        letter-spacing: 0.011em; 
-        line-height: 20px; 
-      } 
-      .item_value { 
-        @apply(--layout-horizontal); 
-        @apply(--layout-center); 
-        @apply(--layout-wrap); 
-      } 
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.011em;
+        line-height: 20px;
+      }
+      .item_value {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+      }
       .item_vert {
         @apply(--layout-vertical);
       }
@@ -130,7 +130,7 @@
       }
       .clearfix:after {
         clear: both;
-      }      
+      }
       .title {
         text-transform: capitalize;
       }
@@ -162,7 +162,7 @@
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_codeToShare}}'
       handle-as="text"  on-response="_handleShareCodeResponse" on-error="_handleShareCodeError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}" 
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
       ></iron-ajax>
 
     <iron-ajax
@@ -170,27 +170,27 @@
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_resultToShare}}'
       handle-as="text"  on-response="_handleShareResultResponse" on-error="_handleShareResultError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}" 
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
       ></iron-ajax>
     <ace-widget
-        id="editor" 
-        theme="ace/theme/eclipse" 
+        id="editor"
+        theme="ace/theme/eclipse"
         mode="ace/mode/warpscript"
-        softtabs="true" 
-        wrap="true" 
-        value="{{content}}" 
+        softtabs="true"
+        wrap="true"
+        value="{{content}}"
         placeholder="Type your WarpScript here..."
         initial-focus></ace-widget>
 
 
     <granite-spinner
-        active="{{loading}}" 
+        active="{{loading}}"
         size="200"
         hover></granite-spinner>
 
     <quantum-permalink-generator
-      warpscript="{{content}}" 
-      backend="{{backend}}" 
+      warpscript="{{content}}"
+      backend="{{backend}}"
       hidden$="{{!showPermalink}}"></quantum-permalink-generator>
 
     <div  class="top-10">
@@ -217,8 +217,8 @@
     </div>
 
 
-    
-    <template is="dom-if" if="{{_hasAResponse}}">      
+
+    <template is="dom-if" if="{{_hasAResponse}}">
       <div class="clearfix"> </div>
       <div  class="top-10">
         <paper-button
@@ -226,17 +226,17 @@
             on-click="shareResult"
             disabled$="{{_shareResultDisabled}}">
             Share result
-        </paper-button>  
-        <template is="dom-if" if="{{_lastSharedResult.snapshotId}}">  
+        </paper-button>
+        <template is="dom-if" if="{{_lastSharedResult.snapshotId}}">
           <div class="item_vert">
             <div class="item">
-              Link to share: 
+              Link to share:
               <a href$="./#/shared-result/{{_lastSharedResult.snapshotId}}" target="_blank">
                 {{_sharingUrlRoot}}#/shared-result/{{_lastSharedResult.snapshotId}}
                 </a>
             </div>
             <div class="item">
-              Link to delete: 
+              Link to delete:
               <a href$="./#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}" target="_blank">
                 {{_sharingUrlRoot}}#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}
               </a>
@@ -246,7 +246,7 @@
       </div>
     </template>
 
-    <template is="dom-if" if="{{!_contentChangedAfterExecution}}">             
+    <template is="dom-if" if="{{!_contentChangedAfterExecution}}">
       <div class="clearfix"> </div>
       <div  class="top-10">
         <paper-button
@@ -256,16 +256,16 @@
           disabled$="{{_shareCodeDisabled}}">
           Share code
         </paper-button>
-        <template is="dom-if" if="{{_lastSharedCode.snapshotId}}">  
+        <template is="dom-if" if="{{_lastSharedCode.snapshotId}}">
           <div class="item_vert">
             <div class="item">
-              Link to share: 
+              Link to share:
               <a href$="./#/shared-code/{{_lastSharedCode.snapshotId}}" target="_blank">
                 {{_sharingUrlRoot}}#/shared-code/{{_lastSharedCode.snapshotId}}
                 </a>
             </div>
             <div class="item">
-              Link to delete: 
+              Link to delete:
               <a href$="./#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}" target="_blank">
                 {{_sharingUrlRoot}}#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}
               </a>
@@ -287,7 +287,7 @@
       <quantum-response-container
         id="response_container"
         response="{{stack}}"
-        received="{{received}}" 
+        received="{{received}}"
         hidden$="{{!_hasAResponse}}"></quantum-response-container>
       <granite-alert level="danger" hidden$="{{!_hasAnError}}">
         {{errorMsg}}
@@ -377,7 +377,7 @@
           type: Boolean,
           value: false
         },
-        
+
         _hasAResponse: {
           type: Boolean,
           value: false
@@ -386,7 +386,7 @@
           type: Boolean,
           value: false
         },
-        
+
         _baseUrl: {
           type: String,
           computed: "_getBaseUrl(backend)"
@@ -407,9 +407,9 @@
           type: String,
           value: function() {
             return window.location.origin+window.location.pathname;
-          } 
+          }
         },
-        
+
         _shareResultDisabled: {
           type: Boolean,
           computed: "_isShareResultDisabled(loading,_lastSharedResult)"
@@ -420,7 +420,7 @@
         },
       },
 
-      
+
 
       /**************************************************************************/
       /* Lifecycle methods                                                      */
@@ -479,9 +479,9 @@
         }
       },
       _onSelectedChanged: function(selected) {
-        
+
         if (selected === this.name) {
-          this._target = document.body;          
+          this._target = document.body;
         } else {
           this._target = null;
         }
@@ -491,36 +491,36 @@
       /**************************************************************************/
       /* Event Listeners                                                        */
       /**************************************************************************/
-      _handleResponse: function(event, response) {      
+      _handleResponse: function(event, response) {
         if (!response.stack ||
           !response.stack instanceof Array ) {
           this._dataToPlot = null;
           return;
-        }        
+        }
         this.elapsed = response.options.elapsed;
         this._dataToPlot = gtsTools.gtsFromJSONList(response.stack);
-        this.stack = response.stack;  
+        this.stack = response.stack;
         this._hasAResponse = true;
         this._hasAnError = false;
         this._contentChangedAfterExecution = false;
         this._lastSharedResult = "";
         this.$.response_container.responseChanged();
-        
+
         // console.debug("[quantum-warpscript] _handleResponse", { stack: this.stack, elapsed: this.elapsed, _dataToPlot: this._dataToPlot });
-      },    
-      _handleError: function(event, error) {        
+      },
+      _handleError: function(event, error) {
         if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
-          this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1]; 
+          this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
         } else {
           this.errorMsg =  error.request.statusText;
         }
-        
+
         console.debug("[quantum-warpscript] _handleError", { error: error, errorMsg: this.errorMsg });
-        
+
         this.elapsed = error.elapsed;
         this._hasAResponse = false;
-        this._hasAnError = true;       
-        
+        this._hasAnError = true;
+
         console.debug("[quantum-warpscript] _handleError - _hasAResponse", this._hasAResponse);
       },
 
@@ -534,16 +534,16 @@
         var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
         console.debug("quantum-warpscript] _handleShareCodeResponse", {snapshotId: snapshotId, snapshotSecret: snapshotSecret});
         this._lastSharedCode = {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
-      },  
+      },
       _handleShareResultResponse: function(event, ironRequest) {
         var snapshotId = looseJSON.parse(ironRequest.response)[1];
         var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
         console.debug("quantum-warpscript] _handleShareResultResponse", ironRequest.response);
         this._lastSharedResult =  {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
-      },         
+      },
       /**************************************************************************/
       /* Action listeners                                                       */
-      /**************************************************************************/    
+      /**************************************************************************/
       /**
        * Executes the warpscript request
        */
@@ -553,7 +553,7 @@
           this._updateLocation();
         }
         this.warpscriptScript = this.content;
-        this.$.warpscriptcaller.generateRequest();    
+        this.$.warpscriptcaller.generateRequest();
       },
       plot: function() {
         // console.debug([quantum-warpscript] Plot", this.stack)
@@ -561,20 +561,29 @@
           this.fire("plot",this._dataToPlot);
         }
       },
-      shareCode: function() {        
+      shareCode: function() {
         this._codeToShare = "<% '"+ encodeURI(this.content).replace(/'/g,'%27').replace(/"/g,'%28').replace(/\+/g,'%2B') + "' %> @orbit/snapshot/store";
-        this.$.shareCodeRequest.generateRequest();    
+        this.$.shareCodeRequest.generateRequest();
       },
       shareResult: function() {
-        this._resultToShare = this.content + " SNAPSHOT 'snapshot' STORE <% !$snapshot %> @orbit/snapshot/store";
-        this.$.shareResultRequest.generateRequest();    
+        var randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+          return v.toString(16);
+        });
+
+        this._resultToShare =
+          "<% SNAPSHOT 'snapshot' STORE '<%25 !$snapshot %25>' EVAL @orbit/snapshot/store STOP %> 'STOP' DEF <% STOP %> '" +
+          randomFunction +"' DEF " + this.content +
+          " "+randomFunction;
+
+        this.$.shareResultRequest.generateRequest();
       },
 
 
       /**************************************************************************/
       /* Other methods                                                          */
       /**************************************************************************/
-       
+
       _updateLocation: function() {
         console.debug("[quantum-warpscript] _updateLocation");
         this.$$("quantum-permalink-generator").updateLocation(this.application);
@@ -583,7 +592,7 @@
 
       /**************************************************************************/
       /* Hotkeys                                                                */
-      /**************************************************************************/      
+      /**************************************************************************/
       _hotkeyExecute: function(e) {
         var normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
         console.debug("[quantum-warpscript] _hotkeyExec", normKeyboardEvt.rootTarget);
