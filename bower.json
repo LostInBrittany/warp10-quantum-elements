@@ -47,7 +47,7 @@
     "ace-widget": "LostInBrittany/ace-widget#~1.2.3",
     "granite-alert": "granite-alert#~1.0.0",
     "granite-spinner": "granite-spinner#^2.0.0",
-    "warp10-quantumviz": "cityzendata/warp10-quantumviz#~1.2.7"
+    "warp10-quantumviz": "cityzendata/warp10-quantumviz#~1.2.9"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
