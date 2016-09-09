@@ -103,10 +103,13 @@
         display: block;
       }
       .top-10 { margin-top:10px; }
+      #displayedPermalink {
+        overflow: hidden;
+      }
     </style>
 
-    <div class="top-10">
-      <b>Permalink:</b> <a href="#/warpscript/{{permalink}}">{{croppedPermalink}}</a>
+    <div id="displayedPermalink" class="top-10">
+      <b>Permalink:</b> <a href="#/warpscript/{{permalink}}"  >{{croppedPermalink}}</a>
     </div>
   </template>
 </dom-module>
@@ -139,7 +142,6 @@
         type: Number
       }
     },
-
 
     /**************************************************************************/
     /* Lifecycle methods                                                      */
@@ -212,6 +214,6 @@
       });      
       console.debug("[quantum-permalink] _encodeBackend - backendToEncode", backendToEncode);
       return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
-    }
+    },
   });
 </script>

@@ -223,7 +223,7 @@ Quantum delete widget
       /* Action Listeners                                                       */
       /**************************************************************************/      
       execute: function() {
-        var header = this.backend.headerName;
+        var header = this.backend.headerName+"-Token";
         this.$.xhr.headers = {}
         this.$.xhr.headers[header] = this.token;
         console.debug("[quantum-update] _doCall - headers", this.$.xhr.headers);

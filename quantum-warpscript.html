@@ -99,9 +99,22 @@
     </style>
 
     <style>
+      .button_bar {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+        @apply(--layout-justified);
+      }
+
       .item {
         margin-top: 8px;
         margin-bottom: 8px;
+      }
+
+      .item_list {        
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
       }
 
       .item_name {
@@ -147,7 +160,7 @@
         <h4>Keyboard Shortcuts:</h4>
         <p><span class="hotkey-key">?</span> Show / hide this help menu</p>
         <p><span class="hotkey-key">e</span> Execute WarpScript</p>
-        <p><span class="hotkey-key">p</span> Plot result</p>
+        <p><span class="hotkey-key">p</span> Plot response</p>
       </div>
     </warp10-simple-overlay>
 
@@ -167,10 +180,10 @@
       ></iron-ajax>
 
     <iron-ajax
-      id="shareResultRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
+      id="shareResponseRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
-      method='POST' body='{{_resultToShare}}'
-      handle-as="text"  on-response="_handleShareResultResponse" on-error="_handleShareResultError"
+      method='POST' body='{{_responseToShare}}'
+      handle-as="text"  on-response="_handleShareResponseResponse" on-error="_handleShareResponseError"
       loading="{{loading}}" debounce-duration="{{debounceDuration}}"
       ></iron-ajax>
     <ace-widget
@@ -194,65 +207,73 @@
       backend="{{backend}}"
       hidden$="{{!showPermalink}}"></quantum-permalink-generator>
 
-    <div  class="top-10">
-      <template is="dom-if" if="{{!hidePlot}}">
-      <div class="right">
-        <paper-button
-          id="btn_execute"
-          class="btn btn-primary btn-lg"
-          on-click="execute"
-          disabled$="{{loading}}">
-          Execute!
-        </paper-button>
-      </div>
+    <div  class="top-10 button_bar">
+      <div class="item_list">
+        <template is="dom-if" if="{{!hidePlot}}">
+          <div class="item_value">
+            <paper-button
+              on-click="plot"
+              disabled$="{{loading}}"
+              hidden$="{{!_hasAResponse}}">
+              Plot
+            </paper-button>
+          </div>            
+        </template>
         <div class="item_value">
           <paper-button
-            on-click="plot"
-            disabled$="{{loading}}"
-            hidden$="{{!_hasAResponse}}">
-            Plot
-          </paper-button>
-          <paper-button
-              id="btn_share_result"
-              on-click="shareResult"
-              disabled$="{{_contentChangedAfterExecution}}"
+              id="btn_share_response"
+              on-click="shareResponse"
+              disabled$="{{_shareResponseDisabled}}"
               hidden$="{{!_hasAResponse}}">
-              Share result
+              Share response
           </paper-button>
+        </div>
+      </div>  
+      <div class="item_list">
+        <div class="item_value">
           <paper-button
             id="btn_share_code"
             class="btn btn-primary btn-lg"
             on-click="shareCode"
-            disabled$="{{_contentChangedAfterExecution}}"
+            disabled$="{{_shareCodeDisabled}}"
             hidden$="{{!_hasAResponse}}">
             Share code
           </paper-button>
+        </div>        
+        <div class="item_value">
+          <paper-button
+            id="btn_execute"
+            class="btn btn-primary btn-lg"
+            on-click="execute"
+            disabled$="{{loading}}">
+            Execute
+          </paper-button>
         </div>
-      </template>
+      </div>
     </div>
 
 
 
     <template is="dom-if" if="{{_hasAResponse}}">
       <div class="top-10 clearfix"> </div>
-      <granite-alert level="danger" hidden$="{{!_shareResultError}}">
+      <granite-alert level="danger" hidden$="{{!_shareResponseError}}">
         <div class="item_vert">
-          <h4>Share result error</h4>
+          <h4>Share response error</h4>
         </div>
       </granite-alert>
-      <granite-alert level="success" hidden$="{{!_lastSharedResult.snapshotId}}">
+      <granite-alert level="success" hidden$="{{!_lastSharedResponse.snapshotId}}">
         <div class="item_vert">
-          <h4>Share result</h4>
+          <h4>Share response</h4>
           <div class="item">
-            Link to share:
-            <a href$="./#/shared-result/{{_lastSharedResult.snapshotId}}" target="_blank">
-              {{_sharingUrlRoot}}#/shared-result/{{_lastSharedResult.snapshotId}}
+            Response link:
+            <a href$="./#/shared-result/{{_lastSharedResponse.snapshotId}}" target="_blank">
+              {{_sharingUrlRoot}}#/shared-result/{{_lastSharedResponse.snapshotId}}
               </a>
           </div>
           <div class="item">
-            Link to delete:
-            <a href$="./#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}" target="_blank">
-              {{_sharingUrlRoot}}#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}
+            Deletion link: 
+            <a href$="./#/delete-shared-result/{{_lastSharedResponse.snapshotId}}/{{_lastSharedResponse.snapshotSecret}}" target="_blank">
+              {{_sharingUrlRoot}}#/delete-shared-result/{{_lastSharedResponse.snapshotId}}/{{_lastSharedResponse.snapshotSecret}}
             </a>
           </div>
         </div>
@@ -269,13 +290,13 @@
         <div class="item_vert">
           <h4>Share code</h4>
           <div class="item">
-            Link to share:
+            Code link:
             <a href$="./#/shared-code/{{_lastSharedCode.snapshotId}}" target="_blank">
               {{_sharingUrlRoot}}#/shared-code/{{_lastSharedCode.snapshotId}}
               </a>
           </div>
           <div class="item">
-            Link to delete:
+            Deletion link: 
             <a href$="./#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}" target="_blank">
               {{_sharingUrlRoot}}#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}
             </a>
@@ -406,21 +427,21 @@
         },
         _shareCodeDisabled: {
           type: Boolean,
-          computed: "_isShareCodeDisabled(loading,_lastSharedCode)"
+          computed: "_isShareCodeDisabled(_contentChangedAfterExecution, loading,_lastSharedCode)"
         },
         _shareCodeError: {
           type: Object,
           value: null
         },
-        _lastSharedResult: {
+        _lastSharedResponse: {
           type: String,
           value: ""
         },
-        _shareResultDisabled: {
+        _shareResponseDisabled: {
           type: Boolean,
-          computed: "_isShareResultDisabled(loading,_lastSharedResult)"
+          computed: "_isShareResponseDisabled(_contentChangedAfterExecution,loading,_lastSharedResponse)"
         },
-        _shareResultError: {
+        _shareResponseError: {
           type: Object,
           value: null
         },
@@ -472,10 +493,10 @@
       },
 
       _isShareCodeDisabled: function() {
-        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) );
+        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) || this._contentChangedAfterExecution );
       },
-      _isShareResultDisabled: function() {
-        return !!(this.loading || (this._lastSharedResult && this._lastSharedResult.snapshotId) );
+      _isShareResponseDisabled: function() {
+        return !!(this.loading || (this._lastSharedResponse && this._lastSharedResponse.snapshotId) );
       },
       /**************************************************************************/
       /* Observers                                                              */
@@ -513,7 +534,7 @@
         this._hasAResponse = true;
         this._hasAnError = false;
         this._contentChangedAfterExecution = false;
-        this._lastSharedResult = "";
+        this._lastSharedResponse = "";
         this.$.response_container.responseChanged();
 
         // console.debug("[quantum-warpscript] _handleResponse", { stack: this.stack, elapsed: this.elapsed, _dataToPlot: this._dataToPlot });
@@ -551,17 +572,17 @@
         this._lastSharedCode = {};
         this._shareCodeError = error;
       },
-      _handleShareResultResponse: function(event, ironRequest) {
+      _handleShareResponseResponse: function(event, ironRequest) {
         var snapshotId = looseJSON.parse(ironRequest.response)[1];
         var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
-        console.debug("[quantum-warpscript] _handleShareResultResponse", ironRequest.response);
-        this._shareResultError = null;
-        this._lastSharedResult =  {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
+        console.debug("[quantum-warpscript] _handleShareResponseResponse", ironRequest.response);
+        this._shareResponseError = null;
+        this._lastSharedResponse =  {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
       },
-      _handleShareResultError: function(event, error) {
-        console.debug("[quantum-warpscript] _handleShareResultError", error.response);
-        this._lastSharedResult = {};
-        this._shareResultError = error;
+      _handleShareResponseError: function(event, error) {
+        console.debug("[quantum-warpscript] _handleShareResponseError", error.response);
+        this._lastSharedResponse = {};
+        this._shareResponseError = error;
       },
       /**************************************************************************/
       /* Action listeners                                                       */
@@ -587,18 +608,18 @@
         this._codeToShare = "<% '"+ encodeURI(this.content).replace(/'/g,'%27').replace(/"/g,'%28').replace(/\+/g,'%2B') + "' %> @orbit/snapshot/store";
         this.$.shareCodeRequest.generateRequest();
       },
-      shareResult: function() {
+      shareResponse: function() {
         var randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
           var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
           return v.toString(16);
         });
 
-        this._resultToShare =
+        this._responseToShare =
           "<% SNAPSHOT 'snapshot' STORE '<%25 !$snapshot %25>' EVAL @orbit/snapshot/store STOP %> 'STOP' DEF <% STOP %> '" +
           randomFunction +"' DEF " + this.content +
           " "+randomFunction;
 
-        this.$.shareResultRequest.generateRequest();
+        this.$.shareResponseRequest.generateRequest();
       },
 
 
