@@ -18,10 +18,10 @@
 <link rel="import" href="../warp10-iron/warp10-simple-overlay.html">
 <link rel="import" href="../warp10-iron/warp10-looseJSON.html">
 
-<link rel="import" href="../granite-alert/granite-alert.html">
 
 <link rel="import" href="../ace-widget/ace-widget.html">
 
+<link rel="import" href="../granite-alert/granite-alert.html">
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
 <link rel="import" href="./quantum-module-behavior.html">
@@ -90,7 +90,8 @@
       }
       paper-button {
         background-color: var(--app-primary-color);
-        color: var(--app-on-background-color)
+        color: var(--app-on-background-color);
+        margin: 5px;
       }
       granite-spinner {
         z-index: 100;
@@ -195,17 +196,7 @@
 
     <div  class="top-10">
       <template is="dom-if" if="{{!hidePlot}}">
-        <div class="left">
-          <paper-button
-            on-click="plot"
-            disabled$="{{loading}}"
-            hidden$="{{!_hasAResponse}}">
-            Plot
-          </paper-button>
-        </div>
-      </template>
       <div class="right">
-
         <paper-button
           id="btn_execute"
           class="btn btn-primary btn-lg"
@@ -214,65 +205,83 @@
           Execute!
         </paper-button>
       </div>
+        <div class="item_value">
+          <paper-button
+            on-click="plot"
+            disabled$="{{loading}}"
+            hidden$="{{!_hasAResponse}}">
+            Plot
+          </paper-button>
+          <paper-button
+              id="btn_share_result"
+              on-click="shareResult"
+              disabled$="{{_contentChangedAfterExecution}}"
+              hidden$="{{!_hasAResponse}}">
+              Share result
+          </paper-button>
+          <paper-button
+            id="btn_share_code"
+            class="btn btn-primary btn-lg"
+            on-click="shareCode"
+            disabled$="{{_contentChangedAfterExecution}}"
+            hidden$="{{!_hasAResponse}}">
+            Share code
+          </paper-button>
+        </div>
+      </template>
     </div>
 
 
 
     <template is="dom-if" if="{{_hasAResponse}}">
-      <div class="clearfix"> </div>
-      <div  class="top-10">
-        <paper-button
-            id="btn_share_result"
-            on-click="shareResult"
-            disabled$="{{_shareResultDisabled}}">
-            Share result
-        </paper-button>
-        <template is="dom-if" if="{{_lastSharedResult.snapshotId}}">
-          <div class="item_vert">
-            <div class="item">
-              Link to share:
-              <a href$="./#/shared-result/{{_lastSharedResult.snapshotId}}" target="_blank">
-                {{_sharingUrlRoot}}#/shared-result/{{_lastSharedResult.snapshotId}}
-                </a>
-            </div>
-            <div class="item">
-              Link to delete:
-              <a href$="./#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}" target="_blank">
-                {{_sharingUrlRoot}}#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}
+      <div class="top-10 clearfix"> </div>
+      <granite-alert level="danger" hidden$="{{!_shareResultError}}">
+        <div class="item_vert">
+          <h4>Share result error</h4>
+        </div>
+      </granite-alert>
+      <granite-alert level="success" hidden$="{{!_lastSharedResult.snapshotId}}">
+        <div class="item_vert">
+          <h4>Share result</h4>
+          <div class="item">
+            Link to share:
+            <a href$="./#/shared-result/{{_lastSharedResult.snapshotId}}" target="_blank">
+              {{_sharingUrlRoot}}#/shared-result/{{_lastSharedResult.snapshotId}}
               </a>
-            </div>
           </div>
-        </template>
-      </div>
+          <div class="item">
+            Link to delete:
+            <a href$="./#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}" target="_blank">
+              {{_sharingUrlRoot}}#/delete-shared-result/{{_lastSharedResult.snapshotId}}/{{_lastSharedResult.snapshotSecret}}
+            </a>
+          </div>
+        </div>
+      </granite-alert>
     </template>
-
     <template is="dom-if" if="{{!_contentChangedAfterExecution}}">
-      <div class="clearfix"> </div>
-      <div  class="top-10">
-        <paper-button
-          id="btn_share_code"
-          class="btn btn-primary btn-lg"
-          on-click="shareCode"
-          disabled$="{{_shareCodeDisabled}}">
-          Share code
-        </paper-button>
-        <template is="dom-if" if="{{_lastSharedCode.snapshotId}}">
-          <div class="item_vert">
-            <div class="item">
-              Link to share:
-              <a href$="./#/shared-code/{{_lastSharedCode.snapshotId}}" target="_blank">
-                {{_sharingUrlRoot}}#/shared-code/{{_lastSharedCode.snapshotId}}
-                </a>
-            </div>
-            <div class="item">
-              Link to delete:
-              <a href$="./#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}" target="_blank">
-                {{_sharingUrlRoot}}#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}
+      <div class="top-10 clearfix"> </div>
+      <granite-alert level="danger" hidden$="{{!_shareCodeError}}">
+        <div class="item_vert">
+          <h4>Share code error</h4>
+        </div>
+      </granite-alert>
+      <granite-alert level="success" hidden$="{{!_lastSharedCode.snapshotId}}">
+        <div class="item_vert">
+          <h4>Share code</h4>
+          <div class="item">
+            Link to share:
+            <a href$="./#/shared-code/{{_lastSharedCode.snapshotId}}" target="_blank">
+              {{_sharingUrlRoot}}#/shared-code/{{_lastSharedCode.snapshotId}}
               </a>
-            </div>
           </div>
-        </template>
-      </div>
+          <div class="item">
+            Link to delete:
+            <a href$="./#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}" target="_blank">
+              {{_sharingUrlRoot}}#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}
+            </a>
+          </div>
+        </div>
+      </granite-alert>
     </template>
 
     <template is="dom-if" if="{{_elapsedTimeShown}}">
@@ -399,20 +408,21 @@
           type: Boolean,
           computed: "_isShareCodeDisabled(loading,_lastSharedCode)"
         },
+        _shareCodeError: {
+          type: Object,
+          value: null
+        },
         _lastSharedResult: {
           type: String,
           value: ""
         },
-        _sharingUrlRoot: {
-          type: String,
-          value: function() {
-            return window.location.origin+window.location.pathname;
-          }
-        },
-
         _shareResultDisabled: {
           type: Boolean,
           computed: "_isShareResultDisabled(loading,_lastSharedResult)"
+        },
+        _shareResultError: {
+          type: Object,
+          value: null
         },
         _contentChangedAfterExecution: {
           type: Boolean,
@@ -532,14 +542,26 @@
       _handleShareCodeResponse: function(event, ironRequest) {
         var snapshotId = looseJSON.parse(ironRequest.response)[1];
         var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
-        console.debug("quantum-warpscript] _handleShareCodeResponse", {snapshotId: snapshotId, snapshotSecret: snapshotSecret});
+        console.debug("[quantum-warpscript] _handleShareCodeResponse", {snapshotId: snapshotId, snapshotSecret: snapshotSecret});
+        this._shareCodeError = null;
         this._lastSharedCode = {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
+      },
+      _handleShareCodeError: function(event, error) {
+        console.debug("[quantum-warpscript] _handleShareCodeError", error);
+        this._lastSharedCode = {};
+        this._shareCodeError = error;
       },
       _handleShareResultResponse: function(event, ironRequest) {
         var snapshotId = looseJSON.parse(ironRequest.response)[1];
         var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
-        console.debug("quantum-warpscript] _handleShareResultResponse", ironRequest.response);
+        console.debug("[quantum-warpscript] _handleShareResultResponse", ironRequest.response);
+        this._shareResultError = null;
         this._lastSharedResult =  {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
+      },
+      _handleShareResultError: function(event, error) {
+        console.debug("[quantum-warpscript] _handleShareResultError", error.response);
+        this._lastSharedResult = {};
+        this._shareResultError = error;
       },
       /**************************************************************************/
       /* Action listeners                                                       */
