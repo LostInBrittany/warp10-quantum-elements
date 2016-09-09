@@ -7,6 +7,7 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
@@ -121,6 +122,7 @@ Warp plot widget
       .item_list {
         @apply(--layout-horizontal);
         @apply(--layout-center);
+        @apply(--layout-center-justified);
         @apply(--layout-wrap);
       }
       .item:not(:first-child) {
@@ -158,6 +160,9 @@ Warp plot widget
       }
       .title {
         text-transform: capitalize;
+      }
+      .spacer {
+        height: 200px;
       }
       warp10-display-chart {
         margin-top: 15px;
@@ -209,6 +214,39 @@ Warp plot widget
         size="200"
         hover></granite-spinner>
 
+   <quantum-gts-tree
+      id="gts-tree"
+      data="{{data}}"
+      plotted-changed={{changed}}></quantum-gts-tree>
+
+
+    <template is="dom-if" if="{{_displayChart}}">
+
+      <div id="vertGuide"></div>
+
+      <quantumviz-annotations
+        id="warp10-quantumviz-annotations"
+        time-bounds="{{timeBounds}}"
+        chart-area="{{chartArea}}"
+        data="{{dataToPlot}}"
+        vert-guide="{{vertGuide}}"
+        width="{{_displayWidth}}"
+        selected-timestamp="{{annotationsSelectedTimestamp}}"
+        >
+      </quantumviz-annotations>
+
+      <warp10-display-chart
+          id="warp10-display-chart"
+          width="{{_displayWidth}}"
+          height="500"
+          data="{{dataToPlot}}"
+          current-values="{{currentValues}}"
+          time-bounds="{{timeBounds}}"
+          chart-area="{{chartArea}}"
+          timestamps="{{timestamps}}"
+          ></warp10-display-chart>
+    </template>
+
     <div class="item_list">
       <div class="item ">
         <div class="item_name">Interpolation</div>
@@ -240,39 +278,7 @@ Warp plot widget
       </div>
     </div>
 
-
-   <quantum-gts-tree
-      id="gts-tree"
-      data="{{data}}"
-      plotted-changed={{changed}}></quantum-gts-tree>
-
-
-    <div id="vertGuide"></div>
-
-    <quantumviz-annotations
-      id="warp10-quantumviz-annotations"
-      time-bounds="{{timeBounds}}"
-      chart-area="{{chartArea}}"
-      data="{{dataToPlot}}"
-      vert-guide="{{vertGuide}}"
-      width="{{_displayWidth}}"
-      selected-timestamp="{{annotationsSelectedTimestamp}}"
-      >
-    </quantumviz-annotations>
-
-
-
-    <warp10-display-chart
-        id="warp10-display-chart"
-        width="{{_displayWidth}}"
-        height="500"
-        data="{{dataToPlot}}"
-        current-values="{{currentValues}}"
-        time-bounds="{{timeBounds}}"
-        chart-area="{{chartArea}}"
-        timestamps="{{timestamps}}"
-        ></warp10-display-chart>
-
+    <div class="spacer"></div>
 
     <warp10-simple-overlay id="gts-select-overlay">
       <div class="overlayGtsSelectorBox">
@@ -385,6 +391,11 @@ Warp plot widget
           type: String,
           computed: "_getBaseUrl(backend)"
         },
+
+        _displayChart: {
+          type: Boolean,
+          computed: "_computeDisplayChart(dataToPlot)"
+        },
       },
 
       listeners: {
@@ -412,7 +423,10 @@ Warp plot widget
       _getBaseUrl: function() {
         return this.backend.url + this.backend.execEndpoint;
       },
-
+      _computeDisplayChart: function() {
+        console.debug("_computeDisplayChart", this.dataToPlot);
+        return (this.dataToPlot.length > 0 && this.dataToPlot[0].gts && this.dataToPlot[0].gts.length >0);
+      },
       /**************************************************************************/
       /* Observers                                                              */
       /**************************************************************************/
