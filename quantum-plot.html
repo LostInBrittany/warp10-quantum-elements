@@ -149,6 +149,7 @@ Warp plot widget
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
+        min-height: 44px;
       }
       .clearfix:before,
       .clearfix:after {
@@ -220,65 +221,65 @@ Warp plot widget
       plotted-changed={{changed}}></quantum-gts-tree>
 
 
-    <template is="dom-if" if="{{_displayChart}}">
 
-      <div id="vertGuide"></div>
 
-      <quantumviz-annotations
-        id="warp10-quantumviz-annotations"
+    <div id="vertGuide"></div>
+
+    <quantumviz-annotations
+      id="warp10-quantumviz-annotations"
+      time-bounds="{{timeBounds}}"
+      chart-area="{{chartArea}}"
+      data="{{dataToPlot}}"
+      vert-guide="{{vertGuide}}"
+      width="{{_displayWidth}}"
+      selected-timestamp="{{annotationsSelectedTimestamp}}"
+      >
+    </quantumviz-annotations>
+
+    <warp10-display-chart
+        id="warp10-display-chart"
+        width="{{_displayWidth}}"
+        height="500"
+        data="{{dataToPlot}}"
+        current-values="{{currentValues}}"
         time-bounds="{{timeBounds}}"
         chart-area="{{chartArea}}"
-        data="{{dataToPlot}}"
-        vert-guide="{{vertGuide}}"
-        width="{{_displayWidth}}"
-        selected-timestamp="{{annotationsSelectedTimestamp}}"
-        >
-      </quantumviz-annotations>
+        timestamps="{{timestamps}}"
+        ></warp10-display-chart>
 
-      <warp10-display-chart
-          id="warp10-display-chart"
-          width="{{_displayWidth}}"
-          height="500"
-          data="{{dataToPlot}}"
-          current-values="{{currentValues}}"
-          time-bounds="{{timeBounds}}"
-          chart-area="{{chartArea}}"
-          timestamps="{{timestamps}}"
-          ></warp10-display-chart>
+    <template is="dom-if" if="{{_displayChart}}">
+      <div class="item_list">
+        <div class="item ">
+          <div class="item_name">Interpolation</div>
+          <paper-radio-group
+            id="interpolationRadioGroup"
+            selected="{{interpolationMode}}">
+            <paper-radio-button
+                id="interpolation_linear"
+                name="linear">
+              Linear
+            </paper-radio-button>
+            <paper-radio-button
+                id="interpolation_step"
+                name="step-before">
+              Step
+            </paper-radio-button>
+            <!--
+            <paper-radio-button
+                id="interpolation_cardinal"
+                name="cardinal">
+              Cardinal
+            </paper-radio-button>
+            -->
+          </paper-radio-group>
+        </div>
+        <div class="item">
+          <div class="item_name">X-axis scale</div>
+          <div class="item_value">Date <paper-toggle-button checked="{{timestamps}}"></paper-toggle-button>Timestamp</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
     </template>
-
-    <div class="item_list">
-      <div class="item ">
-        <div class="item_name">Interpolation</div>
-        <paper-radio-group
-          id="interpolationRadioGroup"
-          selected="{{interpolationMode}}">
-          <paper-radio-button
-              id="interpolation_linear"
-              name="linear">
-            Linear
-          </paper-radio-button>
-          <paper-radio-button
-              id="interpolation_step"
-              name="step-before">
-            Step
-          </paper-radio-button>
-          <!--
-          <paper-radio-button
-              id="interpolation_cardinal"
-              name="cardinal">
-            Cardinal
-          </paper-radio-button>
-          -->
-        </paper-radio-group>
-      </div>
-      <div class="item">
-        <div class="item_name">X-axis scale</div>
-        <div class="item_value">Date <paper-toggle-button checked="{{timestamps}}"></paper-toggle-button>Timestamp</div>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
 
     <warp10-simple-overlay id="gts-select-overlay">
       <div class="overlayGtsSelectorBox">
