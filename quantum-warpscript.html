@@ -516,7 +516,7 @@
         } else {
           this._target = null;
         }
-        // console.debug("[warp10-warpscript-plot] _onSelectedChanged", {selected: selected, name:this.name, target: this._target});
+        console.debug("[warp10-warpscript-plot] _onSelectedChanged", {selected: selected, name:this.name, target: this._target});
       },
 
       /**************************************************************************/
@@ -628,8 +628,10 @@
       /**************************************************************************/
 
       _updateLocation: function() {
-        console.debug("[quantum-warpscript] _updateLocation");
-        this.$$("quantum-permalink-generator").updateLocation(this.application);
+        if (this.selected == this.application) {
+          console.debug("[quantum-warpscript] _updateLocation");
+          this.$$("quantum-permalink-generator").updateLocation(this.application);
+        }
       },
 
 
