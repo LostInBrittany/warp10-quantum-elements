@@ -131,19 +131,22 @@
                   on-tap="_editAltBackend"></iron-icon>
             </div>
           </div>
-          <div class="item">
-            <div class="item_name">
-              {{ localize('backendUrl')}}
-            </div>
-            <div class="item_value">
-              {{_altBackendUrl}}
-            </div>
-          </div>  
 
-          <div class="more_info">  
-            <div class="more_info_label" on-tap="_toggleOtherParamState">
-              <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
-              {{ localize('otherParams') }}
+          <div class="horizontal_flex">
+            <div class="item">
+              <div class="item_name">
+                {{ localize('backendUrl')}}
+              </div>
+              <div class="item_value">
+                {{_altBackendUrl}}
+              </div>
+            </div>  
+
+            <div class="more_info">  
+              <div class="more_info_label" on-tap="_toggleOtherParamState">
+                <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
+                {{ localize('otherParams') }}
+              </div>
             </div>
           </div>
           <template is="dom-if" if="{{_otherParamsOpen}}">
@@ -369,7 +372,7 @@
                 'updateEndpoint': "'Update' endpoint",  
                 'deleteEndpoint': "'Delete' endpoint",
                 'configAltBackend': "Configure backend",
-                'validAltBackend': "Backend configurated"
+                'validAltBackend': "Configured backend"
               },
             }
           }
