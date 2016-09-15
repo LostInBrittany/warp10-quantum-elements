@@ -94,161 +94,165 @@
         @apply(--layout-center); 
         @apply(--layout-wrap); 
       } 
+
+
     </style>
 
 
-    <h4>{{ localize('chooseYourBackend') }}</h4>
 
-    <template is="dom-if" if="{{_hasConfiguredBackends}}">
-      <paper-radio-group id="backendRadioGroup" on-iron-select="_backendChoosen">
-        <template is="dom-repeat" items="{{configuredBackends}}" as="item">
-          <paper-radio-button
-              id$="backend_{{item.id}}"
-              checked="{{item.checked}}"
-              name$="backend_{{item.id}}" 
-              data-backend$="{{item}}">
-            {{item.label}}
+    <h4>{{ localize('chooseYourBackend') }} <iron-icon icon="{{_toggleAction}}" on-click="_toggle"></iron-icon></h4>
+
+    <template is="dom-if" if="{{_open}}">
+      <template is="dom-if" if="{{_hasConfiguredBackends}}">
+        <paper-radio-group id="backendRadioGroup" on-iron-select="_backendChoosen">
+          <template is="dom-repeat" items="{{configuredBackends}}" as="item">
+            <paper-radio-button
+                id$="backend_{{item.id}}"
+                checked="{{item.checked}}"
+                name$="backend_{{item.id}}" 
+                data-backend$="{{item}}">
+              {{item.label}}
+            </paper-radio-button>
+          </template>
+          <paper-radio-button 
+              name="chooseAltBackend" checked="{{_chooseAltBackendSelected}}">
+            Choose another backend
           </paper-radio-button>
-        </template>
-        <paper-radio-button 
-            name="chooseAltBackend" checked="{{_chooseAltBackendSelected}}">
-          Choose another backend
-        </paper-radio-button>
-      </paper-radio-group>
-    </template>
+        </paper-radio-group>
+      </template>
 
-    <template is="dom-if" if="{{_chooseAltBackendSelected}}">
-      <paper-material elevation="1">
+      <template is="dom-if" if="{{_chooseAltBackendSelected}}">
+        <paper-material elevation="1">
 
 
-        <template is="dom-if" if="{{_altBackendValidation}}">        
-          <div class="horizontal_flex">
-            <div>{{ localize('validAltBackend') }} </div>
-            <div>
-              <iron-icon 
-                  class="edit_button" 
-                  icon="create"
-                  on-tap="_editAltBackend"></iron-icon>
+          <template is="dom-if" if="{{_altBackendValidation}}">        
+            <div class="horizontal_flex">
+              <div>{{ localize('validAltBackend') }} </div>
+              <div>
+                <iron-icon 
+                    class="edit_button" 
+                    icon="create"
+                    on-tap="_editAltBackend"></iron-icon>
+              </div>
             </div>
-          </div>
 
-          <div class="horizontal_flex">
-            <div class="item">
-              <div class="item_name">
-                {{ localize('backendUrl')}}
-              </div>
-              <div class="item_value">
-                {{_altBackendUrl}}
-              </div>
-            </div>  
+            <div class="horizontal_flex">
+              <div class="item">
+                <div class="item_name">
+                  {{ localize('backendUrl')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendUrl}}
+                </div>
+              </div>  
 
+              <div class="more_info">  
+                <div class="more_info_label" on-tap="_toggleOtherParamState">
+                  <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
+                  {{ localize('otherParams') }}
+                </div>
+              </div>
+            </div>
+            <template is="dom-if" if="{{_otherParamsOpen}}">
+
+              <div class="item">
+                <div class="item_name">
+                  {{ localize('headerName')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendHeaderName}}
+                </div>
+              </div>  
+              <div class="item">
+                <div class="item_name">
+                  {{ localize('execEndpoint')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendExecEndpoint}}
+                </div>
+              </div>  
+              <div class="item">
+                <div class="item_name">
+                  {{ localize('findEndpoint')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendFindEndpoint}}
+                </div>
+              </div>  
+              <div class="item">
+                <div class="item_name">
+                  {{ localize('updateEndpoint')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendUpdateEndpoint}}
+                </div>
+              </div>  
+              <div class="item">
+                <div class="item_name">
+                  {{ localize('deleteEndpoint')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendDeleteEndpoint}}
+                </div>
+              </div>  
+            </template>  
+          </template>
+
+
+          <template is="dom-if" if="{{!_altBackendValidation}}">        
+            <div>{{ localize('configAltBackend') }}</div>
+
+            <paper-input
+                auto-validate
+                prevent-invalid-input 
+                name="altBackendUrl" 
+                label="{{ localize('backendUrl')}}"
+                type="text" 
+                value="{{_altBackendUrl}}"
+                validator="warp10-backend-validator"
+                maxlength="256"
+                required ></paper-input>
             <div class="more_info">  
               <div class="more_info_label" on-tap="_toggleOtherParamState">
                 <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
                 {{ localize('otherParams') }}
               </div>
             </div>
-          </div>
-          <template is="dom-if" if="{{_otherParamsOpen}}">
+            <template is="dom-if" if="{{_otherParamsOpen}}">
+              <div>            
+                <paper-input
+                  name="altBackendHeader" label="{{ localize('headerName')}}"
+                  type="text" value="{{_altBackendHeaderName}}"
+                  required maxlength="64"></paper-input>
+                <paper-input
+                  name="altBackendExecEndpoint" label="{{ localize('execEndpoint')}}"
+                  type="text" value="{{_altBackendExecEndpoint}}"
+                  required maxlength="64"></paper-input>  
+                <paper-input
+                  name="altBackendFindEndpoint" label="{{ localize('findEndpoint')}}"
+                  type="text" value="{{_altBackendFindEndpoint}}"
+                  required maxlength="64"></paper-input>    
+                <paper-input
+                  name="altBackendUpdateEndpoint" label="{{ localize('updateEndpoint')}}"
+                  type="text" value="{{_altBackendUpdateEndpoint}}"
+                  required maxlength="64"></paper-input>   
+                <paper-input
+                  name="altBackendDeleteEndpoint" label="{{ localize('deleteEndpoint')}}"
+                  type="text" value="{{_altBackendDeleteEndpoint}}"
+                  required maxlength="64"></paper-input>  
+              </div>  
+            </template>  
 
-            <div class="item">
-              <div class="item_name">
-                {{ localize('headerName')}}
-              </div>
-              <div class="item_value">
-                {{_altBackendHeaderName}}
-              </div>
-            </div>  
-            <div class="item">
-              <div class="item_name">
-                {{ localize('execEndpoint')}}
-              </div>
-              <div class="item_value">
-                {{_altBackendExecEndpoint}}
-              </div>
-            </div>  
-            <div class="item">
-              <div class="item_name">
-                {{ localize('findEndpoint')}}
-              </div>
-              <div class="item_value">
-                {{_altBackendFindEndpoint}}
-              </div>
-            </div>  
-            <div class="item">
-              <div class="item_name">
-                {{ localize('updateEndpoint')}}
-              </div>
-              <div class="item_value">
-                {{_altBackendUpdateEndpoint}}
-              </div>
-            </div>  
-            <div class="item">
-              <div class="item_name">
-                {{ localize('deleteEndpoint')}}
-              </div>
-              <div class="item_value">
-                {{_altBackendDeleteEndpoint}}
-              </div>
-            </div>  
-          </template>  
-        </template>
-
-
-        <template is="dom-if" if="{{!_altBackendValidation}}">        
-          <div>{{ localize('configAltBackend') }}</div>
-
-          <paper-input
-              auto-validate
-              prevent-invalid-input 
-              name="altBackendUrl" 
-              label="{{ localize('backendUrl')}}"
-              type="text" 
-              value="{{_altBackendUrl}}"
-              validator="warp10-backend-validator"
-              maxlength="256"
-              required ></paper-input>
-          <div class="more_info">  
-            <div class="more_info_label" on-tap="_toggleOtherParamState">
-              <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
-              {{ localize('otherParams') }}
-            </div>
-          </div>
-          <template is="dom-if" if="{{_otherParamsOpen}}">
-            <div>            
-              <paper-input
-                name="altBackendHeader" label="{{ localize('headerName')}}"
-                type="text" value="{{_altBackendHeaderName}}"
-                required maxlength="64"></paper-input>
-              <paper-input
-                name="altBackendExecEndpoint" label="{{ localize('execEndpoint')}}"
-                type="text" value="{{_altBackendExecEndpoint}}"
-                required maxlength="64"></paper-input>  
-              <paper-input
-                name="altBackendFindEndpoint" label="{{ localize('findEndpoint')}}"
-                type="text" value="{{_altBackendFindEndpoint}}"
-                required maxlength="64"></paper-input>    
-              <paper-input
-                name="altBackendUpdateEndpoint" label="{{ localize('updateEndpoint')}}"
-                type="text" value="{{_altBackendUpdateEndpoint}}"
-                required maxlength="64"></paper-input>   
-              <paper-input
-                name="altBackendDeleteEndpoint" label="{{ localize('deleteEndpoint')}}"
-                type="text" value="{{_altBackendDeleteEndpoint}}"
-                required maxlength="64"></paper-input>  
-            </div>  
-          </template>  
-
-          <paper-button  
-              name="validateAltBackend" on-tap="_validateAltBackend"
-              disabled="{{_invalidAltBackend}}"
-              raised>
-              <iron-icon icon="done"></iron-icon>
-          </paper-button>
-        </template>
-      </paper-material>     
-    </template>  
-
+            <paper-button  
+                name="validateAltBackend" on-tap="_validateAltBackend"
+                disabled="{{_invalidAltBackend}}"
+                raised>
+                <iron-icon icon="done"></iron-icon>
+            </paper-button>
+          </template>
+        </paper-material>     
+      </template>  
+    </template>
 
 
     
@@ -353,6 +357,14 @@
           value: false,
           observer: "_altBackendStatusChanged" 
         },  
+        _open: {
+          type: Boolean,
+          value: true
+        },
+        _toggleAction: {
+          type: String,
+          computed: "_getToggleAction(_open)"
+        },
         /* Overriden from AppLocalizeBehavior */
         language: {
           value: 'en'
@@ -389,7 +401,12 @@
       _getHasConfiguredBackends: function() {
         return (this.configuredBackends.length > 0);
       },
-
+      _getToggleAction: function() {
+        if (this._open) {
+          return "arrow-drop-up";
+        }
+        return "arrow-drop-down";
+      },
       /* ************************************************************************/
       /* Observers                                                              
       /* ************************************************************************/
@@ -481,6 +498,9 @@
       },
 
       // Action listeners
+      _toggle: function(evt) {
+        this._open = !this._open;
+      },
       _toggleOtherParamState: function(evt) {
         this._otherParamsOpen = !this._otherParamsOpen;
       },
