@@ -7,6 +7,7 @@
 
 
 <link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../iron-input/iron-input.html">
 
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
@@ -22,6 +23,7 @@
 <link rel="import" href="../ace-widget/ace-widget.html">
 
 <link rel="import" href="../granite-alert/granite-alert.html">
+<link rel="import" href="../granite-file-reader/granite-file-reader.html">
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
 <link rel="import" href="./quantum-module-behavior.html">
@@ -96,6 +98,9 @@
       granite-spinner {
         z-index: 100;
       }
+      granite-file-reader iron-icon {
+        color: var(--app-primary-color);
+      }
     </style>
 
     <style>
@@ -149,6 +154,12 @@
         text-transform: capitalize;
       }
     </style>
+
+    <div class="right">
+      <granite-file-reader accept=".mc2" read-as="text" on-file-read="_inputFileRead">
+        <iron-icon icon="open-in-browser"></iron-icon>
+      </granite-file-reader>
+    </div>
 
     <h2 class="title">WarpScript</h2>
 
@@ -453,7 +464,6 @@
       /* Lifecycle methods                                                      */
       /**************************************************************************/
       ready: function() {
-
       },
       attached: function() {
         editor = this.$.editor;
@@ -514,7 +524,8 @@
         }
         console.debug("[quantum-warpscript] _onSelectedChanged", {selected: selected, name:this.name, target: this._target});
       },
-
+      
+      
       /**************************************************************************/
       /* Event Listeners                                                        */
       /**************************************************************************/
@@ -579,6 +590,11 @@
         console.debug("[quantum-warpscript] _handleShareResponseError", error.response);
         this._lastSharedResponse = {};
         this._shareResponseError = error;
+      },
+
+      _inputFileRead: function(evt, detail) {
+        console.debug("[quantum-warpscript] _fileChosen", evt, detail); 
+        this.content = detail;
       },
       /**************************************************************************/
       /* Action listeners                                                       */
