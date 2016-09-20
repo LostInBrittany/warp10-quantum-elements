@@ -7,12 +7,14 @@
 
 
 <link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-input/iron-input.html">
 
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-tooltip/paper-tooltip.html">
 
 <link rel="import" href="../warp10-iron/warp10-warpscript-caller.html">
 <link rel="import" href="../warp10-iron/warp10-gts-tools.html">
@@ -45,6 +47,9 @@
         --app-secondary-color: black;
         --app-background-color: white;
         --app-on-background-color: white;
+      }
+      .title {
+        margin-bottom: 10px;
       }
       ace-widget {
         --ace-widget-editor: {
@@ -98,9 +103,20 @@
       granite-spinner {
         z-index: 100;
       }
+      .toolbar {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        margin-bottom: 10px;
+      }
       granite-file-reader iron-icon {
         color: var(--app-primary-color);
+        cursor: pointer;
       }
+      #warpscriptFileReaderTooltip {
+        width: 120px;
+        text-align: center;
+      }
+      .
     </style>
 
     <style>
@@ -155,11 +171,7 @@
       }
     </style>
 
-    <div class="right">
-      <granite-file-reader accept=".mc2" read-as="text" on-file-read="_inputFileRead">
-        <iron-icon icon="open-in-browser"></iron-icon>
-      </granite-file-reader>
-    </div>
+
 
     <h2 class="title">WarpScript</h2>
 
@@ -187,18 +199,30 @@
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_codeToShare}}'
       handle-as="text"  on-response="_handleShareCodeResponse" on-error="_handleShareCodeError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
-      ></iron-ajax>
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}">
+    </iron-ajax>
 
     <iron-ajax
       id="shareResponseRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_responseToShare}}'
       handle-as="text"  on-response="_handleShareResponseResponse" on-error="_handleShareResponseError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
-      ></iron-ajax>
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}">
+    </iron-ajax>
+    
+    <div class="toolbar">
+      <granite-file-reader id="warpscriptFileReader" accept=".mc2" read-as="text" on-file-read="_inputFileRead">
+        <iron-icon icon="open-in-browser"></iron-icon>
+      </granite-file-reader>
+      <paper-tooltip 
+        id="warpscriptFileReaderTooltip" 
+        for="warpscriptFileReader"
+        fit-to-visible-bounds>Load a WarpScript file</paper-tooltip>
+    </div>   
+        
+    
     <ace-widget
-        id="editor"
+        id="editor" 
         theme="ace/theme/eclipse"
         mode="ace/mode/warpscript"
         softtabs="true"
