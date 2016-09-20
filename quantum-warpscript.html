@@ -117,7 +117,10 @@
         width: 120px;
         text-align: center;
       }
-      .
+      .toolbar granite-file-saver iron-icon {
+        --iron-icon-height: 18px;
+        --iron-icon-width: 24px;
+      }
     </style>
 
     <style>
@@ -213,7 +216,7 @@
     
     <div class="toolbar">
       <granite-file-saver id="warpscriptFileSaver" text="{{content}}">
-        <iron-icon icon="get-app"></iron-icon>
+        <iron-icon icon="file-download"></iron-icon>
       </granite-file-saver>
       <paper-tooltip 
         id="warpscriptFileSaverTooltip" 
