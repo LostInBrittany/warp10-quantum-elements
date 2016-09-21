@@ -553,6 +553,10 @@
         if (this.showPermalink) {
           this.debounce('updateLocation', this._updateLocation, 500);
         }
+        var date = new Date().toISOString();
+        this._filename = "warpscript-" + date.slice(0, 4) + date.slice(5, 7) 
+            + date.slice(8, 10) + date.slice(11, 13) +  date.slice(14, 16) 
+            + date.slice(17, 19) + ".mc2";
       },
       _onSelectedChanged: function(selected) {
 
