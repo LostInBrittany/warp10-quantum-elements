@@ -217,7 +217,7 @@ Warp plot widget
 
    <quantum-gts-tree
       id="gts-tree"
-      data="{{data}}"
+      data="{{_gtsStack}}"
       plotted-changed={{changed}}></quantum-gts-tree>
 
 
@@ -334,17 +334,21 @@ Warp plot widget
       ],
       properties: {
         /**
-         * The data to plot
-         */
-        data: {
-          type: Array,
-          observer: "_onDataChanged"
-        },
-        /**
          * The WarpScript generating the data to plot
          */
         warpscript: {
           type: String
+        },        
+        /**
+         * The stack of data to plot
+         */
+        stack: {
+          type: Array,
+        },
+        _gtsStack: {
+          type:Array,
+          computed: "_getGtsStack(stack)",
+          observer: "_onStackChanged"
         },
         /**
          * The name of the currently selected module
@@ -409,12 +413,12 @@ Warp plot widget
       ready: function() {
       },
       attached: function() {
-        console.debug("[quantum-warpscript-plot] attached - target", this._target)
+        console.debug("[quantum-plot] attached - target", this._target)
         this.init();
         this.dataToPlot = [];
-        console.debug("[quantum-warpscript-plot] attached - this", this)
+        console.debug("[quantum-plot] attached - this", this)
 
-        // console.debug("[quantum-warpscript-plot] attached - width", this.offsetWidth)
+        // console.debug("[quantum-plot] attached - width", this.offsetWidth)
         this._displayWidth = this.offsetWidth;
       },
 
@@ -428,6 +432,9 @@ Warp plot widget
         console.debug("_computeDisplayChart", this.dataToPlot);
         return (this.dataToPlot.length > 0 && this.dataToPlot[0].gts && this.dataToPlot[0].gts.length >0);
       },
+      _getGtsStack: function() {
+        return gtsTools.gtsFromJSONList(this.stack);
+      },
       /**************************************************************************/
       /* Observers                                                              */
       /**************************************************************************/
@@ -439,12 +446,12 @@ Warp plot widget
           this.$.vertGuide.style.display = "none";
         }
       },
-      _onDataChanged: function() {
-        console.debug("[warp10-warpscript-plot] _onDataChanged", this.data);
-        if (this.data !== null) {
-          console.debug("[warp10-warpscript-plot] _onDataChanged - do refresh");
-          plottingTools.refresh(gtsTools.flattenGtsIdArray(this.data));
-          this.stackedGtsList = gtsTools.flattenGtsIdArray(this.data, []);
+      _onStackChanged: function() {
+        console.debug("[quantum-plot] _onStackChanged", this._gtsStack);        
+        if (!!this._gtsStack) {
+          plottingTools.refresh(gtsTools.flattenGtsIdArray(this._gtsStack));
+          this.stackedGtsList = gtsTools.flattenGtsIdArray(this._gtsStack, []);
+          console.debug("[quantum-plot] _onStackChanged - do refresh", this.stackedGtsList);
           this.fire('plotted-changed', plottingTools);
         }
       },
@@ -457,11 +464,11 @@ Warp plot widget
         } else {
           this._target = null;
         }
-        console.debug("[warp10-warpscript-plot] _onSelectedChanged", {selected: selected, name:this.name, target: this._target});
+        console.debug("[quantum-plot] _onSelectedChanged", {selected: selected, name:this.name, target: this._target, stack: this.stack});
       },
 
       _onInterpolationModeChanged: function() {
-         console.debug("[quantum-warpscript-plot] _onInterpolationModeChanged", this.interpolationMode);
+         console.debug("[quantum-plot] _onInterpolationModeChanged", this.interpolationMode);
          this.fire('plotted-changed', plottingTools);
       },
 
@@ -469,14 +476,14 @@ Warp plot widget
       /* Event Listeners                                                        */
       /**************************************************************************/
       _handleResponse: function(event, response) {
-        console.debug("[quantum-warpscript-plot] _handleResponse - response",response );
+        console.debug("[quantum-plot] _handleResponse - response",response );        
         if (!response.stack ||
           !response.stack instanceof Array ) {
-          this.data = null;
+          this.stack = null;
           return;
         }
-        this.data = gtsTools.gtsFromJSONList(response.stack);
-        console.debug("[quantum-warpscript-plot] _handleResponse",this.data );
+        this.stack = response.stack;
+        console.debug("[quantum-plot] _handleResponse",this.stack );
       },
       _onPlottedChanged: function(evt) {
         this.dataToPlot = [{
@@ -486,12 +493,12 @@ Warp plot widget
             interpolate: this.interpolationMode
           }
         }];
-        console.debug("[quantum-warpscript-plot] plottedChanged", this.dataToPlot);
+        console.debug("[quantum-plot] _onPlottedChanged", this.dataToPlot);
 
 
         // this.$$('#warp10-display-chart').dataChanged();
         // this.$$("#warp10-quantumviz-annotations").dataChanged();
-        // console.debug("[quantum-warpscript-plot] plottedChanged", e.detail);
+        // console.debug("[quantum-plot] plottedChanged", e.detail);
       },
 
       _showSelectionOverlay: function(evt) {
@@ -500,7 +507,7 @@ Warp plot widget
         this.overlay.timerActivate();
       },
       _showRegexOverlay: function(evt) {
-        console.debug("[quantum-warpscript-plot] _showRegexOverlay");
+        console.debug("[quantum-plot] _showRegexOverlay");
         this._regexMode = true;
         this._regexJustShown = true;
         this.$.gtsRegexOverlay.open();
@@ -514,7 +521,7 @@ Warp plot widget
         this._regexModeJustOpened = true;
         this.$.regexInput.inputElement.focus();
         this.$.regexInput.$.input.select();
-        console.debug("[quantum-warpscript-plot] _showRegexOverlay",  this.$.regexInput.focused );
+        console.debug("[quantum-plot] _showRegexOverlay",  this.$.regexInput.focused );
       },
       _onRegexOverlayClosed: function(evt) {
         this._regexMode = false;
@@ -524,14 +531,14 @@ Warp plot widget
       /* Other methods                                                          */
       /**************************************************************************/
       init: function() {
-        console.debug("[quantum-warpscript-plot] attached() - this.data", this.data);
+        console.debug("[quantum-plot] attached() - this.stack", this.stack);
 
         this.stackedGtsListHalfLimit = 3;
 
-        if (!this.data) {
+        if (!this.stack) {
           this.$.warpscriptcaller.generateRequest();
         } else {
-          this._onDataChanged(this.data);
+          this._onStackChanged(this.stack);
         }
 
         // Overlay conf for selection TO-DO
@@ -572,12 +579,12 @@ Warp plot widget
 
       selectRegex: function() {
         var gts, i, len, ref;
-        // console.debug("[quantum-warpscript-plot] selectRegex called with regex", "/" + this._currentRegex + "/");
+        // console.debug("[quantum-plot] selectRegex called with regex", "/" + this._currentRegex + "/");
         ref = this.stackedGtsList;
         for (i = 0, len = ref.length; i < len; i++) {
           gts = ref[i];
           if (gtsTools.serializeGtsMetadata(gts).match("" + this._currentRegex)) {
-            // console.debug("[quantum-warpscript-plot] gts selected by regex", gtsTools.serializeGtsMetadata(gts))
+            // console.debug("[quantum-plot] gts selected by regex", gtsTools.serializeGtsMetadata(gts))
             // TO-DO this.addToPlot(gts);
             plottingTools.add(gts);
           }
@@ -594,15 +601,15 @@ Warp plot widget
       /**************************************************************************/
 
       _hotkeyEdit: function(e) {
-        // console.debug("[quantum-warpscript-plot] _hotkey edit", this.warpscript);
+        // console.debug("[quantum-plot] _hotkey edit", this.warpscript);
         if (!this._regexMode) {
-          this.fire("edit", { content: this.warpscript });
+          this.fire("edit", { warpscript: this.warpscript, stack: this.stack, backend: this.backend });
         }
       },
       _hotkeyUp: function(e) {
-        // console.debug("[quantum-warpscript-plot] _hotkey up");
+        // console.debug("[quantum-plot] _hotkey up");
         if (!this._regexMode) {
-          // console.debug([quantum-warpscript-plot] _hotkey up");
+          // console.debug([quantum-plot] _hotkey up");
           this._showSelectionOverlay();
           if ((this.selectedGts == null) || this.selectedGts < 0) {
             this.selectedGts = 0;
@@ -613,9 +620,9 @@ Warp plot widget
         }
       },
       _hotkeyDown: function(e) {
-        // console.debug("[quantum-warpscript-plot] _hotkey down");
+        // console.debug("[quantum-plot] _hotkey down");
         if (!this._regexMode) {
-          // console.debug([quantum-warpscript-plot] _hotkey down");
+          // console.debug([quantum-plot] _hotkey down");
           this._showSelectionOverlay();
           if ((this.selectedGts == null) || this.selectedGts < 0) {
             this.selectedGts = 0;
@@ -633,14 +640,14 @@ Warp plot widget
         }
       },
       _hotkeyRegexEnter: function(e) {
-        // console.debug("[quantum-warpscript-plot] _hotkeyRegexEnter - regexMode",this._regexMode);
+        // console.debug("[quantum-plot] _hotkeyRegexEnter - regexMode",this._regexMode);
         if (this._regexMode) {
-          console.debug("[quantum-warpscript-plot] _hotkeyRegexEnter");
+          console.debug("[quantum-plot] _hotkeyRegexEnter");
           this.selectRegex();
         }
       },
       _hotkeySpace: function(e) {
-        // console.debug("[quantum-warpscript-plot] _hotkeySpace");
+        // console.debug("[quantum-plot] _hotkeySpace");
         if (!this._regexMode) {
           this._showSelectionOverlay();
           if (this.selectedGts < 0) {
@@ -649,10 +656,10 @@ Warp plot widget
           var gts = this.stackedGtsList[this.selectedGts];
           if (!plottingTools.isPlotted(gts)) {
             plottingTools.add(gts);
-            // console.debug("[quantum-warpscript-plot] addToPlot", plottingTools);
+            // console.debug("[quantum-plot] addToPlot", plottingTools);
           } else {
             plottingTools.remove(gts);
-            // console.debug("[quantum-warpscript-plot] removeFromPlot", plottingTools);
+            // console.debug("[quantum-plot] removeFromPlot", plottingTools);
           }
           this.changed++;
           this.fire('plotted-changed', plottingTools);
@@ -661,12 +668,12 @@ Warp plot widget
       },
       _hotkeyAll: function(e) {
         if (!this._regexMode) {
-          // console.debug("[quantum-warpscript-plot] _hotkeyAll")
+          // console.debug("[quantum-plot] _hotkeyAll")
           for (var i in this.stackedGtsList) {
               var gts = this.stackedGtsList[i];
               if (!plottingTools.isPlotted(gts)) {
                 plottingTools.add(gts);
-                // console.debug("[quantum-warpscript-plot] addToPlot", plottingTools);
+                // console.debug("[quantum-plot] addToPlot", plottingTools);
               }
           }
           this.changed++;
@@ -675,12 +682,12 @@ Warp plot widget
       },
       _hotkeyNone: function(e) {
         if (!this._regexMode) {
-          // console.debug("[quantum-warpscript-plot] _hotkeyNone")
+          // console.debug("[quantum-plot] _hotkeyNone")
           for (var i in this.stackedGtsList) {
               var gts = this.stackedGtsList[i];
               if (plottingTools.isPlotted(gts)) {
                 plottingTools.remove(gts);
-                // console.debug("[quantum-warpscript-plot] removeFromPlot", plottingTools);
+                // console.debug("[quantum-plot] removeFromPlot", plottingTools);
               }
           }
           this.changed++;
@@ -689,14 +696,14 @@ Warp plot widget
       },
       _hotkeyReload: function(e) {
         if (!this._regexMode) {
-          // console.debug([quantum-warpscript-plot] _hotkey r");
+          // console.debug([quantum-plot] _hotkey r");
           this.$.warpscriptcaller.generateRequest();
         }
       },
       _hotkeyHelp: function(e) {
-        console.debug("[quantum-warpscript-plot] _hotkeyHelp")
+        console.debug("[quantum-plot] _hotkeyHelp")
         if (!this._regexMode) {
-          // console.debug("[quantum-warpscript-plot] _hotkeyHelp")
+          // console.debug("[quantum-plot] _hotkeyHelp")
           if (!this.$$("#warpscript-plot-keyboard-shortcuts-overlay").opened) {
             this.$$("#warpscript-plot-keyboard-shortcuts-overlay").open();
           } else {
@@ -802,7 +809,7 @@ Warp plot widget
           return "";
         }
         if (this.stackedGtsList[this.selectedGts].id === this.gts.id) {
-          // console.debug("[quantum-warpscript-plot] Selected gts", this.gts.id);
+          // console.debug("[quantum-plot] Selected gts", this.gts.id);
           return "background-color:rgba(200,200,200,0.5);";
         }
         return "";

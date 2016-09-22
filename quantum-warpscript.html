@@ -219,7 +219,7 @@
       <granite-file-saver 
         filename="{{_filename}}" 
         id="warpscriptFileSaver" 
-        text="{{content}}">
+        text="{{warpscript}}">
         <iron-icon icon="file-download"></iron-icon>
       </granite-file-saver>
       <paper-tooltip 
@@ -242,7 +242,7 @@
         mode="ace/mode/warpscript"
         softtabs="true"
         wrap="true"
-        value="{{content}}"
+        value="{{warpscript}}"
         placeholder="Type your WarpScript here..."
         initial-focus></ace-widget>
 
@@ -253,7 +253,7 @@
         hover></granite-spinner>
 
     <quantum-permalink-generator
-      warpscript="{{content}}"
+      warpscript="{{warpscript}}"
       backend="{{backend}}"
       hidden$="{{!showPermalink}}"></quantum-permalink-generator>
 
@@ -329,7 +329,7 @@
         </div>
       </granite-alert>
     </template>
-    <template is="dom-if" if="{{!_contentChangedAfterExecution}}">
+    <template is="dom-if" if="{{!_warpscriptChangedAfterExecution}}">
       <div class="top-10 clearfix"> </div>
       <granite-alert level="danger" hidden$="{{!_shareCodeError}}">
         <div class="item_vert">
@@ -389,7 +389,7 @@
          * Fired when user clicks on plot
          *
          * @event plot
-         * @param {Array} the stack
+         * @param {Object} params
          */
 
         /**
@@ -401,10 +401,10 @@
         /**
          * The WarpScript
          */
-        content: {
+        warpscript: {
           type: String,
           value: "",
-          observer: "_onContentChange"
+          observer: "_onWarpscriptChange"
         },
         /**
          * The name of the currently selected module
@@ -413,8 +413,10 @@
           type: String,
           observer: "_onSelectedChanged"
         },
-
-        _dataToPlot: {
+        /**
+         * The WarpScript stack received as response
+         */
+        stack: {
           type: Array,
           notify: true
         },
@@ -481,7 +483,7 @@
         },
         _shareCodeDisabled: {
           type: Boolean,
-          computed: "_isShareCodeDisabled(_contentChangedAfterExecution, loading,_lastSharedCode)"
+          computed: "_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)"
         },
         _shareCodeError: {
           type: Object,
@@ -493,13 +495,13 @@
         },
         _shareResponseDisabled: {
           type: Boolean,
-          computed: "_isShareResponseDisabled(_contentChangedAfterExecution,loading,_lastSharedResponse)"
+          computed: "_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)"
         },
         _shareResponseError: {
           type: Object,
           value: null
         },
-        _contentChangedAfterExecution: {
+        _warpscriptChangedAfterExecution: {
           type: Boolean,
           value: true
         },
@@ -546,7 +548,7 @@
       },
 
       _isShareCodeDisabled: function() {
-        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) || this._contentChangedAfterExecution );
+        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) || this._warpscriptChangedAfterExecution );
       },
       _isShareResponseDisabled: function() {
         return !!(this.loading || (this._lastSharedResponse && this._lastSharedResponse.snapshotId) );
@@ -554,9 +556,9 @@
       /**************************************************************************/
       /* Observers                                                              */
       /**************************************************************************/
-      _onContentChange: function(content) {
-        console.debug("[quantum-warpscript] _onContentChange", content);
-        this._contentChangedAfterExecution = true;
+      _onWarpscriptChange: function(warpscript) {
+        console.debug("[quantum-warpscript] _onWarpscriptChange", warpscript);
+        this._warpscriptChangedAfterExecution = true;
         this._lastSharedCode = false;
         if (this.showPermalink) {
           this.debounce('updateLocation', this._updateLocation, 500);
@@ -586,15 +588,14 @@
       _handleResponse: function(event, response) {
         if (!response.stack ||
           !response.stack instanceof Array ) {
-          this._dataToPlot = null;
           return;
         }
         this.elapsed = response.options.elapsed;
-        this._dataToPlot = gtsTools.gtsFromJSONList(response.stack);
+        // this._dataToPlot = gtsTools.gtsFromJSONList(response.stack);
         this.stack = response.stack;
         this._hasAResponse = true;
         this._hasAnError = false;
-        this._contentChangedAfterExecution = false;
+        this._warpscriptChangedAfterExecution = false;
         this._lastSharedResponse = "";
         this.$.response_container.responseChanged();
 
@@ -617,8 +618,8 @@
       },
 
       editorChangeAction: function(value, oldValue) {
-        this.content  = value.detail.value;
-        // console.debug("[quantum-warpscript] editorChangeAction", this.content);
+        this.warpscript  = value.detail.value;
+        // console.debug("[quantum-warpscript] editorChangeAction", this.warpscript);
       },
 
       _handleShareCodeResponse: function(event, ironRequest) {
@@ -648,7 +649,7 @@
 
       _inputFileRead: function(evt, detail) {
         console.debug("[quantum-warpscript] _fileChosen", evt, detail); 
-        this.content = detail;
+        this.warpscript = detail;
       },
       /**************************************************************************/
       /* Action listeners                                                       */
@@ -657,21 +658,21 @@
        * Executes the warpscript request
        */
       execute: function() {
-        console.debug("[quantum-warpscript] Execute", this.content)
+        console.debug("[quantum-warpscript] Execute", this.warpscript)
         if (this.showPermalink) {
           this._updateLocation();
         }
-        this.warpscriptScript = this.content;
+        this.warpscriptScript = this.warpscript;
         this.$.warpscriptcaller.generateRequest();
       },
       plot: function() {
         // console.debug([quantum-warpscript] Plot", this.stack)
         if (this.stack.length) {
-          this.fire("plot",this._dataToPlot);
+          this.fire("plot",{ warpscript: this.warpscript, stack: this.stack });
         }
       },
       shareCode: function() {
-        this._codeToShare = "<% '"+ encodeURI(this.content).replace(/'/g,'%27').replace(/"/g,'%28').replace(/\+/g,'%2B') + "' %> @orbit/snapshot/store";
+        this._codeToShare = "<% '"+ encodeURI(this.warpscript).replace(/'/g,'%27').replace(/"/g,'%28').replace(/\+/g,'%2B') + "' %> @orbit/snapshot/store";
         this.$.shareCodeRequest.generateRequest();
       },
       shareResponse: function() {
@@ -682,7 +683,7 @@
 
         this._responseToShare =
           "<% SNAPSHOT 'snapshot' STORE '<%25 !$snapshot %25>' EVAL @orbit/snapshot/store STOP %> 'STOP' DEF <% STOP %> '" +
-          randomFunction +"' DEF " + this.content +
+          randomFunction +"' DEF " + this.warpscript +
           " "+randomFunction;
 
         this.$.shareResponseRequest.generateRequest();
@@ -701,13 +702,21 @@
       },
 
       _getInfoFromParams: function() {
-        if (this.params.content !== undefined && typeof this.params.content === "string") {
-          if (this.content === this.params.content) {
-            console.debug("[quantum-warpscript] _getInfoFromParams - Content didn't change");
+        if (this.params.warpscript !== undefined && typeof this.params.warpscript === "string") {
+          if (this.warpscript === this.params.warpscript) {
+            console.debug("[quantum-warpscript] _getInfoFromParams - Warpscript didn't change");
           } else {
-            console.debug("[quantum-warpscript] _getInfoFromParams - Content changed");
-            this.content = this.params.content;
+            console.debug("[quantum-warpscript] _getInfoFromParams - Warpscript changed");
+            this.warpscript = this.params.warpscript;
           }
+        }
+        if (this.params.stack !== undefined && this.params.stack.length > 0) {
+          this.stack = this.params.stack;          
+          this._hasAResponse = true;
+          this._hasAnError = false;
+          this._warpscriptChangedAfterExecution = false;
+          this._lastSharedResponse = "";
+          this.$.response_container.responseChanged();
         }
         if (this.params.backend !== undefined) {
           this.backend = this.params.backend;
@@ -726,7 +735,7 @@
       },
       _hotkeyPlot: function(e) {
         var normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
-        console.debug("[quantum-warpscript] _hotkeyExec", normKeyboardEvt.rootTarget);
+        console.debug("[quantum-warpscript] _hotkeyPlot", normKeyboardEvt.rootTarget);
         var nodeName =  normKeyboardEvt.rootTarget.nodeName;
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
           this.plot();
