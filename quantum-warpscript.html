@@ -453,7 +453,15 @@
           type: Boolean,
           value: false
         },
-
+        /**
+         * Parameters to pass to each page
+         */
+        params: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+        },
         _hasAResponse: {
           type: Boolean,
           value: false
@@ -560,10 +568,13 @@
       },
       _onSelectedChanged: function(selected) {
 
-        if (selected === this.name) {
-          this._target = document.body;
-        } else {
+        if (selected !== this.name) {
           this._target = null;
+          return;
+        }
+        this._target = document.body;
+        if (this.params && this.params !== {}) {
+          this._getInfoFromParams();
         }
         console.debug("[quantum-warpscript] _onSelectedChanged", {selected: selected, name:this.name, target: this._target});
       },
@@ -689,7 +700,19 @@
         }
       },
 
-
+      _getInfoFromParams: function() {
+        if (this.params.content !== undefined && typeof this.params.content === "string") {
+          if (this.content === this.params.content) {
+            console.debug("[quantum-warpscript] _getInfoFromParams - Content didn't change");
+          } else {
+            console.debug("[quantum-warpscript] _getInfoFromParams - Content changed");
+            this.content = this.params.content;
+          }
+        }
+        if (this.params.backend !== undefined) {
+          this.backend = this.params.backend;
+        }        
+      },
       /**************************************************************************/
       /* Hotkeys                                                                */
       /**************************************************************************/

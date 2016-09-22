@@ -596,7 +596,7 @@ Warp plot widget
       _hotkeyEdit: function(e) {
         // console.debug("[quantum-warpscript-plot] _hotkey edit", this.warpscript);
         if (!this._regexMode) {
-          this.fire("edit", this.warpscript);
+          this.fire("edit", { content: this.warpscript });
         }
       },
       _hotkeyUp: function(e) {
