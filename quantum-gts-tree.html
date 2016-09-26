@@ -284,33 +284,11 @@ Warp10 GTS stack tree
       // console.debug("[quantum-gts-tree] showImageOverlay", e);
       var image = e.model.node.image;
       var caption = e.model.node.caption;
-      var id = 'image-overlay'
-      var dialog = document.getElementById(id);
-      if (dialog) {
-        if (e.type == 'click') {
-          dialog.setAttribute('imageClicked', true);
-        } else {
-          dialog.noCancelOnOutsideClick = true;
-        }
-        dialog.setAttribute('src', image )
-        dialog.setAttribute('caption', caption )
-        // console.debug("[quantum-gts-tree] let's open", dialog.opened);
-        if (!dialog.opened) {
-          dialog.open();
-        }
-
-        // console.debug("[quantum-gts-tree] dialog.noCancelOnOutsideClick",dialog.noCancelOnOutsideClick);
-        // console.debug("[quantum-gts-tree] and now it should be open", dialog.opened);
-      }
+      var type = e.type;
+      this.fire('show-image', {image: image, caption: caption, type: type});
     },
     hideImageOverlay: function(e) {
-
-      var id = 'image-overlay'
-      var dialog = document.getElementById(id);
-      dialog.noCancelOnOutsideClick = false;
-      if (dialog && !dialog.getAttribute('imageClicked')) {
-        dialog.cancel();
-      }
+      this.fire('hide-image');
     },
     _toArray: function(obj) {
       if (obj === undefined) {
