@@ -235,8 +235,7 @@ Warp plot widget
       vert-guide="{{vertGuide}}"
       width="{{_displayWidth}}"
       selected-timestamp="{{annotationsSelectedTimestamp}}"
-      >
-    </quantumviz-annotations>
+      timestamps="{{timestamps}}"></quantumviz-annotations>
 
     <warp10-display-chart
         id="warp10-display-chart"
@@ -246,8 +245,7 @@ Warp plot widget
         current-values="{{currentValues}}"
         time-bounds="{{timeBounds}}"
         chart-area="{{chartArea}}"
-        timestamps="{{timestamps}}"
-        ></warp10-display-chart>
+        timestamps="{{timestamps}}"></warp10-display-chart>
 
     <template is="dom-if" if="{{_displayChart}}">
       <div class="item_list">
