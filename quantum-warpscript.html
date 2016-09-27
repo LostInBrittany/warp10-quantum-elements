@@ -233,6 +233,15 @@
         id="warpscriptFileReaderTooltip" 
         for="warpscriptFileReader"
         fit-to-visible-bounds>Load a WarpScript file</paper-tooltip>
+      
+      <iron-icon
+        id="helpButton" 
+        icon="help" 
+        on-click="_hotkeyHelp"></iron-icon>
+      <paper-tooltip 
+        id="helpButtonTooltip" 
+        for="helpButton"
+        fit-to-visible-bounds>Help</paper-tooltip>
     </div>   
         
     
@@ -743,8 +752,13 @@
       },
       _hotkeyHelp: function(e) {
         var normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
-        console.debug("[quantum-warpscript] _hotkeyExec", normKeyboardEvt.rootTarget);
-        var nodeName =  normKeyboardEvt.rootTarget.nodeName;
+        console.debug("[quantum-warpscript] _hotkeyHelp", normKeyboardEvt.rootTarget);
+        var nodeName;
+        if (!normKeyboardEvt.rootTarget) {
+          nodeName = '';
+        } else {
+          nodeName =  normKeyboardEvt.rootTarget.nodeName;
+        }        
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
           console.debug("[quantum-warpscript] _hotkeyHelp")
           if (!this.$$("#warpscript-ide-keyboard-shortcuts-overlay").opened) {
