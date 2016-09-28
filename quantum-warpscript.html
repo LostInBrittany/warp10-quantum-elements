@@ -369,7 +369,8 @@
     <template is="dom-if" if="{{_elapsedTimeShown}}">
       <div class="clearfix"> </div>
       <div  class="top-10">
-        <div class="right">Your script execution took {{_formattedElapsedTime}} serverside</div>
+        <div class="right">
+          Your script execution took {{_formattedElapsedTime}} serverside, fetched {{_fetched}} datapoints and performed {{_operations}} WarpScript operations.</div>
       </div>
     </template>
     <div class="clearfix"> </div>
@@ -602,6 +603,9 @@
           return;
         }
         this.elapsed = response.options.elapsed;
+        this._fetched = response.options.fetched;
+        this._operations = response.options.operations;
+        console.debug("[quantum-warpscript] _handleResponse", response.options);
         // this._dataToPlot = gtsTools.gtsFromJSONList(response.stack);
         this.stack = response.stack;
         this._hasAResponse = true;
@@ -622,6 +626,8 @@
         console.debug("[quantum-warpscript] _handleError", { error: error, errorMsg: this.errorMsg });
 
         this.elapsed = error.elapsed;
+        this._fetched = response.options.fetched;
+        this._operations = response.options.operations;
         this._hasAResponse = false;
         this._hasAnError = true;
 
