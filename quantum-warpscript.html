@@ -106,6 +106,7 @@
       }
       .toolbar {
         @apply(--layout-horizontal);
+        @apply(--layout-center);
         @apply(--layout-end-justified);
         margin-bottom: 10px;
       }
@@ -119,6 +120,10 @@
         text-align: center;
       }
       .toolbar granite-file-saver iron-icon {
+        --iron-icon-height: 18px;
+        --iron-icon-width: 24px;
+      }
+      .toolbar iron-icon#helpButton {
         --iron-icon-height: 18px;
         --iron-icon-width: 24px;
       }
