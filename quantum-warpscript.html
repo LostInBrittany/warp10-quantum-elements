@@ -621,18 +621,24 @@
 
         // console.debug("[quantum-warpscript] _handleResponse", { stack: this.stack, elapsed: this.elapsed, _dataToPlot: this._dataToPlot });
       },
-      _handleError: function(event, error) {
-        if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
-          this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
+      _handleError: function(event, error) {        
+        //console.debug("[quantum-warpscript] _handleError", error);        
+        if (!error.errorLine || !error.errorMsg) {
+          if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
+            this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
+          } else {
+            this.errorMsg =  error.request.statusText;
+          }
         } else {
-          this.errorMsg =  error.request.statusText;
+          this.errorMsg = "ERROR line #"+ error.errorLine+": "+error.errorMsg;
+          console.debug("[quantum-warpscript] _handleError", this.errorMsg);
         }
 
         console.debug("[quantum-warpscript] _handleError", { error: error, errorMsg: this.errorMsg });
 
         this.elapsed = error.elapsed;
-        this._fetched = response.options.fetched;
-        this._operations = response.options.operations;
+        this._fetched = error.fetched;
+        this._operations = error.operations;
         this._hasAResponse = false;
         this._hasAnError = true;
 
