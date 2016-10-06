@@ -624,7 +624,7 @@
         // console.debug("[quantum-warpscript] _handleResponse", { stack: this.stack, elapsed: this.elapsed, _dataToPlot: this._dataToPlot });
       },
       _handleError: function(event, error) {        
-        //console.debug("[quantum-warpscript] _handleError", error);        
+        console.debug("[quantum-warpscript] _handleError", error);        
         if (!error.errorLine || !error.errorMsg) {
           if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
             this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
