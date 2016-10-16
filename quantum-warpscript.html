@@ -11,6 +11,7 @@
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-input/iron-input.html">
 
+<link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-styles/color.html">
@@ -125,7 +126,7 @@
         text-align: center;
       }
       
-      .toolbar iron-icon#collectionSaveButton,
+      .toolbar iron-icon#saveDialogButton,
       .toolbar granite-file-saver iron-icon,
       .toolbar iron-icon#helpButton {
         --iron-icon-height: 18px;
@@ -183,6 +184,44 @@
       .title {
         text-transform: capitalize;
       }
+
+
+      paper-dialog {
+        width: 80vw;
+        background: white;
+        transition: box-shadow 0.5s cubic-bezier(.25,.8,.25,1);
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        overflow : auto;
+        border-radius: 2px;
+        padding: 15px;
+        --app-primary-color: var(--google-blue-500);
+        --app-secondary-color: black;
+        --app-background-color: white;
+        --app-on-background-color: white;
+      }
+      paper-dialog .closeDialog {
+        margin: 0 !important;
+        position: absolute;
+        justify-content: flex-end;
+        right: 16px;
+        top: 16px;
+        margin: 0;
+        transition: color 0.5s cubic-bezier(.25,.8,.25,1);
+        color: var(--google-grey-300);       
+        cursor: pointer; 
+      }
+      paper-dialog .header {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        margin-top: 30px !important;
+      }
+      paper-dialog  .actions {
+        margin-left: 0px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+        
+      }
     </style>
 
 
@@ -235,20 +274,43 @@
       loading="{{loading}}" debounce-duration="{{debounceDuration}}">
     </iron-ajax>
     
+    <paper-dialog
+        id="saveDialog">
+          <div
+              class="closeDialog"
+              on-tap="_closeSaveDialog">
+            <iron-icon icon="close"></iron-icon>
+          </div>
+        <h2 class="header">Save your WarpScript</h2>
+
+        <div class="actions">
+          <granite-file-saver 
+              filename="{{_filename}}" 
+              id="warpscriptFileSaver" 
+              text="{{warpscript}}"
+              on-file-saved="_closeSaveDialog">
+              <paper-button>
+                To a file
+              </paper-button>  
+          </granite-file-saver>
+          <paper-button
+              id="collectionSaveButton" 
+              on-click="saveCollection">
+            To in-browser storage
+          </paper-button>
+        </div>
+      </div>      
+    </paper-dialog>
+
+
     <div class="toolbar">
+
       <div>
         <iron-icon
-            id="collectionSaveButton" 
-            icon="file-download" 
-            on-click="saveCollection"></iron-icon>
-      </div>      
-
-      <granite-file-saver 
-          filename="{{_filename}}" 
-          id="warpscriptFileSaver" 
-          text="{{warpscript}}">
-        <iron-icon icon="file-download"></iron-icon>
-      </granite-file-saver>
+            id="saveDialogButton" 
+            icon="file-download"
+            on-tap="_openSaveDialog"></iron-icon>
+      </div>
 
       <div>
         <iron-icon
@@ -270,9 +332,9 @@
     </div>   
        
     <paper-tooltip 
-        id="warpscriptFileSaverTooltip" 
-        for="warpscriptFileSaver"
-        fit-to-visible-bounds>Save to a WarpScript file</paper-tooltip>
+        id="saveWarpscriptTooltip" 
+        for="saveWarpscript"
+        fit-to-visible-bounds>Save your WarpScript</paper-tooltip>
     <paper-tooltip 
         id="collectionSaveButtonTooltip" 
         for="collectionSaveButton"
@@ -755,12 +817,18 @@
         this.$.shareResponseRequest.generateRequest();
       },
       saveCollection: function() {
+        this.$.saveDialog.cancel();
         this.$.collectionWriter.open();
       },
       readCollection: function() {
         this.$.collectionReader.open();
       },
-
+      _openSaveDialog: function() {
+        this.$.saveDialog.open();
+      },
+      _closeSaveDialog: function() {
+        this.$.saveDialog.cancel();
+      },
 
       /**************************************************************************/
       /* Other methods                                                          */

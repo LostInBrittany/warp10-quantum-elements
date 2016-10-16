@@ -62,17 +62,21 @@
         @apply(--layout-vertical);
         margin-bottom: 15px;
       }
+      .item > div {
+        margin-left: 15px;
+        margin-bottom: 10px;
+      }
       .item_name {
         font-weight: bold;
         font-size: 1.1em;
+        margin-left: 0 !important;
       }
       .item_date {
-        margin-left: 15px;
+        
       }
       .item_tag_list {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
-        margin-left: 15px;
       }
       .item_tag {
         font-size: 0.75em;
@@ -80,6 +84,16 @@
         background-color: var(--google-blue-100);
         padding: 5px;
         border-radius: 2px;
+      }
+      .item_warpscript {
+        padding: 5px;
+        font-family: 'Roboto Mono', sans-serif;
+        font-size: 0.75em;
+        -moz-box-shadow:    inset 0 0 2px #AAA;
+        -webkit-box-shadow: inset 0 0 2px #AAA;
+        box-shadow:         inset 0 0 2px #AAA; 
+        max-height: 100px;
+        overflow: auto;       
       }
     </style>
 
@@ -107,16 +121,28 @@
 
     <template is="dom-repeat" items="{{collection}}" as="record">
       <div class="item">
+        
         <div class="item_name">{{record.name}}</div>
-        <div class="item_date">Saved on: <moment-js date="{{fromTimestampToDate(record.timestamp)}}" utc format="YYYY-MM-DD HH:mm:ss"></moment-js> (UTC)</div>
-
-        <div class="item_tag_list">
-          
-      <template is="dom-repeat" items="[[record.tags]]" as="tag">
-        <div class="item_tag">
-          {{tag}}
+        
+        <div class="item_date">
+          Saved on: 
+          <moment-js 
+              date="{{_fromTimestampToDate(record.timestamp)}}" 
+              format="YYYY-MM-DD HH:mm:ss"
+              utc></moment-js> 
+          (UTC)
         </div>
-      </template>
+
+        <div class="item_tag_list">          
+          <template is="dom-repeat" items="[[record.tags]]" as="tag">
+            <div class="item_tag">
+              {{tag}}
+            </div>
+          </template>
+        </div>
+
+        <div class="item_warpscript">
+          {{record.shortWarpscript}}
         </div>
       </div>
     </template> 
@@ -166,14 +192,42 @@
       },
       onCollectionChange: function() {
         console.debug("[quantum-local-collection-reader] onCollectionChange", this.collection);
+        for (var i in this.collection) {
+          this.collection[i].shortWarpscript = this._shortWarpscript(this.collection[i].warpscript);
+        }
       },
       /**
       * Convert token timestamps to dates
       */
-      fromTimestampToDate: function(ts) {
-        console.debug("[quantum-local-collection-reader] fromTimestampToDate", ts)
+      _fromTimestampToDate: function(ts) {
+        console.debug("[quantum-local-collection-reader] _fromTimestampToDate", ts)
         return new Date(ts).toISOString();  
       },
+      _shortWarpscript: function(warpscript) {
+        var shortWarpscript = this._trimExcessLineFeeds(warpscript).substring(0,256);
+
+        
+        if (shortWarpscript.length != warpscript.length) {
+          shortWarpscript = shortWarpscript+ "...";
+        }       
+        
+        console.debug("[quantum-local-collection-reader] _shortWarpscript", shortWarpscript);
+        return shortWarpscript
+      },
+      _trimExcessLineFeeds: function(warpscript) {
+        var maxNumberOfLineFeeds = 3
+        var numberOfLineFeeds = 0;
+        var i;
+        for (i in warpscript.length) {
+          if (warpscript[i] == "\n") {
+            numberOfLineFeeds++;
+          }
+          if (numberOfLineFeeds >= maxNumberOfLineFeeds) {
+            break;
+          }
+        }
+        return warpscript.substring(0,i);
+      }
     });
   </script>
 </dom-module>  
