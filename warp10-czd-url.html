@@ -1,0 +1,104 @@
+<script>
+  
+  warp10Conf = {
+    apiHost: "",
+    get apiBaseUrl() {
+      return this.apiHost + "/ws/v1";
+    }
+  }
+  
+  
+  warp10CzdUrl = {    
+          
+    
+    // Properties
+    properties: {
+      
+      applicationsUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/list"
+      },
+
+      applicationDetailUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/details"
+      },
+
+      cellsUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/cell/list"
+      },
+
+      cellDetailUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/cell/details"
+      },
+
+      authenticationUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/portal/auth"
+      },
+
+      quasarRateUrl: {
+        type: String,
+        value: warp10Conf.apiHost + "/quasar/signup/rate"
+      },
+
+      profileUpdateNameUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/portal/profile/update/name"
+      },
+
+      createNewApplication: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/create"
+      },
+
+      updateNameApplication: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/update/displayname"
+      },
+
+      updateAuthenticationUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/portal/auth/password/update"
+      },
+
+      createAuthenticationUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/portal/auth/password/create"
+      },
+
+      tokenInfoUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/token/infos"
+      },
+
+      tokenListUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/token/list"
+      },
+
+      tokenRevokeUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/token/revoke"
+      },
+
+      tokenDeliverReadWriteUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/token/deliver/default"
+      },
+
+      updateTokenUrl: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/application/update/token/parameters"
+      },
+
+      privateWarpScriptExec: {
+        type: String,
+        value: warp10Conf.apiBaseUrl + "/warp10/exec"
+      }
+
+  },
+}
+</script>

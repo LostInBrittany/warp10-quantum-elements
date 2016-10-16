@@ -236,17 +236,12 @@
     </iron-ajax>
     
     <div class="toolbar">
-
       <div>
         <iron-icon
             id="collectionSaveButton" 
             icon="file-download" 
             on-click="saveCollection"></iron-icon>
       </div>      
-      <paper-tooltip 
-          id="collectionSaveButtonTooltip" 
-          for="collectionSaveButton"
-          fit-to-visible-bounds>Save Warpscript to in-browser DB</paper-tooltip>
 
       <granite-file-saver 
           filename="{{_filename}}" 
@@ -254,10 +249,6 @@
           text="{{warpscript}}">
         <iron-icon icon="file-download"></iron-icon>
       </granite-file-saver>
-      <paper-tooltip 
-          id="warpscriptFileSaverTooltip" 
-          for="warpscriptFileSaver"
-          fit-to-visible-bounds>Save to a WarpScript file</paper-tooltip>
 
       <div>
         <iron-icon
@@ -265,18 +256,10 @@
             icon="open-in-browser" 
             on-click="readCollection"></iron-icon>
       </div>
-      <paper-tooltip 
-          id="collectionReadButtonTooltip" 
-          for="collectionReadButton"
-          fit-to-visible-bounds>Read Warpscript from in-browser DB</paper-tooltip>
 
       <granite-file-reader id="warpscriptFileReader" accept=".mc2" read-as="text" on-file-read="_inputFileRead">
         <iron-icon icon="open-in-browser"></iron-icon>
       </granite-file-reader>
-      <paper-tooltip 
-          id="warpscriptFileReaderTooltip" 
-          for="warpscriptFileReader"
-          fit-to-visible-bounds>Load a WarpScript file</paper-tooltip>
       
       <div>
         <iron-icon
@@ -284,12 +267,28 @@
             icon="help" 
             on-click="_hotkeyHelp"></iron-icon>
       </div>
-      <paper-tooltip 
-          id="helpButtonTooltip" 
-          for="helpButton"
-          fit-to-visible-bounds>Help</paper-tooltip>
     </div>   
-        
+       
+    <paper-tooltip 
+        id="warpscriptFileSaverTooltip" 
+        for="warpscriptFileSaver"
+        fit-to-visible-bounds>Save to a WarpScript file</paper-tooltip>
+    <paper-tooltip 
+        id="collectionSaveButtonTooltip" 
+        for="collectionSaveButton"
+        fit-to-visible-bounds>Save Warpscript to in-browser DB</paper-tooltip>
+    <paper-tooltip 
+        id="collectionReadButtonTooltip" 
+        for="collectionReadButton"
+        fit-to-visible-bounds>Read Warpscript from in-browser DB</paper-tooltip>
+    <paper-tooltip 
+        id="warpscriptFileReaderTooltip" 
+        for="warpscriptFileReader"
+        fit-to-visible-bounds>Load a WarpScript file</paper-tooltip> 
+    <paper-tooltip 
+        id="helpButtonTooltip" 
+        for="helpButton"
+        fit-to-visible-bounds>Help</paper-tooltip>
     
     <ace-widget
         id="editor" 
@@ -757,6 +756,9 @@
       },
       saveCollection: function() {
         this.$.collectionWriter.open();
+      },
+      readCollection: function() {
+        this.$.collectionReader.open();
       },
 
 
