@@ -33,6 +33,7 @@
 <link rel="import" href="./quantum-module-behavior.html">
 <link rel="import" href="./quantum-response-container.html">
 <link rel="import" href="./quantum-permalink.html">
+<link rel="import" href="./quantum-pouchdb-collection.html">"
 
 <script src="./ace/mode-warpscript.js"></script>
 
@@ -111,6 +112,9 @@
         @apply(--layout-end-justified);
         margin-bottom: 10px;
       }
+      .toolbar > * {        
+        height: 24px;
+      }
       .toolbar iron-icon {
         color: var(--app-primary-color);
         cursor: pointer;
@@ -120,10 +124,9 @@
         width: 120px;
         text-align: center;
       }
-      .toolbar granite-file-saver iron-icon {
-        --iron-icon-height: 18px;
-        --iron-icon-width: 24px;
-      }
+      
+      .toolbar iron-icon#collectionSaveButton,
+      .toolbar granite-file-saver iron-icon,
       .toolbar iron-icon#helpButton {
         --iron-icon-height: 18px;
         --iron-icon-width: 24px;
@@ -201,6 +204,14 @@
       </div>
     </warp10-simple-overlay>
 
+    <quantum-local-collection-writer
+        id="collectionWriter"
+        warpscript="[[warpscript]]"></quantum-local-collection-writer>
+    <quantum-local-collection-reader
+        id="collectionReader"
+        warpscript="[[warpscript]]"></quantum-local-collection-reader>        
+
+
     <warp10-warpscript-caller
       id="warpscriptcaller"
       url="{{_baseUrl}}" warpscript="{{warpscriptScript}}"
@@ -225,32 +236,58 @@
     </iron-ajax>
     
     <div class="toolbar">
+
+      <div>
+        <iron-icon
+            id="collectionSaveButton" 
+            icon="file-download" 
+            on-click="saveCollection"></iron-icon>
+      </div>      
+      <paper-tooltip 
+          id="collectionSaveButtonTooltip" 
+          for="collectionSaveButton"
+          fit-to-visible-bounds>Save Warpscript to in-browser DB</paper-tooltip>
+
       <granite-file-saver 
-        filename="{{_filename}}" 
-        id="warpscriptFileSaver" 
-        text="{{warpscript}}">
+          filename="{{_filename}}" 
+          id="warpscriptFileSaver" 
+          text="{{warpscript}}">
         <iron-icon icon="file-download"></iron-icon>
       </granite-file-saver>
       <paper-tooltip 
-        id="warpscriptFileSaverTooltip" 
-        for="warpscriptFileSaver"
-        fit-to-visible-bounds>Save to a WarpScript file</paper-tooltip>
+          id="warpscriptFileSaverTooltip" 
+          for="warpscriptFileSaver"
+          fit-to-visible-bounds>Save to a WarpScript file</paper-tooltip>
+
+      <div>
+        <iron-icon
+            id="collectionReadButton" 
+            icon="open-in-browser" 
+            on-click="readCollection"></iron-icon>
+      </div>
+      <paper-tooltip 
+          id="collectionReadButtonTooltip" 
+          for="collectionReadButton"
+          fit-to-visible-bounds>Read Warpscript from in-browser DB</paper-tooltip>
+
       <granite-file-reader id="warpscriptFileReader" accept=".mc2" read-as="text" on-file-read="_inputFileRead">
         <iron-icon icon="open-in-browser"></iron-icon>
       </granite-file-reader>
       <paper-tooltip 
-        id="warpscriptFileReaderTooltip" 
-        for="warpscriptFileReader"
-        fit-to-visible-bounds>Load a WarpScript file</paper-tooltip>
+          id="warpscriptFileReaderTooltip" 
+          for="warpscriptFileReader"
+          fit-to-visible-bounds>Load a WarpScript file</paper-tooltip>
       
-      <iron-icon
-        id="helpButton" 
-        icon="help" 
-        on-click="_hotkeyHelp"></iron-icon>
+      <div>
+        <iron-icon
+            id="helpButton" 
+            icon="help" 
+            on-click="_hotkeyHelp"></iron-icon>
+      </div>
       <paper-tooltip 
-        id="helpButtonTooltip" 
-        for="helpButton"
-        fit-to-visible-bounds>Help</paper-tooltip>
+          id="helpButtonTooltip" 
+          for="helpButton"
+          fit-to-visible-bounds>Help</paper-tooltip>
     </div>   
         
     
@@ -717,6 +754,9 @@
           " "+randomFunction;
 
         this.$.shareResponseRequest.generateRequest();
+      },
+      saveCollection: function() {
+        this.$.collectionWriter.open();
       },
 
 
