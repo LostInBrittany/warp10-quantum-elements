@@ -99,16 +99,16 @@
     </style>
 
     <app-pouchdb-index
-        db-name="ws001"
+        db-name="warpscript-collection"
         name="main"
-        fields='["_id","timestamp"]'>
+        fields='["_id"]'>
     </app-pouchdb-index>
     <app-pouchdb-query
         id="query"
-        db-name="ws001"
-        selector="timestamp $gt 0"
+        db-name="warpscript-collection"
+        selector="_id $gt 0"
         fields='["_id", "name", "tags", "timestamp", "warpscript"]'
-        sort='["timestamp"]'
+        sort='["_id"]'
         data="{{collection}}">
     </app-pouchdb-query>
 
@@ -195,18 +195,31 @@
       },
       onCollectionChange: function() {
         console.debug("[quantum-local-collection-reader] onCollectionChange", this.collection);
+        var collection = [];
         for (var i in this.collection) {
-          this.collection[i].shortWarpscript = this._shortWarpscript(this.collection[i].warpscript);
+          if (this.collection[i].warpscript) {
+            collection.push(this.collection[i]);
+          }
+        }
+        if (collection.length != this.collection.length) {
+          this.collection = collection;
+          for (var i in this.collection) {          
+            this.collection[i].shortWarpscript = this._shortWarpscript(this.collection[i].warpscript);
+          }
         }
       },
       /**
       * Convert token timestamps to dates
       */
       _fromTimestampToDate: function(ts) {
+        if (!ts) return 0;
         console.debug("[quantum-local-collection-reader] _fromTimestampToDate", ts)
         return new Date(ts).toISOString();  
       },
       _shortWarpscript: function(warpscript) {
+        if (!warpscript) {
+          return "";
+        }
         var shortWarpscript = this._trimExcessLineFeeds(warpscript).substring(0,256);
 
         
