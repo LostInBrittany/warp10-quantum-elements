@@ -56,7 +56,8 @@
     "granite-file-reader": "granite-file-reader#^1.0.3",
     "granite-spinner": "granite-spinner#^2.0.0",
     "warp10-iron": "cityzendata/warp10-iron#^1.1.5",
-    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.3.9"
+    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.3.9",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.1"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

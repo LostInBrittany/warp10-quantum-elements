@@ -17,6 +17,7 @@
 
 <link rel="import" href="../paper-badge/paper-badge.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../paper-dialog-behavior/paper-dialog-behavior.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-input/paper-textarea.html">
@@ -57,36 +58,40 @@
         @apply(--layout-center);
         margin-top: 30px;
       }
-      .item {
+      .collection {
+        margin-top: 15px;
+        @apply(--layout-vertical);
+      }
+      .record {
         position: relative;
         @apply(--layout-vertical);
         margin-bottom: 15px;
       }
-      .item > div {
+      .record > div {
         margin-left: 15px;
         margin-bottom: 10px;
       }
-      .item_name {
+      .record_name {
         font-weight: bold;
         font-size: 1.1em;
         margin-left: 0 !important;
         cursor: pointer;
       }
-      .item_date {
+      .record_date {
         
       }
-      .item_tag_list {
+      .record_tag_list {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
       }
-      .item_tag {
+      .record_tag {
         font-size: 0.75em;
         margin-right: 20px; 
         background-color: var(--google-blue-100);
         padding: 5px;
         border-radius: 2px;
       }
-      .item_warpscript {
+      .record_warpscript {
         padding: 5px;
         font-family: 'Roboto Mono', sans-serif;
         font-size: 0.75em;
@@ -95,6 +100,14 @@
         box-shadow:         inset 0 0 2px #AAA; 
         max-height: 100px;
         overflow: auto;       
+      }
+      .filterCriteria {        
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+      .filterCriteria paper-input {
+        margin-left: 15px;
+        @apply(--layout-flex);
       }
     </style>
 
@@ -120,36 +133,78 @@
 
     <h2>{{localize('title')}}</h2>
 
-    <template is="dom-repeat" items="{{collection}}" as="record">
-      <div class="item">
-        
-        <div 
-            class="item_name" 
-            on-tap="_load">{{record.name}}</div>
-        
-        <div class="item_date">
-          Saved on: 
-          <moment-js 
-              date="{{_fromTimestampToDate(record.timestamp)}}" 
-              format="YYYY-MM-DD HH:mm:ss"
-              utc></moment-js> 
-          (UTC)
-        </div>
+    <div class="header">
+      <h4>{{localize('filter')}}</h4>
+    </div>
 
-        <div class="item_tag_list">          
-          <template is="dom-repeat" items="[[record.tags]]" as="tag">
-            <div class="item_tag">
-              {{tag}}
-            </div>
-          </template>
-        </div>
+<!--
+    <div class="filterCriteria">
+      <paper-checkbox 
+          id="filterByName" 
+          active="{{_filterByName}}"
+          on-change="_onFilterByNameCheckboxChange">{{localize('filterByName')}}</paper-checkbox>
+      <template is="dom-if" if="{{_filterByName}}">
+          <paper-input
+              name="filterByNameInput" 
+              label="{{ localize('pattern')}}"
+              type="text" 
+              value="{{_filterByNameInput}}"
+              maxlength="256"></paper-input>
+      </template>
+    </div>
 
-        <div class="item_warpscript">
-          {{record.shortWarpscript}}
+    <div class="filterCriteria">
+      <paper-checkbox 
+          id="filterByName" 
+          active="{{_filterByTags}}"
+          on-change="_onFilterByTagsCheckboxChange">{{localize('filterByTags')}}</paper-checkbox>
+      <template is="dom-if" if="{{_filterByTags}}">
+          <paper-input
+              name="filterByTagsInput" 
+              label="{{ localize('commaSeparatedPatterns')}}"
+              type="text" 
+              value="{{_filterByTagsInput}}"
+              maxlength="256"></paper-input>
+      </template>
+    </div>
+-->
+    <div class="collection">
+      <template 
+          is="dom-repeat" 
+          id="collectionTemplate"
+          items="{{collection}}" 
+          as="record"
+          filter="{{_filterRecords(_filterByNameInput,_filterByTagsInput)}}">
+        <div class="record">
+          
+          <div 
+              class="record_name" 
+              on-tap="_load">{{record.name}}</div>
+          
+          <div class="record_date">
+            Saved on: 
+            <moment-js 
+                date="{{_fromTimestampToDate(record.timestamp)}}" 
+                format="YYYY-MM-DD HH:mm:ss"
+                utc></moment-js> 
+            (UTC)
+          </div>
+
+          <div class="record_tag_list">          
+            <template is="dom-repeat" records="[[record.tags]]" as="tag">
+              <div class="record_tag">
+                {{tag}}
+              </div>
+            </template>
+          </div>
+
+          <div class="record_warpscript">
+            {{record.shortWarpscript}}
+          </div>
         </div>
-      </div>
-    </template> 
-    
+      </template> 
+    </div>
+
   </template>
   <script>
     Polymer({
@@ -162,6 +217,18 @@
 
       properties: {
 
+        _filterByName: {
+          type: Boolean,
+          value: false
+        },
+        _filterByTags: {
+          type: Boolean,
+          value: false
+        },
+        _filterByDate: {
+          type: Boolean,
+          value: false
+        },
         /**
          * The Warscript collection object
          */
@@ -170,6 +237,14 @@
           notify: true,
           observer: "onCollectionChange"
         },      
+        _filterByNameInput: {
+          type: String,
+          value: ""
+        },
+        _filterByTagsInput: {
+          type: String,
+          value: ""
+        },   
         language: {
           value: 'en'
         },     
@@ -179,13 +254,18 @@
           value: function() {
             return {
               'en': { 
-                'title': 'Load a script from local storage'
-              },
+                'title': 'Load a script from local storage',
+                'filter': 'Search',
+                'filterByName': "By name",
+                'filterByTags': "By tags",
+                'filterByDate': "By date",
+                'pattern': 'Pattern',
+                'commaSeparatedPatterns': 'Patterns, separated by commas',
+              }
             }
           }
         }         
       },
-
       listeners: {
         'iron-overlay-opened': 'onOpen'
       },
@@ -207,6 +287,10 @@
             this.collection[i].shortWarpscript = this._shortWarpscript(this.collection[i].warpscript);
           }
         }
+      },
+      _onFilterByNameCheckboxChange: function() {
+      },
+      _onFilterByTagsCheckboxChange: function() {
       },
       /**
       * Convert token timestamps to dates
@@ -248,6 +332,25 @@
         this.cancel();
         console.debug("[quantum-local-collection-reader] _load", evt.model.record);
         this.fire("warpscript-choosen", evt.model.record.warpscript);
+      },
+      _filterRecords: function(_filterByNameInput,_filterByTagesInput) {
+
+        console.debug("[quantum-local-collection-reader] _filterRecords - Init", _filterByNameInput,_filterByTagesInput);
+        if (!_filterByNameInput && !_filterByTagesInput) {
+          // set filter to null to disable filtering
+          console.debug("[quantum-local-collection-reader] _filterRecords - set filter to null to disable filtering");
+          return null;
+        } else {
+          // return a filter function for the current search string
+          console.debug("[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string");
+          return function(item) {
+            console.debug("[quantum-local-collection-reader] _filterRecords - Filter called", record, _filterByNameInput, _filterByTagesInput);
+            if (!record.name || record.name.search(_filterByNameInput) < 0) {
+              return false;
+            }
+            return true;
+          };
+        }
       },
 
     });
