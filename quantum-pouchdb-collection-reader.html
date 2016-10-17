@@ -70,6 +70,7 @@
         font-weight: bold;
         font-size: 1.1em;
         margin-left: 0 !important;
+        cursor: pointer;
       }
       .item_date {
         
@@ -122,7 +123,9 @@
     <template is="dom-repeat" items="{{collection}}" as="record">
       <div class="item">
         
-        <div class="item_name">{{record.name}}</div>
+        <div 
+            class="item_name" 
+            on-tap="_load">{{record.name}}</div>
         
         <div class="item_date">
           Saved on: 
@@ -227,7 +230,13 @@
           }
         }
         return warpscript.substring(0,i);
-      }
+      },
+      _load: function(evt) {
+        this.cancel();
+        console.debug("[quantum-local-collection-reader] _load", evt.model.record);
+        this.fire("warpscript-choosen", evt.model.record.warpscript);
+      },
+
     });
   </script>
 </dom-module>  

@@ -248,7 +248,8 @@
         warpscript="[[warpscript]]"></quantum-local-collection-writer>
     <quantum-local-collection-reader
         id="collectionReader"
-        warpscript="[[warpscript]]"></quantum-local-collection-reader>        
+        warpscript="[[warpscript]]"
+        on-warpscript-choosen="_inputFileRead"></quantum-local-collection-reader>        
 
 
     <warp10-warpscript-caller
@@ -302,6 +303,35 @@
       </div>      
     </paper-dialog>
 
+    <paper-dialog
+        id="loadDialog">
+          <div
+              class="closeDialog"
+              on-tap="_closeLoadDialog">
+            <iron-icon icon="close"></iron-icon>
+          </div>
+        <h2 class="header">Load a WarpScript</h2>
+
+        <div class="actions">
+
+          <granite-file-reader 
+              id="warpscriptFileReader" 
+              accept=".mc2" 
+              read-as="text" 
+              on-file-read="_inputFileRead">
+            <paper-button>
+              From a file
+            </paper-button>  
+          </granite-file-reader>
+
+          <paper-button
+              id="collectionReadButton" 
+              on-click="readCollection">
+            From in-browser storage
+          </paper-button>
+        </div>
+      </div>      
+    </paper-dialog>
 
     <div class="toolbar">
 
@@ -314,14 +344,10 @@
 
       <div>
         <iron-icon
-            id="collectionReadButton" 
+            id="loadDialogButton" 
             icon="open-in-browser" 
-            on-click="readCollection"></iron-icon>
+            on-click="_openLoadDialog"></iron-icon>
       </div>
-
-      <granite-file-reader id="warpscriptFileReader" accept=".mc2" read-as="text" on-file-read="_inputFileRead">
-        <iron-icon icon="open-in-browser"></iron-icon>
-      </granite-file-reader>
       
       <div>
         <iron-icon
@@ -332,21 +358,13 @@
     </div>   
        
     <paper-tooltip 
-        id="saveWarpscriptTooltip" 
-        for="saveWarpscript"
-        fit-to-visible-bounds>Save your WarpScript</paper-tooltip>
+        id="saveDialogButtonTooltip" 
+        for="saveDialogButton"
+        fit-to-visible-bounds>Save WarpScript</paper-tooltip>
     <paper-tooltip 
-        id="collectionSaveButtonTooltip" 
-        for="collectionSaveButton"
-        fit-to-visible-bounds>Save Warpscript to in-browser DB</paper-tooltip>
-    <paper-tooltip 
-        id="collectionReadButtonTooltip" 
-        for="collectionReadButton"
-        fit-to-visible-bounds>Read Warpscript from in-browser DB</paper-tooltip>
-    <paper-tooltip 
-        id="warpscriptFileReaderTooltip" 
-        for="warpscriptFileReader"
-        fit-to-visible-bounds>Load a WarpScript file</paper-tooltip> 
+        id="loadDialogButtonTooltip" 
+        for="loadDialogButton"
+        fit-to-visible-bounds>Load WaprScript</paper-tooltip>
     <paper-tooltip 
         id="helpButtonTooltip" 
         for="helpButton"
@@ -776,6 +794,7 @@
       },
 
       _inputFileRead: function(evt, detail) {
+        this.$.loadDialog.cancel();
         console.debug("[quantum-warpscript] _fileChosen", evt, detail); 
         this.warpscript = detail;
       },
@@ -821,6 +840,7 @@
         this.$.collectionWriter.open();
       },
       readCollection: function() {
+        this.$.loadDialog.cancel();
         this.$.collectionReader.open();
       },
       _openSaveDialog: function() {
@@ -829,6 +849,13 @@
       _closeSaveDialog: function() {
         this.$.saveDialog.cancel();
       },
+      _openLoadDialog: function() {
+        this.$.loadDialog.open();
+      },
+      _closeLoadDialog: function() {
+        this.$.loadDialog.cancel();
+      },
+
 
       /**************************************************************************/
       /* Other methods                                                          */
