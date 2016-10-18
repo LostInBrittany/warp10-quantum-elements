@@ -137,7 +137,6 @@
       <h4>{{localize('filter')}}</h4>
     </div>
 
-<!--
     <div class="filterCriteria">
       <paper-checkbox 
           id="filterByName" 
@@ -167,7 +166,7 @@
               maxlength="256"></paper-input>
       </template>
     </div>
--->
+
     <div class="collection">
       <template 
           is="dom-repeat" 
@@ -191,7 +190,7 @@
           </div>
 
           <div class="record_tag_list">          
-            <template is="dom-repeat" records="[[record.tags]]" as="tag">
+            <template is="dom-repeat" items="[[record.tags]]" as="tag">
               <div class="record_tag">
                 {{tag}}
               </div>
@@ -343,11 +342,24 @@
         } else {
           // return a filter function for the current search string
           console.debug("[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string");
-          return function(item) {
+          return function(record) {
             console.debug("[quantum-local-collection-reader] _filterRecords - Filter called", record, _filterByNameInput, _filterByTagesInput);
-            if (!record.name || record.name.search(_filterByNameInput) < 0) {
-              return false;
+            if (_filterByNameInput) {
+              if (record.name && record.name.toLowerCase().indexOf(_filterByNameInput.toLowerCase()) < 0) {
+                return false;
+              }
             }
+           
+            if (_filterByTagesInput) {
+              var tags = _filterByTagesInput.split(',');
+              for (var i in tags) {
+                if (record.tags.indexOf(tags[i].trim().toLowerCase()) < 0) {
+                  return false;
+                }
+              }
+            }
+
+           
             return true;
           };
         }

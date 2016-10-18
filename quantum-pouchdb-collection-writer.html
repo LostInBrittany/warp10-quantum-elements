@@ -171,6 +171,8 @@
           value="{{_newTag}}"
           maxlength="64"
           invalid="{{_isInvalidNewTag}}"
+          auto-validate 
+          allowed-pattern="[a-z0-9_]
           required></paper-input>
       <iron-icon
           class="submit" disabled$="{{_isInvalidNewTag}}"
