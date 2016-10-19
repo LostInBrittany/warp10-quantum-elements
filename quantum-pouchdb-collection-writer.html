@@ -69,7 +69,7 @@
       .item.tag { 
         margin-top: 10px;
         background-color: var(--google-blue-100);
-        padding: 5px;
+        padding: 5px 15px;
         border-radius: 2px;
       } 
       iron-icon.submit {
@@ -80,7 +80,7 @@
         color: var(--google-red-500);
       }
       paper-badge.delete {
-        margin-left:5px;
+        margin-left:15px;
         margin-top: -5px;
       }
 
@@ -145,6 +145,19 @@
       {{localize('promptTags')}}
     </div>
 
+    <div class="item">
+      <paper-input
+          name="newTag" 
+          id="newTag" 
+          label="{{localize('promptTag')}}"
+          type="text" 
+          value="{{_newTag}}"
+          maxlength="64"
+          auto-validate 
+          allowed-pattern="[a-z0-9_]"
+          on-keypress="_onNewTagAction"></paper-input>
+    </div>    
+    
     <div class="itemList">
       <template
           is="dom-repeat"
@@ -162,25 +175,7 @@
       </template>
     </div>
 
-    <div class="item">
-      <paper-input
-          name="newTag" 
-          id="newTag" 
-          label="{{localize('promptTag')}}"
-          type="text" 
-          value="{{_newTag}}"
-          maxlength="64"
-          invalid="{{_isInvalidNewTag}}"
-          auto-validate 
-          allowed-pattern="[a-z0-9_]"
-          required></paper-input>
-      <iron-icon
-          class="submit" disabled$="{{_isInvalidNewTag}}"
-          icon="done" on-tap="_addNewTag" ></iron-icon>
-      <iron-icon
-          class="close"
-          icon="clear" on-tap="_emptyNewTag"></iron-icon>
-    </div>     
+ 
 
     <div class="header">
       <h4>{{localize('scriptToSave')}}</h4>
@@ -253,7 +248,7 @@
                 'title': 'Save current script into local storage',
                 'promptName': 'Give a name to the script',
                 'name': 'Name',
-                'promptTags': 'Add some tags to qualify the script',
+                'promptTags': 'Add some tags to qualify the script, separated by `,` or `enter`',
                 'promptTag': 'Add a tag',
                 'deleteTag': 'Remove tag',
                 'scriptToSave': 'The current WarpScript script',
@@ -268,6 +263,12 @@
       // ***********************************************************************
       // Action listeners
       // ***********************************************************************
+      _onNewTagAction: function(evt, detail) {
+        // console.debug("[quantum-local-collection-writer] _onNewTagAction", evt, detail);
+        if (evt.key == ',' || evt.key == 'Enter') {
+          this._addNewTag();
+        } 
+      },
       _addNewTag: function() {
         if (this.tags.indexOf(this._newTag) < 0) {
           this.push('tags', this._newTag);

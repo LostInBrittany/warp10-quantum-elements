@@ -109,6 +109,34 @@
         margin-left: 15px;
         @apply(--layout-flex);
       }
+      .itemList {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+      }
+      .item {
+        position: relative;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        margin-right: 35px;
+      }
+      .item.tag { 
+        margin-top: 10px;
+        background-color: var(--google-blue-100);
+        padding: 5px 15px;
+        border-radius: 2px;
+      } 
+      iron-icon.submit {
+        color: var(--google-green-500);
+      }
+      iron-icon.close,
+      iron-icon.delete {
+        color: var(--google-red-500);
+      }
+      paper-badge.delete {
+        margin-left:15px;
+        margin-top: -5px;
+      }      
     </style>
 
     <app-pouchdb-index
@@ -158,12 +186,36 @@
           active="{{_filterByTags}}"
           on-change="_onFilterByTagsCheckboxChange">{{localize('filterByTags')}}</paper-checkbox>
       <template is="dom-if" if="{{_filterByTags}}">
-          <paper-input
-              name="filterByTagsInput" 
-              label="{{ localize('commaSeparatedPatterns')}}"
-              type="text" 
-              value="{{_filterByTagsInput}}"
-              maxlength="256"></paper-input>
+        <paper-input
+            name="newTag" 
+            id="newTag" 
+            label="{{localize('promptTag')}}"
+            type="text" 
+            value="{{_newTag}}"
+            maxlength="64"
+            auto-validate 
+            allowed-pattern="[a-z0-9]"
+            on-keypress="_onNewTagAction"></paper-input>
+      </template>
+    </div>
+    <div class="filterCriteria">
+      <template is="dom-if" if="{{_filterByTags}}">
+        <div class="itemList">
+          <template
+              is="dom-repeat"
+              items="[[_tags]]"
+              as="tag">
+            <div class="item tag">
+              <span id$="tag-{{tag}}" class="tagname">{{tag}}</span>
+              <paper-badge
+                  icon="close"
+                  class="delete"
+                  for$="tag-{{tag}}"
+                  label="localize('deleteTag')"
+                  on-click="_deleteTag"></paper-badge>    
+            </div>
+          </template>
+        </div>              
       </template>
     </div>
 
@@ -173,7 +225,7 @@
           id="collectionTemplate"
           items="{{collection}}" 
           as="record"
-          filter="{{_filterRecords(_filterByNameInput,_filterByTagsInput)}}">
+          filter="{{_filterRecords(_filterByNameInput,_tags,_tags.length)}}">
         <div class="record">
           
           <div 
@@ -215,6 +267,13 @@
       ],
 
       properties: {
+
+        _tags: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
 
         _filterByName: {
           type: Boolean,
@@ -259,7 +318,8 @@
                 'filterByTags': "By tags",
                 'filterByDate': "By date",
                 'pattern': 'Pattern',
-                'commaSeparatedPatterns': 'Patterns, separated by commas',
+                'promptTag': 'Add tags, separated by `,` or `enter`',
+                'deleteTag': 'Remove tag',              
               }
             }
           }
@@ -332,10 +392,13 @@
         console.debug("[quantum-local-collection-reader] _load", evt.model.record);
         this.fire("warpscript-choosen", evt.model.record.warpscript);
       },
-      _filterRecords: function(_filterByNameInput,_filterByTagesInput) {
+      _filterRecords: function(_filterByNameInput,_tags, len) {
 
-        console.debug("[quantum-local-collection-reader] _filterRecords - Init", _filterByNameInput,_filterByTagesInput);
-        if (!_filterByNameInput && !_filterByTagesInput) {
+        // 3rd param, `len` used to alert function it must execute when _tags.length change
+        // In an ideal world it should work without, to test with next Polymer versions
+
+        console.debug("[quantum-local-collection-reader] _filterRecords - Init", _filterByNameInput,_tags);
+        if (!_filterByNameInput && (!_tags || _tags.length == 0) ) {
           // set filter to null to disable filtering
           console.debug("[quantum-local-collection-reader] _filterRecords - set filter to null to disable filtering");
           return null;
@@ -343,28 +406,47 @@
           // return a filter function for the current search string
           console.debug("[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string");
           return function(record) {
-            console.debug("[quantum-local-collection-reader] _filterRecords - Filter called", record, _filterByNameInput, _filterByTagesInput);
+            console.debug("[quantum-local-collection-reader] _filterRecords - Filter called", record, _filterByNameInput, _tags);
             if (_filterByNameInput) {
               if (record.name && record.name.toLowerCase().indexOf(_filterByNameInput.toLowerCase()) < 0) {
                 return false;
               }
             }
            
-            if (_filterByTagesInput) {
-              var tags = _filterByTagesInput.split(',');
-              for (var i in tags) {
-                if (record.tags.indexOf(tags[i].trim().toLowerCase()) < 0) {
+            if (_tags && _tags.length > 0) {
+              for (var i in _tags) {
+                if (record.tags.indexOf(_tags[i].trim().toLowerCase()) < 0) {
                   return false;
                 }
               }
             }
-
-           
             return true;
           };
         }
       },
-
+      // ***********************************************************************
+      // Action listeners
+      // ***********************************************************************
+      _onNewTagAction: function(evt, detail) {
+        // console.debug("[quantum-local-collection-reader] _onNewTagAction", evt, detail);
+        if (evt.key == ',' || evt.key == 'Enter') {
+          this._addNewTag();
+        } 
+      },
+      _addNewTag: function() {
+        if (this._tags.indexOf(this._newTag) < 0) {
+          this.push('_tags', this._newTag);
+        }        
+        this._emptyNewTag();
+      },
+      _emptyNewTag: function() {
+        this._newTag = "";
+      },
+      _deleteTag: function(evt) {
+        // console.debug("[quantum-local-collection-reader] _deleteTag", evt.model);
+        var tagToDelete = evt.model;
+        this.splice('_tags', tagToDelete.index, 1);
+      },
     });
   </script>
 </dom-module>  
