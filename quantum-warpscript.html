@@ -245,11 +245,13 @@
 
     <quantum-local-collection-writer
         id="collectionWriter"
-        warpscript="[[warpscript]]"></quantum-local-collection-writer>
+        warpscript="[[warpscript]]"
+        on-keydown="_dontBubble"></quantum-local-collection-writer>
     <quantum-local-collection-reader
         id="collectionReader"
         warpscript="[[warpscript]]"
-        on-warpscript-choosen="_inputFileRead"></quantum-local-collection-reader>        
+        on-warpscript-choosen="_inputFileRead"
+        on-keydown="_dontBubble"></quantum-local-collection-reader>        
 
 
     <warp10-warpscript-caller
@@ -797,6 +799,10 @@
         this.$.loadDialog.cancel();
         console.debug("[quantum-warpscript] _fileChosen", evt, detail); 
         this.warpscript = detail;
+      },
+      _dontBubble: function(evt, detail) {
+        console.debug("[quantum-warpscript] _dontBubble");
+        evt.stopPropagation();
       },
       /**************************************************************************/
       /* Action listeners                                                       */

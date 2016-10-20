@@ -154,7 +154,7 @@
           value="{{_newTag}}"
           maxlength="64"
           auto-validate 
-          allowed-pattern="[a-z0-9_]"
+          on-input="_onNewTagInput"
           on-keypress="_onNewTagAction"></paper-input>
     </div>    
     
@@ -263,9 +263,18 @@
       // ***********************************************************************
       // Action listeners
       // ***********************************************************************
+      _onNewTagInput: function(evt, detail) {
+        console.debug("[quantum-local-collection-writer] _onNewTagInput", this._newTag);
+        var tags = this._newTag.split(',');
+        if (tags.length > 1);
+        for (var i=0; i < tags.length-1; i++) {
+          this.push('tags', tags[i]);
+        }
+        this._newTag = tags[tags.length-1];
+      },
       _onNewTagAction: function(evt, detail) {
-        // console.debug("[quantum-local-collection-writer] _onNewTagAction", evt, detail);
-        if (evt.key == ',' || evt.key == 'Enter') {
+        console.debug("[quantum-local-collection-writer] _onNewTagAction", evt.key);
+        if (evt.key == 'Enter') {
           this._addNewTag();
         } 
       },
