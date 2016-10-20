@@ -16,7 +16,7 @@
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
-<link rel="import" href="../warp10-iron/warp10-iso-date-time-validator.html"
+<link rel="import" href="../warp10-iron/warp10-iso-date-time-or-timestamp-validator.html">
 <link rel="import" href="./quantum-module-behavior.html">
 
 
@@ -180,7 +180,7 @@ Quantum delete widget
             label="{{localize('startTime')}}"
             type="text" 
             value="{{startTime}}"
-            validator="warp10-iso-date-time-validator"
+            validator="warp10-iso-date-time-or-timestamp-validator"
             required ></paper-input>
         <paper-input
             auto-validate
@@ -190,7 +190,7 @@ Quantum delete widget
             label="{{localize('endTime')}}"
             type="text" 
             value="{{endTime}}"
-            validator="warp10-iso-date-time-validator"
+            validator="warp10-iso-date-time-or-timestamp-validator"
             required ></paper-input>
       </div>   
     </template>
@@ -222,13 +222,13 @@ Quantum delete widget
 
     <iron-ajax
       id="xhr"
-      url="{{_baseUrl}}?selector={{selector}}"
+      url="{{_baseUrl}}"
       method='GET'
       handle-as="json"
       on-response="_handleResponse"
       on-error="_handleError"></iron-ajax>
 
-      <warp10-iso-date-time-validator></warp10-iso-date-time-validator>
+      <warp10-iso-date-time-or-timestamp-validator></warp10-iso-date-time-or-timestamp-validator>
 
   </template>
 
@@ -289,8 +289,8 @@ Quantum delete widget
                 'deleteAll': "Delete all",
                 'deleteByDate': "By date",
                 'deleteMethod': "Choose delete mode:", 
-                'startTime': "Start time (in ISO 8601 format)", 
-                'endTime': "End time (in ISO 8601 format)",
+                'startTime': "Start time (in ISO 8601 format or in μs since Epoch)", 
+                'endTime': "End time (in ISO 8601 format or in μs since Epoch)",
               }
             }
           }
@@ -326,6 +326,15 @@ Quantum delete widget
       /**************************************************************************/      
       execute: function() {
         var header = this.backend.headerName+"-Token";
+        this.$.xhr.params = {
+          selector: this.selector
+        }
+        if (this.deleteAll) {
+          this.$.xhr.params.deleteall = true;          
+        } else {
+          this.$.xhr.params.start = this.startTime;
+          this.$.xhr.params.end = this.endTime;
+        }
         this.$.xhr.headers = {}
         this.$.xhr.headers[header] = this.token;
         console.debug("[quantum-update] _doCall - headers", this.$.xhr.headers);
