@@ -5,6 +5,9 @@
 -->
 <link rel="import" href="../polymer/polymer.html">
 
+<link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 
 <link rel="import" href="../ace-widget/ace-widget.html">
@@ -13,6 +16,7 @@
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
+<link rel="import" href="../warp10-iron/warp10-iso-date-time-validator.html"
 <link rel="import" href="./quantum-module-behavior.html">
 
 
@@ -100,6 +104,20 @@ Quantum delete widget
       .title {
         text-transform: capitalize;
       }
+      #chooseDeleteMethod {
+        margin-top: 15px;
+      }
+      #chooseDeleteMethod > .item_value > *:first-child {
+        margin-right: 15px;
+      }
+      #chooseDeleteMethod paper-toggle-button {
+        --paper-toggle-button-checked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-ink-color: var(--app-primary-color);
+        --paper-toggle-button-unchecked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-ink-color: var(--app-primary-color);
+      }
     </style>
 
     <h2 class="title">{{name}}</h2>
@@ -115,7 +133,7 @@ Quantum delete widget
         prevent-invalid-input 
         always-float-label
         name="token" 
-        label="Write token"
+        label="{{localize('writeToken')}}"
         type="text" 
         value="{{token}}"
         required ></paper-input>
@@ -127,11 +145,57 @@ Quantum delete widget
         prevent-invalid-input 
         always-float-label
         name="selector" 
-        label="Selector to delete"
+        label="{{localize('selector')}}"
         type="text" 
         value="{{selector}}"
         required ></paper-input>
     </div>
+
+    <div id="chooseDeleteMethod" class="top-10 item">
+      <div class="item_name">
+          {{localize('deleteMethod')}}
+      </div>
+      <div class="item_value">
+        <div>
+          {{localize('deleteByDate')}}
+        </div>
+        <div>
+          <paper-toggle-button
+              checked="{{deleteAll}}"></paper-toggle-button>
+        </div>
+        <div>
+          {{localize('deleteAll')}}
+        </div>
+      </div>      
+    </div>
+
+    <template is="dom-if" if="{{!deleteAll}}">
+      <div id="chooseTimespan" class="top-10 item">
+
+        <paper-input
+            auto-validate
+            prevent-invalid-input 
+            always-float-label
+            name="selector" 
+            label="{{localize('startTime')}}"
+            type="text" 
+            value="{{startTime}}"
+            validator="warp10-iso-date-time-validator"
+            required ></paper-input>
+        <paper-input
+            auto-validate
+            prevent-invalid-input 
+            always-float-label
+            name="selector" 
+            label="{{localize('endTime')}}"
+            type="text" 
+            value="{{endTime}}"
+            validator="warp10-iso-date-time-validator"
+            required ></paper-input>
+      </div>   
+    </template>
+
+     
     <div  class="top-10">
       <div class="right">
         <paper-button
@@ -139,11 +203,13 @@ Quantum delete widget
           class="btn btn-primary btn-lg"
           on-click="execute"
           disabled$="{{_disabled}}">
-          Execute!
+          {{localize('execute')}}
         </paper-button>
       </div>
     </div>
+
     <div class="clearfix"> </div>
+
     <div  class="top-10">
       <granite-alert level="danger" hidden$="{{!_hasAnError}}">
         {{errorMsg}}
@@ -162,14 +228,18 @@ Quantum delete widget
       on-response="_handleResponse"
       on-error="_handleError"></iron-ajax>
 
+      <warp10-iso-date-time-validator></warp10-iso-date-time-validator>
+
   </template>
 
   <script>
     Polymer({
       is: "quantum-delete",
       behaviors: [
-        QuantumModule
+        QuantumModule,
+        Polymer.AppLocalizeBehavior 
       ],
+
       properties: {
         /**
          * A WRITE token valable for the GTS to be updated
@@ -192,7 +262,39 @@ Quantum delete widget
         _disabled: {
           type: Boolean,
           computed: "_isDisabled(token, selector)"
+        }, 
+        deleteAll:{
+          type: Boolean,
+          value: false
         },
+        startTime: {
+          type: String,
+        },
+        endTime: {
+          type: String,
+        },
+        language: {
+          value: 'en'
+        },     
+        /* Overriden from AppLocalizeBehavior */
+        resources: {
+          type: Object,
+          value: function() {
+            return {
+              'en': { 
+                'title': 'Delete',
+                'writeToken': 'Write token',
+                'selector':'Selector to delete',
+                'execute': 'Execute',
+                'deleteAll': "Delete all",
+                'deleteByDate': "By date",
+                'deleteMethod': "Choose delete mode:", 
+                'startTime': "Start time (in ISO 8601 format)", 
+                'endTime': "End time (in ISO 8601 format)",
+              }
+            }
+          }
+        }         
       },
  
       /**************************************************************************/
