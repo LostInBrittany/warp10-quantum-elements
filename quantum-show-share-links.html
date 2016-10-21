@@ -1,0 +1,141 @@
+<!--
+@author Horacio Gonzalez (@lostinbrittany)
+@copyright (c) 2016 Cityzen Data
+@license Apache 2.0
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="../paper-badge/paper-badge.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+
+
+<link rel="import" href="../granite-alert/granite-alert.html">
+<link rel="import" href="../granite-qrcode-generator/granite-qrcode-generator.html">"
+
+<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-iconset.html">
+
+<dom-module is="quantum-show-share-links">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      granite-alert {
+        margin: 10px 0;
+        display: none;
+      }
+      *[show] {
+        display: block;
+      }
+      .item_vert {
+        @apply(--layout-vertical);
+      }
+      .item_horizontal {
+        @apply(--layout-horizontal);
+      }
+      #icon_qrcode {
+        margin-right: 10px;
+        cursor: pointer;
+      }
+      paper-dialog {
+        padding-top: 30px;
+      }
+      #closeButton {
+        position: absolute;
+        justify-content: flex-end;
+        right: 16px;
+        top: 16px;
+        margin: 0 !important;
+        padding: 0 !important;
+        transition: color 0.5s cubic-bezier(.25,.8,.25,1);
+        color: var(--google-grey-300);        
+      }
+    </style>
+
+    <paper-dialog id="qrcode">    
+      <paper-button
+          id = "closeButton"
+          on-tap = "_closeQRCode">
+        <iron-icon icon = "close"></iron-icon>
+      </paper-button>
+      <h2>Share {{linkType}} QRCode</h2>
+      <granite-qrcode-generator 
+        mode="octet" 
+        data="{{defaultQuantum}}#/shared-result/{{snapshotId}}"
+        auto></granite-qrcode-generator>
+    </paper-dialog>
+
+    <granite-alert level="danger" show$="{{error}}">
+      <div class="item_vert">
+        <h4>Share {{linkType}} error</h4>
+      </div>
+    </granite-alert>
+
+    <granite-alert level="success" show$="{{snapshotId}}">
+      <div class="item_horizontal">
+        <div class="item_vert">
+          <h4>Share {{linkType}}</h4>
+          <div class="item_horizontal">  
+            <iron-icon
+                id="icon_qrcode"
+                icon="quantum:qrcode" 
+                on-tap="_openQRCode"></iron-icon>          
+            Link:
+            <a href$="./#/shared-code/{{snapshotId}}" target="_blank">
+              {{urlRoot}}#/shared-code/{{snapshotId}}
+            </a>
+          </div>
+          <div class="item">
+            Deletion link: 
+            <a href$="./#/delete-shared-code/{{snapshotId}}/{{snapshotSecret}}" target="_blank">
+              {{urlRoot}}#/delete-shared-code/{{snapshotId}}/{{snapshotSecret}}
+            </a>
+          </div>
+        </div>
+      </div>
+    </granite-alert>
+
+  </template>
+  <script>
+    Polymer({
+      is: "quantum-show-share-links",
+      behaviors: [
+        QuantumModule
+      ],
+      properties: {
+        snapshotId: {
+          type: String,
+          value: ""
+        },
+        snapshotSecret: {
+          type: String,
+          value: ""
+        },
+        linkType: {
+          type: String,
+          value: ""
+        },
+        error: {
+          type: Boolean,
+          value: false
+        },
+        urlRoot: {
+          type: String,
+          value: ""
+        }       
+      },
+      _openQRCode: function() {
+        this.$.qrcode.open();
+      },
+      _closeQRCode: function() {
+        this.$.qrcode.close();
+      } 
+      
+    });
+  </script>
+</dom-module>

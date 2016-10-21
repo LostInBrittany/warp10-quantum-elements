@@ -29,13 +29,13 @@
 <link rel="import" href="../granite-alert/granite-alert.html">
 <link rel="import" href="../granite-file-reader/granite-file-reader.html">
 <link rel="import" href="../granite-file-saver/granite-file-saver.html">
-<link rel="import" href="../granite-qrcode-generator/granite-qrcode-generator.html">"
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
 <link rel="import" href="./quantum-module-behavior.html">
 <link rel="import" href="./quantum-response-container.html">
 <link rel="import" href="./quantum-permalink.html">
 <link rel="import" href="./quantum-pouchdb-collection.html">"
+<link rel="import" href="./quantum-show-share-links.html">"
 
 <script src="./ace/mode-warpscript.js"></script>
 
@@ -447,66 +447,22 @@
 
 
     <template is="dom-if" if="{{_hasAResponse}}">
-      <div class="top-10 clearfix"> </div>
-      <granite-alert level="danger" hidden$="{{!_shareResponseError}}">
-        <div class="item_vert">
-          <h4>Share response error</h4>
-        </div>
-      </granite-alert>
-      <granite-alert level="success" hidden$="{{!_lastSharedResponse.snapshotId}}">
-        <div class="item_horizontal">
-          <div class="item_vert">
-            <h4>Share response</h4>
-            <div class="item">
-              Response link:
-              <a href$="./#/shared-result/{{_lastSharedResponse.snapshotId}}" target="_blank">
-                {{_sharingUrlRoot}}#/shared-result/{{_lastSharedResponse.snapshotId}}
-                </a>
-            </div>
-            <div class="item">
-              Deletion link: 
-              <a href$="./#/delete-shared-result/{{_lastSharedResponse.snapshotId}}/{{_lastSharedResponse.snapshotSecret}}" target="_blank">
-                {{_sharingUrlRoot}}#/delete-shared-result/{{_lastSharedResponse.snapshotId}}/{{_lastSharedResponse.snapshotSecret}}
-              </a>
-            </div>
-          </div>        
-          <granite-qrcode-generator 
-            mode="octet" 
-            data="{{defaultQuantum}}#/shared-result/{{_lastSharedResponse.snapshotId}}"
-            auto></granite-qrcode-generator>
-        </div>
-      </granite-alert>
+      <quantum-show-share-links
+          link-type="response"
+          error="{{_shareResponseError}}"
+          snapshot-id="{{_lastSharedResponse.snapshotId}}"
+          snapshot-secret="{{_lastSharedResponse.snapshotSecret}}"
+          url-root="{{_sharingUrlRoot}}"></quantum-show-share-links>
     </template>
+
     <template is="dom-if" if="{{!_warpscriptChangedAfterExecution}}">
+      <quantum-show-share-links
+          link-type="code"
+          error="{{_shareCodeError}}"
+          snapshot-id="{{_lastSharedCode.snapshotId}}"
+          snapshot-secret="{{_lastSharedCode.snapshotSecret}}"
+          url-root="{{_sharingUrlRoot}}"></quantum-show-share-links>
       <div class="top-10 clearfix"> </div>
-      <granite-alert level="danger" hidden$="{{!_shareCodeError}}">
-        <div class="item_vert">
-          <h4>Share code error</h4>
-        </div>
-      </granite-alert>
-      <granite-alert level="success" hidden$="{{!_lastSharedCode.snapshotId}}">
-        <div class="item_horizontal">
-          <div class="item_vert">
-            <h4>Share code</h4>
-            <div class="item">
-              Code link:
-              <a href$="./#/shared-code/{{_lastSharedCode.snapshotId}}" target="_blank">
-                {{_sharingUrlRoot}}#/shared-code/{{_lastSharedCode.snapshotId}}
-                </a>
-            </div>
-            <div class="item">
-              Deletion link: 
-              <a href$="./#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}" target="_blank">
-                {{_sharingUrlRoot}}#/delete-shared-code/{{_lastSharedCode.snapshotId}}/{{_lastSharedCode.snapshotSecret}}
-              </a>
-            </div>
-          </div>
-          <granite-qrcode-generator 
-            mode="octet" 
-            data="{{defaultQuantum}}#/shared-result/{{_lastSharedCode.snapshotId}}"
-            auto></granite-qrcode-generator>
-        </div>
-      </granite-alert>
     </template>
 
     <template is="dom-if" if="{{_elapsedTimeShown}}">
