@@ -472,7 +472,7 @@ Warp plot widget
       _onVertGuideChanged: function(event) {
         if (this.vertGuide >0) {
           this.$.vertGuide.style.display = "inline-block";
-          this.$.vertGuide.style.left = this.vertGuide+"px";
+          this.$.vertGuide.style.left = (30 + this.vertGuide)+"px"; //plot padding-left need to be added
         } else {
           this.$.vertGuide.style.display = "none";
         }
