@@ -56,7 +56,7 @@
     "granite-file-reader": "LostInBrittany/granite-file-reader#^1.0.3",
     "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.0.2",
     "granite-spinner": "LostInBrittany/granite-spinner#^2.0.0",
-    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.4.2",
+    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.4.3",
     "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.1"
   },
   "devDependencies": {
