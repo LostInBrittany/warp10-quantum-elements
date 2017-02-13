@@ -29,6 +29,7 @@
     "app-route": "PolymerElements/app-route#^0.9.1",
     "iron-a11y-keys": "PolymerElements/iron-a11y-keys#^1.0.6",
     "iron-a11y-keys-behavior": "PolymerElements/iron-a11y-keys-behavior#^1.1.7",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.1",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.0.0",
     "iron-icon": "PolymerElements/iron-icon#^1.0.0",
     "iron-icons": "PolymerElements/iron-icons#^1.1.3",
@@ -56,8 +57,7 @@
     "granite-file-reader": "LostInBrittany/granite-file-reader#^1.0.3",
     "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.0.2",
     "granite-spinner": "LostInBrittany/granite-spinner#^2.0.0",
-    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.4.3",
-    "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.1"
+    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.6.0"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
