@@ -181,6 +181,14 @@
               </div>  
               <div class="item">
                 <div class="item_name">
+                  {{ localize('fetchEndpoint')}}
+                </div>
+                <div class="item_value">
+                  {{_altBackendFetchEndpoint}}
+                </div>
+              </div> 
+              <div class="item">
+                <div class="item_name">
                   {{ localize('updateEndpoint')}}
                 </div>
                 <div class="item_value">
@@ -232,6 +240,10 @@
                   name="altBackendFindEndpoint" label="{{ localize('findEndpoint')}}"
                   type="text" value="{{_altBackendFindEndpoint}}"
                   required maxlength="64"></paper-input>    
+                <paper-input
+                  name="altBackendFetchEndpoint" label="{{ localize('fetchEndpoint')}}"
+                  type="text" value="{{_altBackendFetchEndpoint}}"
+                  required maxlength="64"></paper-input>  
                 <paper-input
                   name="altBackendUpdateEndpoint" label="{{ localize('updateEndpoint')}}"
                   type="text" value="{{_altBackendUpdateEndpoint}}"
@@ -285,6 +297,7 @@
          *        "url": "https://warp.cityzendata.net/dist/api/v0",
          *        "execEndpoint": "/exec",
          *        "findEndpoint": "/find",
+         *        "fetchEndpoint": "/fetch",
          *        "updateEndpoint": "/update",
          *        "deleteEndpoint": "/delete",
          *        "headerName": "X-Warp10"
@@ -332,6 +345,10 @@
           type: String,
           value: "/find"
         },
+        _altBackendFetchEndpoint: {
+          type: String,
+          value: "/fetch"
+        },
         _altBackendUpdateEndpoint: {
           type: String,
           value: "/update"
@@ -342,7 +359,7 @@
         },
         _invalidAltBackend: {
           type: Boolean,
-          computed: "_isInvalidAltBackend(_altBackendUrl,_altBackendHeaderName,_altBackendExecEndpoint,_altBackendFindEndpoint,_altBackendUpdateEndpoint,_altBackendDeleteEndpoint)"
+          computed: "_isInvalidAltBackend(_altBackendUrl,_altBackendHeaderName,_altBackendExecEndpoint,_altBackendFindEndpoint,_altBackendFetchEndpoint,_altBackendUpdateEndpoint,_altBackendDeleteEndpoint)"
         },
         _altBackendValidation: {
           type: Boolean,
@@ -381,6 +398,7 @@
                 'headerName': "HTTP header root",
                 'execEndpoint': "'Exec' endpoint", 
                 'findEndpoint': "'Find' endpoint",
+                'fetchEndpoint': "'Fetch' endpoint",
                 'updateEndpoint': "'Update' endpoint",  
                 'deleteEndpoint': "'Delete' endpoint",
                 'configAltBackend': "Configure backend",
@@ -442,6 +460,7 @@
           this._altBackendHeaderName = this.backend.headerName;
           this. _altBackendExecEndpoint = this.backend.execEndpoint;
           this._altBackendFindEndpoint = this.backend.findEndpoint;
+          this._altBackendFetchEndpoint = this.backend.fetchEndpoint;
           this._altBackendUpdateEndpoint = this.backend.updateEndpoint;
           this._altBackendDeleteEndpoint = this.backend.deleteEndpoint;     
           
@@ -478,12 +497,14 @@
         if (!this._altBackendHeaderName) return true;
         if (!this._altBackendExecEndpoint) return true;
         if (!this._altBackendFindEndpoint) return true;
+        if (!this._altBackendFetchEndpoint) return true;
         if (!this._altBackendUpdateEndpoint) return true;
         if (!this._altBackendDeleteEndpoint) return true;
 
         var endpoints = [ 
           this._altBackendExecEndpoint, 
           this._altBackendFindEndpoint,
+          this._altBackendFetchEndpoint,
           this._altBackendUpdateEndpoint,
           this._altBackendDeleteEndpoint
           ];
@@ -492,7 +513,7 @@
         }  
         var uniqueEndpoints = endpoints.filter(unique);
                
-        if (uniqueEndpoints.length != 4) return true;
+        if (uniqueEndpoints.length != 5) return true;
 
         return false;
       },
@@ -511,6 +532,7 @@
           headerName: this._altBackendHeaderName,
           execEndpoint:this. _altBackendExecEndpoint,
           findEndpoint: this._altBackendFindEndpoint,
+          fetchEndpoint: this._altBackendFetchEndpoint,
           updateEndpoint: this._altBackendUpdateEndpoint,
           deleteEndpoint: this._altBackendDeleteEndpoint
         }

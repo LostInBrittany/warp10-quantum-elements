@@ -17,14 +17,14 @@
 
 
 <!--
-Quantum find widget
+Quantum fetch widget
 
 
-    <quantum-find
+    <quantum-fetch
       choose-backend  backend="{{backend}}">
-    </quantum-find>
+    </quantum-fetch>
 -->
-<dom-module id="quantum-find">
+<dom-module id="quantum-fetch">
   <template>
     <style>
       :host {
@@ -127,7 +127,7 @@ Quantum find widget
         prevent-invalid-input 
         always-float-label
         name="selector" 
-        label="Selector to find"
+        label="Selector to fetch"
         type="text" 
         value="{{selector}}"
         required ></paper-input>
@@ -166,7 +166,7 @@ Quantum find widget
 
   <script>
     Polymer({
-      is: "quantum-find",
+      is: "quantum-fetch",
       behaviors: [
         QuantumModule
       ],
@@ -179,7 +179,7 @@ Quantum find widget
           value: ""
         },
         /**
-         * The Selector to find
+         * The Selector to fetch
          */
         selector: {
           type: String,
@@ -209,11 +209,11 @@ Quantum find widget
       /* Computed porperties                                                    */
       /**************************************************************************/     
       _getBaseUrl: function() {
-        console.debug('[quantum-find] _getBaseUrl', this.backend);
-        return this.backend.url + this.backend.findEndpoint;
+        console.debug('[quantum-fetch] _getBaseUrl', this.backend);
+        return this.backend.url + this.backend.fetchEndpoint;
       },
       _isDisabled: function() {
-        console.debug('[quantum-find] _isDisabled', !this.token || !this.selector);
+        console.debug('[quantum-fetch] _isDisabled', !this.token || !this.selector);
         if (!this.token || !this.selector) {
           return true;
         }
@@ -227,7 +227,7 @@ Quantum find widget
         var header = this.backend.headerName+"-Token";
         this.$.xhr.headers = {}
         this.$.xhr.headers[header] = this.token;
-        console.debug("[quantum-find] _doCall - headers", this.$.xhr.headers);
+        console.debug("[quantum-fetch] _doCall - headers", this.$.xhr.headers);
         this.$.xhr.generateRequest();
       },
 
@@ -237,16 +237,16 @@ Quantum find widget
       _editorChangeAction: function(value, oldValue) {
         this.fire('editor-content', {value: value, oldValue: oldValue});
         this.content = value.detail.value;
-        // console.debug("[quantum-find] Ide content changed", this.content);
+        // console.debug("[quantum-fetch] Ide content changed", this.content);
       },
       _handleResponse: function(event, ironRequest) {
-        // console.debug("[quantum-find] _handleResponse - Updated!", ironRequest.response);
+        // console.debug("[quantum-fetch] _handleResponse - Updated!", ironRequest.response);
         this._hasAResponse = true;
         this._hasAnError = false;
         this.data = ironRequest.response;
       },
       _handleError: function(event, ironRequest) {
-        console.debug("[quantum-find] _handleError - Updated!", ironRequest);
+        console.debug("[quantum-fetch] _handleError - Updated!", ironRequest);
         this._hasAResponse = false;
         this._hasAnError = true;      
         this.data = null;
