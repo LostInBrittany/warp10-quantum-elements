@@ -7,8 +7,12 @@
 
 <link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
 
-<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="../ace-widget/ace-widget.html">
 <link rel="import" href="../granite-ajax-saver/granite-ajax-saver.html">
@@ -118,6 +122,11 @@ Quantum fetch widget
         --paper-toggle-button-unchecked-button-color:  var(--app-primary-color);
         --paper-toggle-button-unchecked-ink-color: var(--app-primary-color);
       }
+      #chooseOther {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-justified);
+      }
     </style>
 
     <h2 class="title">{{name}}</h2>
@@ -135,7 +144,7 @@ Quantum fetch widget
         name="token" 
         label="Read token"
         type="text" 
-        value="{{token}}"
+        value="{{paramToken}}"
         required ></paper-input>
     </div>
 
@@ -145,9 +154,9 @@ Quantum fetch widget
         prevent-invalid-input 
         always-float-label
         name="selector" 
-        label="Selector to fetch"
+        label="[[localize('selector')]]"
         type="text" 
-        value="{{selector}}"
+        value="{{paramSelector}}"
         required ></paper-input>
     </div>
 
@@ -175,20 +184,18 @@ Quantum fetch widget
             auto-validate
             prevent-invalid-input 
             always-float-label
-            name="selector" 
             label="{{localize('startTime')}}"
             type="text" 
-            value="{{startTime}}"
+            value="{{paramStartTime}}"
             validator="warp10-iso-date-time-or-timestamp-validator"
             required ></paper-input>
         <paper-input
             auto-validate
             prevent-invalid-input 
             always-float-label
-            name="selector" 
             label="{{localize('endTime')}}"
             type="text" 
-            value="{{endTime}}"
+            value="{{paramEndTime}}"
             validator="warp10-iso-date-time-or-timestamp-validator"
             required ></paper-input>
       </div>   
@@ -199,24 +206,33 @@ Quantum fetch widget
             auto-validate
             prevent-invalid-input 
             always-float-label
-            name="selector" 
             label="{{localize('timestamp')}}"
             type="text" 
-            value="{{timestamp}}"
+            value="{{paramTimestamp}}"
             validator="warp10-iso-date-time-or-timestamp-validator"
             required ></paper-input>
         <paper-input
             auto-validate
             prevent-invalid-input 
             always-float-label
-            name="selector" 
             label="{{localize('timespan')}}"
             type="text" 
-            value="{{timespan}}"
+            value="{{paramTimespan}}"
             allowed-pattern="[-+0-9]"
             required ></paper-input>
       </div>   
     </template>
+
+    <div id="chooseOther" class="top-10">
+      <paper-dropdown-menu label="{{localize('format')}}" selected-item="{{paramFormat}}" >
+        <paper-listbox class="dropdown-content" selected="0">
+          <paper-item name="text">{{localize('text')}}</paper-item>
+          <paper-item name="fulltext">{{localize('fulltext')}}</paper-item>
+          <paper-item name="json">{{localize('json')}}</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <paper-checkbox checked="{{paramDedup}}">{{localize('dedup')}}
+    </div>
 
     <div  class="top-10">
       <div class="right">
@@ -263,16 +279,41 @@ Quantum fetch widget
         /**
          * A WRITE token valable for the GTS to be updated
          */
-        token: {
+        paramToken: {
           type: String,
           value: ""
         },
         /**
          * The Selector to fetch
          */
-        selector: {
+        paramSelector: {
           type: String,
           value: ""
+        },
+        paramDedup: {
+          type: Boolean,
+          value: false,
+        },
+        paramFormat: {
+          type: Object,
+          value: null
+        },
+        paramStartTime: {
+          type: String,
+        },
+        paramEndTime: {
+          type: String,
+        },
+        paramTimespan: {
+          type: String,
+        },
+
+        paramTimestamp: {
+          type: String,
+        },
+        fetchByTimespan: {
+          type: Boolean,
+          value: false
         },
         _baseUrl: {
           type: String,
@@ -280,7 +321,7 @@ Quantum fetch widget
         },
         _disabled: {
           type: Boolean,
-          computed: "_isDisabled(token, selector, fetchByTimespan, startTime, endTime, timestamp, timespan)"
+          computed: "_isDisabled(paramToken, paramSelector, fetchByTimespan, paramStartTime, paramEndTime, paramTimestamp, paramTimespan, paramFormat, paramDedup)"
         },        
         language: {
           value: 'en'
@@ -293,7 +334,7 @@ Quantum fetch widget
               'en': { 
                 'title': 'Delete',
                 'writeToken': 'Write token',
-                'selector':'Selector to delete',
+                'selector':'Selector to fetch',
                 'execute': 'Execute',
                 'fetchByTimespan': "By timespan",
                 'fetchByDate': "By dates",
@@ -301,7 +342,12 @@ Quantum fetch widget
                 'startTime': "Start time (in ISO 8601 format or in μs since Epoch)", 
                 'endTime': "End time (in ISO 8601 format or in μs since Epoch)",
                 'timestamp': "End timestamp (in μs since Epoch)",
-                'timespan': "Timespan (if positive, in μs) or number of points (if negative, -n for n points)"
+                'timespan': "Timespan (if positive, in μs) or number of points (if negative, -n for n points)",
+                'dedup': "Dedup",
+                'format': "Format",
+                'fulltext': "Fulltext",
+                'text': "Text",
+                'json': "JSON",
               }
             }
           }
@@ -326,11 +372,12 @@ Quantum fetch widget
         return this.backend.url + this.backend.fetchEndpoint;
       },
       _isDisabled: function() {
-        // token, selector, fetchByTimespan, startTime, endTime, timestamp, timespan
-        console.debug('[quantum-fetch] _isDisabled', !this.token || !this.selector );
-        if  (!this.token || !this.selector || 
-            (this.fetchByTimespan && (!this.timestamp || !this.timespan) ) ||
-            (!this.fetchByTimespan && (!this.startTime || !this.endTime) ) ) {
+        // token, selector, fetchByTimespan, paramStartTime, paramEndTime, timestamp, paramTimespan, paramFormat, paramDedup
+        console.debug('[quantum-fetch] _isDisabled', !this.paramToken || !this.paramSelector || (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) || (!this.fetchByTimespan && (!this.paramStartTime || !this.paramEndTime) ) || !this.paramFormat );
+        if  (!this.paramToken || !this.paramSelector || 
+            (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) ||
+            (!this.fetchByTimespan && (!this.paramStartTime || !this.paramEndTime) ) ||
+            !this.paramFormat)  {
           return true;
         }
         return false;
@@ -342,15 +389,19 @@ Quantum fetch widget
       execute: function() {
         var header = this.backend.headerName+"-Token";
         this.$.xhr.headers = {}
-        this.$.xhr.params = { "selector": this.selector };
+        this.$.xhr.params = { 
+          "selector": this.paramSelector, 
+          "dedup": this.paramDedup,
+          "format": this.paramFormat.getAttribute("name"),
+        };
         if (this.fetchByTimespan) {
-          this.$.xhr.params.now = this.timestamp;
-          this.$.xhr.params.timespan = this.timespan;
+          this.$.xhr.params.now = this.paramTimestamp;
+          this.$.xhr.params.timespan = this.paramTimespan;
         } else {
-          this.$.xhr.params.start = this.startTime;
-          this.$.xhr.params.timespan = this.endTime;
+          this.$.xhr.params.start = this.paramStartTime;
+          this.$.xhr.params.timespan = this.paramEndTime;
         }
-        this.$.xhr.headers[header] = this.token;
+        this.$.xhr.headers[header] = this.paramToken;
         console.debug("[quantum-fetch] _doCall - headers", this.$.xhr.headers);
         this.$.xhr.generateRequest();
       },
