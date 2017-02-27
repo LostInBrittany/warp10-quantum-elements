@@ -5,12 +5,17 @@
 -->
 <link rel="import" href="../polymer/polymer.html">
 
+<link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
+
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../paper-input/paper-input.html">
 
 <link rel="import" href="../ace-widget/ace-widget.html">
 <link rel="import" href="../granite-ajax-saver/granite-ajax-saver.html">
 <link rel="import" href="../granite-alert/granite-alert.html">
 <link rel="import" href="../granite-spinner/granite-spinner.html">
+
+<link rel="import" href="../warp10-iron/warp10-iso-date-time-or-timestamp-validator.html">
 
 <link rel="import" href="./quantum-module-behavior.html">
 
@@ -99,6 +104,20 @@ Quantum fetch widget
       .title {
         text-transform: capitalize;
       }
+      #chooseFetchMethod {
+        margin-top: 15px;
+      }
+      #chooseFetchMethod > .item_value > *:first-child {
+        margin-right: 15px;
+      }
+      #chooseFetchMethod paper-toggle-button {
+        --paper-toggle-button-checked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-ink-color: var(--app-primary-color);
+        --paper-toggle-button-unchecked-bar-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-ink-color: var(--app-primary-color);
+      }
     </style>
 
     <h2 class="title">{{name}}</h2>
@@ -131,6 +150,74 @@ Quantum fetch widget
         value="{{selector}}"
         required ></paper-input>
     </div>
+
+    <div id="chooseFetchMethod" class="top-10 item">
+      <div class="item_name">
+          {{localize('fetchMethod')}}
+      </div>
+      <div class="item_value">
+        <div>
+          {{localize('fetchByDate')}}
+        </div>
+        <div>
+          <paper-toggle-button
+              checked="{{fetchByTimespan}}"></paper-toggle-button>
+        </div>
+        <div>
+          {{localize('fetchByTimespan')}}
+        </div>
+      </div>      
+    </div>
+
+    <template is="dom-if" if="{{!fetchByTimespan}}">
+      <div id="chooseTimespan" class="top-10 item">
+        <paper-input
+            auto-validate
+            prevent-invalid-input 
+            always-float-label
+            name="selector" 
+            label="{{localize('startTime')}}"
+            type="text" 
+            value="{{startTime}}"
+            validator="warp10-iso-date-time-or-timestamp-validator"
+            required ></paper-input>
+        <paper-input
+            auto-validate
+            prevent-invalid-input 
+            always-float-label
+            name="selector" 
+            label="{{localize('endTime')}}"
+            type="text" 
+            value="{{endTime}}"
+            validator="warp10-iso-date-time-or-timestamp-validator"
+            required ></paper-input>
+      </div>   
+    </template>
+    <template is="dom-if" if="{{fetchByTimespan}}">
+      <div id="chooseTimespan" class="top-10 item">
+        <paper-input
+            auto-validate
+            prevent-invalid-input 
+            always-float-label
+            name="selector" 
+            label="{{localize('timestamp')}}"
+            type="text" 
+            value="{{timestamp}}"
+            validator="warp10-iso-date-time-or-timestamp-validator"
+            required ></paper-input>
+        <paper-input
+            auto-validate
+            prevent-invalid-input 
+            always-float-label
+            name="selector" 
+            label="{{localize('timespan')}}"
+            type="text" 
+            value="{{timespan}}"
+            allowed-pattern="[-+0-9]"
+            required ></paper-input>
+      </div>   
+    </template>
+
     <div  class="top-10">
       <div class="right">
         <paper-button
@@ -142,7 +229,9 @@ Quantum fetch widget
         </paper-button>
       </div>
     </div>
+
     <div class="clearfix"> </div>
+   
     <div  class="top-10">
       <granite-alert level="danger" hidden$="{{!_hasAnError}}">
         {{errorMsg}}
@@ -155,7 +244,7 @@ Quantum fetch widget
 
     <granite-ajax-saver
       id="xhr"
-      url="{{_baseUrl}}?selector={{selector}}"
+      url="{{_baseUrl}}"
       method='GET'
       handle-as="json"
       on-response="_handleResponse"
@@ -167,7 +256,8 @@ Quantum fetch widget
     Polymer({
       is: "quantum-fetch",
       behaviors: [
-        QuantumModule
+        QuantumModule,
+        Polymer.AppLocalizeBehavior 
       ],
       properties: {
         /**
@@ -190,8 +280,32 @@ Quantum fetch widget
         },
         _disabled: {
           type: Boolean,
-          computed: "_isDisabled(token, selector)"
-        },
+          computed: "_isDisabled(token, selector, fetchByTimespan, startTime, endTime, timestamp, timespan)"
+        },        
+        language: {
+          value: 'en'
+        },     
+        /* Overriden from AppLocalizeBehavior */
+        resources: {
+          type: Object,
+          value: function() {
+            return {
+              'en': { 
+                'title': 'Delete',
+                'writeToken': 'Write token',
+                'selector':'Selector to delete',
+                'execute': 'Execute',
+                'fetchByTimespan': "By timespan",
+                'fetchByDate': "By dates",
+                'fetchMethod': "Choose fetch mode:", 
+                'startTime': "Start time (in ISO 8601 format or in μs since Epoch)", 
+                'endTime': "End time (in ISO 8601 format or in μs since Epoch)",
+                'timestamp': "End timestamp (in μs since Epoch)",
+                'timespan': "Timespan (if positive, in μs) or number of points (if negative, -n for n points)"
+              }
+            }
+          }
+        } 
       },
  
       /**************************************************************************/
@@ -212,8 +326,11 @@ Quantum fetch widget
         return this.backend.url + this.backend.fetchEndpoint;
       },
       _isDisabled: function() {
-        console.debug('[quantum-fetch] _isDisabled', !this.token || !this.selector);
-        if (!this.token || !this.selector) {
+        // token, selector, fetchByTimespan, startTime, endTime, timestamp, timespan
+        console.debug('[quantum-fetch] _isDisabled', !this.token || !this.selector );
+        if  (!this.token || !this.selector || 
+            (this.fetchByTimespan && (!this.timestamp || !this.timespan) ) ||
+            (!this.fetchByTimespan && (!this.startTime || !this.endTime) ) ) {
           return true;
         }
         return false;
@@ -225,6 +342,14 @@ Quantum fetch widget
       execute: function() {
         var header = this.backend.headerName+"-Token";
         this.$.xhr.headers = {}
+        this.$.xhr.params = { "selector": this.selector };
+        if (this.fetchByTimespan) {
+          this.$.xhr.params.now = this.timestamp;
+          this.$.xhr.params.timespan = this.timespan;
+        } else {
+          this.$.xhr.params.start = this.startTime;
+          this.$.xhr.params.timespan = this.endTime;
+        }
         this.$.xhr.headers[header] = this.token;
         console.debug("[quantum-fetch] _doCall - headers", this.$.xhr.headers);
         this.$.xhr.generateRequest();
