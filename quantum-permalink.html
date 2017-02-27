@@ -59,7 +59,7 @@
     _decodeBackend: function(){
       // console.debug([quantum-permalink-decoder] decodeBackend - encodedBackend :", this.encodedBackend);
       var self = this;
-      var fields = ['url', 'execEndpoint', 'findEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      var fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
       var decoded;
 
       try {
@@ -205,7 +205,7 @@
       if (!this.backend) return;
       
       var backendToEncode = {};
-      var fields = ['url', 'execEndpoint', 'findEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];     
+      var fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];     
 
       fields.forEach(function(field){ 
         if (self.backend[field] !== self.defaultBackend[field]) {
