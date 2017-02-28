@@ -22,7 +22,7 @@
   ],
   "homepage": "http://www.warp10.io",
   "dependencies": {
-    "polymer": "polymer/polymer#^1.6.0",
+    "polymer": "polymer/polymer#^1.8.0",
     "app-layout": "PolymerElements/app-layout#^0.9.0",
     "app-localize-behavior": "PolymerElements/app-localize-behavior#^0.10.0",
     "app-pouchdb": "PolymerElements/app-pouchdb#^0.9.2",
@@ -55,18 +55,18 @@
     "font-roboto": "PolymerElements/font-roboto-local#^1.0.1",
     "moment-js": "^0.4.0",
     "ace-widget": "LostInBrittany/ace-widget#~1.2.3",
+    "granite-ajax-saver": "LostInBrittany/granite-ajax-saver#^1.0.3",
     "granite-alert": "LostInBrittany/granite-alert#^1.0.0",
     "granite-file-saver": "LostInBrittany/granite-file-saver#^1.0.2",
     "granite-file-reader": "LostInBrittany/granite-file-reader#^1.0.3",
     "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.0.2",
     "granite-spinner": "LostInBrittany/granite-spinner#^2.0.0",
-    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.6.1",
-    "granite-ajax-saver": "LostInBrittany/granite-ajax-saver#^1.0.3"
+    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^1.6.2"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
   },
   "resolutions": {
-    "polymer": "^1.6.0"
+    "polymer": "^1.8.0"
   }
 }

@@ -633,10 +633,11 @@ Warp plot widget
 
       selectRegex: function() {
         var gts, i, len, ref;
-        // console.debug("[quantum-plot] selectRegex called with regex", "/" + this._currentRegex + "/");
         ref = this.stackedGtsList;
+        // console.debug("[quantum-plot] selectRegex called with regex", "/" + this._currentRegex + "/", ref);
         for (i = 0, len = ref.length; i < len; i++) {
           gts = ref[i];
+          // console.debug("[quantum-plot] selectRegex - matching", gts,  gtsTools.serializeGtsMetadata(gts), gtsTools.serializeGtsMetadata(gts).match("" + this._currentRegex))
           if (gtsTools.serializeGtsMetadata(gts).match("" + this._currentRegex)) {
             // console.debug("[quantum-plot] gts selected by regex", gtsTools.serializeGtsMetadata(gts))
             // TO-DO this.addToPlot(gts);
