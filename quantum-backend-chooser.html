@@ -331,9 +331,27 @@
 
         _altBackendUrl: {
           type: String,
-          value: "http://127.0.0.1:8080/api/v0"
+          value: function() {
+            if (window.location.protocol == "https:") {
+              return "";
+            } 
+            return "http://127.0.0.1:8080/api/v0"
+          },
         },
+        _altBackendDefaultUrl: {
+          type: String,
+          value: function() {
+            if (window.location.protocol == "https:") {
+              return "https://[host]:[port]/api/v0";
+            } 
+            return "http://127.0.0.1:8080/api/v0"
+          },
+        },        
         _altBackendHeaderName: {
+          type: String,
+          value: "X-Warp10"
+        },     
+        _altBackendDefaultHeaderName: {
           type: String,
           value: "X-Warp10"
         },
@@ -341,7 +359,15 @@
           type: String,
           value: "/exec"
         },
+        _altBackendDefaultExecEndpoint: {
+          type: String,
+          value: "/exec"
+        },
         _altBackendFindEndpoint: {
+          type: String,
+          value: "/find"
+        },
+        _altBackendDefaultFindEndpoint: {
           type: String,
           value: "/find"
         },
@@ -349,11 +375,23 @@
           type: String,
           value: "/fetch"
         },
+        _altBackendDefaultFetchEndpoint: {
+          type: String,
+          value: "/fetch"
+        },
         _altBackendUpdateEndpoint: {
           type: String,
           value: "/update"
         },
+        _altBackendDefaultUpdateEndpoint: {
+          type: String,
+          value: "/update"
+        },
         _altBackendDeleteEndpoint: {
+          type: String,
+          value: "/delete"
+        },
+        _altBackendDefaultDeleteEndpoint: {
           type: String,
           value: "/delete"
         },
@@ -393,7 +431,7 @@
             return {
               'en': { 
                 'chooseYourBackend': 'Choose your backend',
-                'backendUrl': 'Backend URL',
+                'backendUrl': 'Backend URL (http[s]://[host]:[port]/api/v0)',
                 'otherParams': 'Other backend configuration parameters',
                 'headerName': "HTTP header root",
                 'execEndpoint': "'Exec' endpoint", 
@@ -410,7 +448,7 @@
 
       },
       observers: [
-        "_backendChanged(backend,configuredBackends)"
+        "_backendChanged(backend,configuredBackends,_isAttached)"
       ],
 
       /* ************************************************************************/
@@ -436,6 +474,9 @@
         }
       },
       _backendChanged: function() {
+        if (!this.isAttached) {
+          return;
+        }
        console.debug("[quantum-backend-chooser] _backendChanged - backend ", this.backend)
        console.debug("[quantum-backend-chooser] _backendChanged - configuredBackends ", this.configuredBackends)
         if (!this.backend) {
@@ -468,6 +509,13 @@
         } else {
          // console.debug("[quantum-backend-chooser] _backendChanged - preconfiguredBackend"); 
           this._chooseAltBackendSelected = false;
+          this._altBackendUrl = this._altBackendDefaultUrl;
+          this._altBackendHeaderName = this._altBackendDefaultHeaderName;
+          this._altBackendExecEndpoint = this._altBackendDefaultExecEndpoint;
+          this._altBackendFindEndpoint = this._altBackendDefaultFindEndpoint;
+          this._altBackendFetchEndpoint = this._altBackendDefaultFetchEndpoint;
+          this._altBackendUpdateEndpoint = this._altBackendDefaultUpdateEndpoint
+          this._altBackendDeleteEndpoint = this._altBackendDefaultDeleteEndpoint;    
         }
          console.debug("[quantum-backend-chooser] _backendChanged - configurated backends", this.configuredBackends); 
       },
