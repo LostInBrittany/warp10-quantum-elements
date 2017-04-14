@@ -399,7 +399,7 @@ Quantum fetch widget
           this.$.xhr.params.timespan = this.paramTimespan;
         } else {
           this.$.xhr.params.start = this.paramStartTime;
-          this.$.xhr.params.timespan = this.paramEndTime;
+          this.$.xhr.params.stop = this.paramEndTime;
         }
         this.$.xhr.headers[header] = this.paramToken;
         console.debug("[quantum-fetch] _doCall - headers", this.$.xhr.headers);
