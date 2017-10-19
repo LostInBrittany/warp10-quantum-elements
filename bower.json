@@ -55,12 +55,12 @@
     "font-roboto": "PolymerElements/font-roboto-local#^1.0.1",
     "moment-js": "saeidzebardast/moment-js#^0.7.2",
     "ace-widget": "LostInBrittany/ace-widget#~1.2.3",
-    "granite-ajax-saver": "LostInBrittany/granite-ajax-saver#^1.0.3",
-    "granite-alert": "LostInBrittany/granite-alert#^1.0.0",
-    "granite-file-saver": "LostInBrittany/granite-file-saver#^1.0.2",
-    "granite-file-reader": "LostInBrittany/granite-file-reader#^1.0.3",
-    "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.0.2",
-    "granite-spinner": "LostInBrittany/granite-spinner#^2.0.0",
+    "granite-ajax-saver": "LostInBrittany/granite-ajax-saver#^1.1.0",
+    "granite-alert": "LostInBrittany/granite-alert#^1.2.0",
+    "granite-file-saver": "LostInBrittany/granite-file-saver#^1.1.0",
+    "granite-file-reader": "LostInBrittany/granite-file-reader#^1.3.0",
+    "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.1.4",
+    "granite-spinner": "LostInBrittany/granite-spinner#^2.1.0",
     "warp10-iron": "cityzendata/warp10-iron#^2.0.0-a1",
     "warp10-quantumviz": "cityzendata/warp10-quantumviz#^2.1.0-a1"
   },
@@ -69,7 +69,6 @@
   },
   "resolutions": {
     "polymer": "^2.0.0",
-    "warp10-iron": "^2.0.0-a1",
     "webcomponentsjs": "^v1.0.2"
   }
 }
