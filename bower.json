@@ -62,7 +62,7 @@
     "granite-qrcode-generator": "LostInBrittany/granite-qrcode-generator#^1.0.2",
     "granite-spinner": "LostInBrittany/granite-spinner#^2.0.0",
     "warp10-iron": "cityzendata/warp10-iron#^2.0.0-a1",
-    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^2.0.0"
+    "warp10-quantumviz": "cityzendata/warp10-quantumviz#^2.1.0-a1"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0"
