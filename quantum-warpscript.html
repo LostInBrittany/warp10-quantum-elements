@@ -53,38 +53,49 @@
         --app-background-color: white;
         --app-on-background-color: white;
       }
+
       .title {
         margin-bottom: 10px;
       }
+
       ace-widget {
         --ace-widget-editor: {
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
         };
       }
+
       .ace-editor {
         font-size: 18px;
       }
-      .top-10 { margin-top:10px; }
+
+      .top-10 {
+        margin-top: 10px;
+      }
 
       .left {
         float: left;
       }
+
       .right {
         float: right;
       }
+
       .btn[hidden],
       quantum-permalink-generator[hidden],
-      quantum-response-container[hidden]{
+      quantum-response-container[hidden] {
         display: none;
       }
+
       .overlayBox {
-        display:flex;
+        display: flex;
         flex-flow: row;
         justify-content: center;
         font-size: 1.2em;
       }
-      .overlayContent  {
+
+      .overlayContent {
       }
+
       .hotkey-key {
         background-color: #333;
         border: 1px solid #333;
@@ -97,36 +108,43 @@
         padding: 5px 9px;
         text-align: center;
       }
+
       granite-alert[hidden] {
         display: none;
       }
+
       paper-button {
         background-color: var(--app-primary-color);
         color: var(--app-on-background-color);
         margin: 5px;
       }
+
       granite-spinner {
         z-index: 100;
       }
+
       .toolbar {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-end-justified);
         margin-bottom: 10px;
       }
-      .toolbar > * {        
+
+      .toolbar > * {
         height: 24px;
       }
+
       .toolbar iron-icon {
         color: var(--app-primary-color);
         cursor: pointer;
         margin-left: 10px;
       }
+
       .toolbar paper-tooltip {
         width: 120px;
         text-align: center;
       }
-      
+
       .toolbar iron-icon#saveDialogButton,
       .toolbar granite-file-saver iron-icon,
       .toolbar iron-icon#helpButton {
@@ -148,7 +166,7 @@
         margin-bottom: 8px;
       }
 
-      .item_list {        
+      .item_list {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
@@ -166,37 +184,42 @@
         letter-spacing: 0.011em;
         line-height: 20px;
       }
+
       .item_value {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
       }
+
       .item_vert {
         @apply(--layout-vertical);
       }
+
       .item_horizontal {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
       }
+
       .clearfix:before,
       .clearfix:after {
         content: " "; /* 1 */
         display: table; /* 2 */
       }
+
       .clearfix:after {
         clear: both;
       }
+
       .title {
         text-transform: capitalize;
       }
 
-
       paper-dialog {
         width: 80vw;
         background: white;
-        transition: box-shadow 0.5s cubic-bezier(.25,.8,.25,1);
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-        overflow : auto;
+        transition: box-shadow 0.5s cubic-bezier(.25, .8, .25, 1);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        overflow: auto;
         border-radius: 2px;
         padding: 15px;
         --app-primary-color: var(--google-blue-500);
@@ -204,31 +227,32 @@
         --app-background-color: white;
         --app-on-background-color: white;
       }
+
       paper-dialog .closeDialog {
         margin: 0 !important;
         position: absolute;
         justify-content: flex-end;
         right: 16px;
         top: 16px;
-        margin: 0;
-        transition: color 0.5s cubic-bezier(.25,.8,.25,1);
-        color: var(--google-grey-300);       
-        cursor: pointer; 
+        transition: color 0.5s cubic-bezier(.25, .8, .25, 1);
+        color: var(--google-grey-300);
+        cursor: pointer;
       }
+
       paper-dialog .header {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         margin-top: 30px !important;
       }
-      paper-dialog  .actions {
-        margin-left: 0px;
+
+      paper-dialog .actions {
+        margin-left: 0;
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-center-justified);
-        
+
       }
     </style>
-
 
 
     <h2 class="title">WarpScript</h2>
@@ -251,21 +275,23 @@
     </warp10-simple-overlay>
 
     <quantum-local-collection-writer
-        id="collectionWriter"
-        warpscript="[[warpscript]]"
-        on-keydown="_dontBubble"
-        modal></quantum-local-collection-writer>
+      id="collectionWriter"
+      warpscript="[[warpscript]]"
+      on-keydown="_dontBubble"
+      debug="[[debug]]"
+      modal></quantum-local-collection-writer>
     <quantum-local-collection-reader
-        id="collectionReader"
-        warpscript="[[warpscript]]"
-        on-warpscript-choosen="_inputFileRead"
-        on-keydown="_dontBubble"></quantum-local-collection-reader>        
-
+      id="collectionReader"
+      warpscript="[[warpscript]]"
+      debug="[[debug]]"
+      on-warpscript-choosen="_inputFileRead"
+      on-keydown="_dontBubble"></quantum-local-collection-reader>
 
     <warp10-warpscript-caller
       id="warpscriptcaller"
+      debug="[[debug]]"
       url="{{_baseUrl}}" warpscript="{{warpscriptScript}}"
-      on-response="_handleResponse"  on-error="_handleError"
+      on-response="_handleResponse" on-error="_handleError"
       loading="{{loading}}">
     </warp10-warpscript-caller>
 
@@ -273,7 +299,7 @@
       id="shareCodeRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_codeToShare}}'
-      handle-as="text"  on-response="_handleShareCodeResponse" on-error="_handleShareCodeError"
+      handle-as="text" on-response="_handleShareCodeResponse" on-error="_handleShareCodeError"
       loading="{{loading}}" debounce-duration="{{debounceDuration}}">
     </iron-ajax>
 
@@ -281,127 +307,120 @@
       id="shareResponseRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_responseToShare}}'
-      handle-as="text"  on-response="_handleShareResponseResponse" on-error="_handleShareResponseError"
+      handle-as="text" on-response="_handleShareResponseResponse" on-error="_handleShareResponseError"
       loading="{{loading}}" debounce-duration="{{debounceDuration}}">
     </iron-ajax>
-    
-    <paper-dialog
-        id="saveDialog">
-          <div
-              class="closeDialog"
-              on-tap="_closeSaveDialog">
-            <iron-icon icon="close"></iron-icon>
-          </div>
-        <h2 class="header">Save your WarpScript</h2>
 
-        <div class="actions">
-          <granite-file-saver 
-              filename="{{_filename}}" 
-              id="warpscriptFileSaver" 
-              text="{{warpscript}}"
-              on-file-saved="_closeSaveDialog">
-              <paper-button>
-                To a file
-              </paper-button>  
-          </granite-file-saver>
-          <paper-button
-              id="collectionSaveButton" 
-              on-click="saveCollection">
-            To in-browser storage
-          </paper-button>
-        </div>
-      </div>      
+    <paper-dialog
+      id="saveDialog">
+      <div class="closeDialog" on-tap="_closeSaveDialog">
+        <iron-icon icon="close"></iron-icon>
+      </div>
+      <h2 class="header">Save your WarpScript</h2>
+
+      <div class="actions">
+        <granite-file-saver
+          filename="{{_filename}}"
+          id="warpscriptFileSaver"
+          text="{{warpscript}}"
+          on-file-saved="_closeSaveDialog">
+          <paper-button>To a file</paper-button>
+        </granite-file-saver>
+        <paper-button
+          id="collectionSaveButton"
+          on-click="saveCollection">
+          To in-browser storage
+        </paper-button>
+      </div>
     </paper-dialog>
 
     <paper-dialog
-        id="loadDialog">
-          <div
-              class="closeDialog"
-              on-tap="_closeLoadDialog">
-            <iron-icon icon="close"></iron-icon>
-          </div>
-        <h2 class="header">Load a WarpScript</h2>
+      id="loadDialog">
+      <div class="closeDialog" on-tap="_closeLoadDialog">
+        <iron-icon icon="close"></iron-icon>
+      </div>
+      <h2 class="header">Load a WarpScript</h2>
 
-        <div class="actions">
+      <div class="actions">
+        <granite-file-reader
+          id="warpscriptFileReader"
+          accept=".mc2"
+          read-as="text"
+          on-file-read="_inputFileRead">
+          <paper-button>From a file</paper-button>
+        </granite-file-reader>
 
-          <granite-file-reader 
-              id="warpscriptFileReader" 
-              accept=".mc2" 
-              read-as="text" 
-              on-file-read="_inputFileRead">
-            <paper-button>
-              From a file
-            </paper-button>  
-          </granite-file-reader>
-
-          <paper-button
-              id="collectionReadButton" 
-              on-click="readCollection">
-            From in-browser storage
-          </paper-button>
-        </div>
-      </div>      
+        <paper-button
+          id="collectionReadButton"
+          on-click="readCollection">
+          From in-browser storage
+        </paper-button>
+      </div>
     </paper-dialog>
 
     <div class="toolbar">
 
       <div>
         <iron-icon
-            id="saveDialogButton" 
-            icon="file-download"
-            on-tap="_openSaveDialog"></iron-icon>
+          id="saveDialogButton"
+          icon="file-download"
+          on-tap="_openSaveDialog"></iron-icon>
       </div>
 
       <div>
         <iron-icon
-            id="loadDialogButton" 
-            icon="open-in-browser" 
-            on-click="_openLoadDialog"></iron-icon>
+          id="loadDialogButton"
+          icon="open-in-browser"
+          on-click="_openLoadDialog"></iron-icon>
       </div>
-      
+
       <div>
         <iron-icon
-            id="helpButton" 
-            icon="help" 
-            on-click="_hotkeyHelp"></iron-icon>
+          id="helpButton"
+          icon="help"
+          on-click="_hotkeyHelp"></iron-icon>
       </div>
-    </div>   
-       
-    <paper-tooltip 
-        id="saveDialogButtonTooltip" 
-        for="saveDialogButton"
-        fit-to-visible-bounds>Save WarpScript</paper-tooltip>
-    <paper-tooltip 
-        id="loadDialogButtonTooltip" 
-        for="loadDialogButton"
-        fit-to-visible-bounds>Load WaprScript</paper-tooltip>
-    <paper-tooltip 
-        id="helpButtonTooltip" 
-        for="helpButton"
-        fit-to-visible-bounds>Help</paper-tooltip>
-    
+    </div>
+
+    <paper-tooltip
+      id="saveDialogButtonTooltip"
+      for="saveDialogButton"
+      fit-to-visible-bounds>Save WarpScript
+    </paper-tooltip>
+    <paper-tooltip
+      id="loadDialogButtonTooltip"
+      for="loadDialogButton"
+      fit-to-visible-bounds>Load WaprScript
+    </paper-tooltip>
+    <paper-tooltip
+      id="helpButtonTooltip"
+      for="helpButton"
+      fit-to-visible-bounds>Help
+    </paper-tooltip>
+
     <ace-widget
-        id="editor" 
-        theme="ace/theme/eclipse"
-        mode="ace/mode/warpscript"
-        softtabs="true"
-        wrap="true"
-        value="{{warpscript}}"
-        placeholder="Type your WarpScript here..."
-        initial-focus></ace-widget>
+      id="editor"
+      theme="ace/theme/eclipse"
+      mode="ace/mode/warpscript"
+      softtabs="true"
+      wrap="true"
+      value="{{warpscript}}"
+      placeholder="Type your WarpScript here..."
+      initial-focus></ace-widget>
 
 
     <granite-spinner
-        active="{{loading}}"
-        size="200"
-        hover></granite-spinner>
+      active="{{loading}}"
+      size="200"
+      hover></granite-spinner>
 
     <quantum-permalink-generator
       warpscript="{{warpscript}}"
       backend="{{backend}}"
+      debug="[[debug]]"
       hidden$="{{!showPermalink}}"></quantum-permalink-generator>
 
-    <div  class="top-10 button_bar">
+    <div class="top-10 button_bar">
       <div class="item_list">
         <template is="dom-if" if="{{!hidePlot}}">
           <div class="item_value">
@@ -423,14 +442,14 @@
         </template>
         <div class="item_value">
           <paper-button
-              id="btn_share_response"
-              on-click="shareResponse"
-              disabled$="{{_shareResponseDisabled}}"
-              hidden$="{{!_hasAResponse}}">
-              Share response
+            id="btn_share_response"
+            on-click="shareResponse"
+            disabled$="{{_shareResponseDisabled}}"
+            hidden$="{{!_hasAResponse}}">
+            Share response
           </paper-button>
         </div>
-      </div>  
+      </div>
       <div class="item_list">
         <div class="item_value">
           <paper-button
@@ -441,7 +460,7 @@
             hidden$="{{!_hasAResponse}}">
             Share code
           </paper-button>
-        </div>        
+        </div>
         <div class="item_value">
           <paper-button
             id="btn_execute"
@@ -455,39 +474,43 @@
     </div>
 
 
-
     <template is="dom-if" if="{{_hasAResponse}}">
       <quantum-show-share-links
-          link-type="response"
-          error="{{_shareResponseError}}"
-          snapshot-id="{{_lastSharedResponse.snapshotId}}"
-          snapshot-secret="{{_lastSharedResponse.snapshotSecret}}"
-          url-root="{{_sharingUrlRoot}}"></quantum-show-share-links>
+        link-type="response"
+        error="{{_shareResponseError}}"
+        debug="[[debug]]"
+        snapshot-id="{{_lastSharedResponse.snapshotId}}"
+        snapshot-secret="{{_lastSharedResponse.snapshotSecret}}"
+        url-root="{{_sharingUrlRoot}}"></quantum-show-share-links>
     </template>
 
     <template is="dom-if" if="{{!_warpscriptChangedAfterExecution}}">
       <quantum-show-share-links
-          link-type="code"
-          error="{{_shareCodeError}}"
-          snapshot-id="{{_lastSharedCode.snapshotId}}"
-          snapshot-secret="{{_lastSharedCode.snapshotSecret}}"
-          url-root="{{_sharingUrlRoot}}"></quantum-show-share-links>
-      <div class="top-10 clearfix"> </div>
+        link-type="code"
+        error="{{_shareCodeError}}"
+        debug="[[debug]]"
+        snapshot-id="{{_lastSharedCode.snapshotId}}"
+        snapshot-secret="{{_lastSharedCode.snapshotSecret}}"
+        url-root="{{_sharingUrlRoot}}"></quantum-show-share-links>
+      <div class="top-10 clearfix"></div>
     </template>
 
     <template is="dom-if" if="{{_elapsedTimeShown}}">
-      <div class="clearfix"> </div>
-      <div  class="top-10">
+      <div class="clearfix"></div>
+      <div class="top-10">
         <div class="right">
-          Your script execution took {{_formattedElapsedTime}} serverside, fetched {{_fetched}} datapoints and performed {{_operations}} WarpScript operations.</div>
+          Your script execution took {{_formattedElapsedTime}} serverside, fetched {{_fetched}} datapoints and performed
+          {{_operations}} WarpScript operations.
+        </div>
       </div>
     </template>
-    <div class="clearfix"> </div>
+    <div class="clearfix"></div>
 
-    <div  class="top-10">
+    <div class="top-10">
       <quantum-response-container
         id="response_container"
         response="{{stack}}"
+        debug="[[debug]]"
         received="{{received}}"
         hidden$="{{!_hasAResponse}}"></quantum-response-container>
       <granite-alert level="danger" hidden$="{{!_hasAnError}}">
@@ -495,212 +518,221 @@
       </granite-alert>
     </div>
 
-
   </template>
 
   <script>
-    Polymer({
-      is:"quantum-warpscript",
-      behaviors: [
-        QuantumModule
-      ],
-      properties: {
+    /* globals looseJSON */
+    class QuantumWarpscript extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-warpscript';
+      }
 
-        /**
-         * Fired when user clicks on plot
-         *
-         * @event plot
-         * @param {Object} params
-         */
+      static get properties() {
+        return {
+          /**
+           * Fired when user clicks on plot
+           *
+           * @event plot
+           * @param {Object} params
+           */
 
-        /**
-         * The application name for this widget
-         */
-        application: {
-          type: String,
-        },
-        /**
-         * The WarpScript
-         */
-        warpscript: {
-          type: String,
-          value: "",
-          observer: "_onWarpscriptChange"
-        },
-        /**
-         * The name of the currently selected module
-         */
-        selected: {
-          type: String,
-          observer: "_onSelectedChanged"
-        },
-        /**
-         * The WarpScript stack received as response
-         */
-        stack: {
-          type: Array,
-          notify: true
-        },
-        _target: {
-          type: Object,
-          value: function() {
-            return document.body;
-          }
-        },
-
-        /**
-         * Elapsed time for the call
-         */
-        elapsed: {
-          type: Number,
-          value: -1
-        },
-        _formattedElapsedTime: {
-          type: String,
-          computed: "_formatElapsedTime(elapsed)"
-        },
-        _elapsedTimeShown: {
-          type: Boolean,
-          computed: "_isElapsedTimeShown(elapsed)"
-        },
-
-        showPermalink: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * If true, the `quantum-warpscript` component inside this one won't show
-         * the plot Button, useful for embedded mode
-         */
-        hidePlot: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * Parameters to pass to each page
-         */
-        params: {
-          type: Object,
-          value: function() {
-            return {};
+          /**
+           * The application name for this widget
+           */
+          application: {
+            type: String,
           },
-        },
-        _hasAResponse: {
-          type: Boolean,
-          value: false
-        },
-        _hasAnError: {
-          type: Boolean,
-          value: false
-        },
-
-        _baseUrl: {
-          type: String,
-          computed: "_getBaseUrl(backend)"
-        },
-        _lastSharedCode: {
-          type: String,
-          value: ""
-        },
-        _shareCodeDisabled: {
-          type: Boolean,
-          computed: "_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)"
-        },
-        _shareCodeError: {
-          type: Object,
-          value: null
-        },
-        _lastSharedResponse: {
-          type: String,
-          value: ""
-        },
-        _shareResponseDisabled: {
-          type: Boolean,
-          computed: "_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)"
-        },
-        _shareResponseError: {
-          type: Object,
-          value: null
-        },
-        _warpscriptChangedAfterExecution: {
-          type: Boolean,
-          value: true
-        },
-      },
-
-
+          /**
+           * The WarpScript
+           */
+          warpscript: {
+            type: String,
+            value: '',
+            observer: '_onWarpscriptChange'
+          },
+          /**
+           * The name of the currently selected module
+           */
+          selected: {
+            type: String,
+            observer: '_onSelectedChanged'
+          },
+          /**
+           * The WarpScript stack received as response
+           */
+          stack: {
+            type: Array,
+            notify: true
+          },
+          _target: {
+            type: Object,
+            value: function () {
+              return document.body;
+            }
+          },
+          /**
+           * Elapsed time for the call
+           */
+          elapsed: {
+            type: Number,
+            value: -1
+          },
+          _formattedElapsedTime: {
+            type: String,
+            computed: '_formatElapsedTime(elapsed)'
+          },
+          _elapsedTimeShown: {
+            type: Boolean,
+            computed: '_isElapsedTimeShown(elapsed)'
+          },
+          showPermalink: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * If true, the `quantum-warpscript` component inside this one won't show
+           * the plot Button, useful for embedded mode
+           */
+          hidePlot: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Parameters to pass to each page
+           */
+          params: {
+            type: Object,
+            value: function () {
+              return {};
+            },
+          },
+          _hasAResponse: {
+            type: Boolean,
+            value: false
+          },
+          _hasAnError: {
+            type: Boolean,
+            value: false
+          },
+          _baseUrl: {
+            type: String,
+            computed: '_getBaseUrl(backend)'
+          },
+          _lastSharedCode: {
+            type: String,
+            value: ''
+          },
+          _shareCodeDisabled: {
+            type: Boolean,
+            computed: '_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)'
+          },
+          _shareCodeError: {
+            type: Object,
+            value: null
+          },
+          _lastSharedResponse: {
+            type: String,
+            value: ''
+          },
+          _shareResponseDisabled: {
+            type: Boolean,
+            computed: '_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)'
+          },
+          _shareResponseError: {
+            type: Object,
+            value: null
+          },
+          _warpscriptChangedAfterExecution: {
+            type: Boolean,
+            value: true
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
 
       /**************************************************************************/
       /* Lifecycle methods                                                      */
+
       /**************************************************************************/
-      ready : function() {
+      ready() {
+        super.ready();
         /*
          * Attaching dialog to main body to make it live over the gray div 
          * Bug that will be corrected 
          * https://github.com/PolymerElements/polymer-starter-kit/issues/154
          * https://github.com/PolymerElements/paper-dialog/issues/7
          */
-        this.collectionWriter = this.$.collectionWriter        
+        this.collectionWriter = this.$.collectionWriter;
         document.querySelector('body').appendChild(this.collectionWriter);
-        this.collectionReader = this.$.collectionReader        
+        this.collectionReader = this.$.collectionReader;
         document.querySelector('body').appendChild(this.collectionReader);
-      },
-      attached: function() {
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
         editor = this.$.editor;
         editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
         if (this.showPermalink) {
           this.debounce('updateLocation', this._updateLocation, 500);
         }
-      },
+      }
 
       /**************************************************************************/
       /* Computed properties                                                    */
+
       /**************************************************************************/
-      _formatElapsedTime: function() {
+      _formatElapsedTime() {
         if (this.elapsed < 1000) {
-          return ""+this.elapsed+" ns";
+          return '' + this.elapsed + ' ns';
         }
         if (this.elapsed < 1000000) {
-          return ""+(this.elapsed/1000).toFixed(3)+" μs";
+          return '' + (this.elapsed / 1000).toFixed(3) + ' μs';
         }
         if (this.elapsed < 1000000000) {
-          return ""+(this.elapsed/1000000).toFixed(3)+" ms";
+          return '' + (this.elapsed / 1000000).toFixed(3) + ' ms';
         }
-        return ""+(this.elapsed/1000000000).toFixed(3)+" s";
-      },
-      _isElapsedTimeShown: function() {
-        if (this.elapsed >0) {
-          return true;
-        }
-        return false;
-      },
-      _getBaseUrl: function() {
-        return this.backend.url + this.backend.execEndpoint;
-      },
+        return '' + (this.elapsed / 1000000000).toFixed(3) + ' s';
+      }
 
-      _isShareCodeDisabled: function() {
+      _isElapsedTimeShown() {
+        return this.elapsed > 0;
+      }
+
+      _getBaseUrl() {
+        return this.backend.url + this.backend.execEndpoint;
+      }
+
+      _isShareCodeDisabled() {
         return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) || this._warpscriptChangedAfterExecution );
-      },
-      _isShareResponseDisabled: function() {
+      }
+
+      _isShareResponseDisabled() {
         return !!(this.loading || (this._lastSharedResponse && this._lastSharedResponse.snapshotId) );
-      },
+      }
+
       /**************************************************************************/
       /* Observers                                                              */
+
       /**************************************************************************/
-      _onWarpscriptChange: function(warpscript) {
-        console.debug("[quantum-warpscript] _onWarpscriptChange", warpscript);
+      _onWarpscriptChange(warpscript) {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _onWarpscriptChange', warpscript);
+        }
         this._warpscriptChangedAfterExecution = true;
         this._lastSharedCode = false;
         if (this.showPermalink) {
           this.debounce('updateLocation', this._updateLocation, 500);
         }
-        var date = new Date().toISOString();
-        this._filename = "WarpsSript-" + date.slice(0, 4) + date.slice(5, 7) 
-            + date.slice(8, 10) + date.slice(11, 13) +  date.slice(14, 16) 
-            + date.slice(17, 19) + ".mc2";
-      },
-      _onSelectedChanged: function(selected) {
+        let date = new Date().toISOString();
+        this._filename = 'WarpsSript-' + date.slice(0, 4) + date.slice(5, 7)
+          + date.slice(8, 10) + date.slice(11, 13) + date.slice(14, 16)
+          + date.slice(17, 19) + '.mc2';
+      }
 
+      _onSelectedChanged(selected) {
         if (selected !== this.name) {
           this._target = null;
           return;
@@ -709,46 +741,63 @@
         if (this.params && this.params !== {}) {
           this._getInfoFromParams();
         }
-        console.debug("[quantum-warpscript] _onSelectedChanged", {selected: selected, name:this.name, target: this._target});
-      },
-      
-      
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _onSelectedChanged', {
+            selected: selected,
+            name: this.name,
+            target: this._target
+          });
+        }
+      }
+
       /**************************************************************************/
       /* Event Listeners                                                        */
+
       /**************************************************************************/
-      _handleResponse: function(event, response) {
-        if (!response.stack ||
-          !response.stack instanceof Array ) {
+      _handleResponse(event, response) {
+        if (!response.stack || !response.stack instanceof Array) {
           return;
         }
         this.elapsed = response.options.elapsed;
         this._fetched = response.options.fetched;
         this._operations = response.options.operations;
-        console.debug("[quantum-warpscript] _handleResponse", response.options);
-        // this._dataToPlot = gtsTools.gtsFromJSONList(response.stack);
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleResponse', response.options);
+        }
         this.stack = response.stack;
         this._hasAResponse = true;
         this._hasAnError = false;
         this._warpscriptChangedAfterExecution = false;
-        this._lastSharedResponse = "";
+        this._lastSharedResponse = '';
         this.$.response_container.responseChanged();
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleResponse', {
+            stack: this.stack,
+            elapsed: this.elapsed,
+            _dataToPlot: this._dataToPlot
+          });
+        }
+      }
 
-        // console.debug("[quantum-warpscript] _handleResponse", { stack: this.stack, elapsed: this.elapsed, _dataToPlot: this._dataToPlot });
-      },
-      _handleError: function(event, error) {        
-        console.debug("[quantum-warpscript] _handleError", error);        
+      _handleError(event, error) {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleError', error);
+        }
         if (!error.errorLine || !error.errorMsg) {
           if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
             this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
           } else {
-            this.errorMsg =  error.request.statusText;
+            this.errorMsg = error.request.statusText;
           }
         } else {
-          this.errorMsg = "ERROR line #"+ error.errorLine+": "+error.errorMsg;
-          console.debug("[quantum-warpscript] _handleError", this.errorMsg);
+          this.errorMsg = 'ERROR line #' + error.errorLine + ': ' + error.errorMsg;
+          if (this.debug) {
+            console.debug('[quantum-warpscript] _handleError', this.errorMsg);
+          }
         }
-
-        console.debug("[quantum-warpscript] _handleError", { error: error, errorMsg: this.errorMsg });
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleError', {error: error, errorMsg: this.errorMsg});
+        }
 
         this.elapsed = error.elapsed;
         this._fetched = error.fetched;
@@ -756,185 +805,240 @@
         this._hasAResponse = false;
         this._hasAnError = true;
 
-        console.debug("[quantum-warpscript] _handleError - _hasAResponse", this._hasAResponse);
-      },
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleError - _hasAResponse', this._hasAResponse);
+        }
+      }
 
-      editorChangeAction: function(value, oldValue) {
-        this.warpscript  = value.detail.value;
-        // console.debug("[quantum-warpscript] editorChangeAction", this.warpscript);
-      },
+      editorChangeAction(value, oldValue) {
+        this.warpscript = value.detail.value;
+        if (this.debug) {
+          console.debug('[quantum-warpscript] editorChangeAction', this.warpscript);
+        }
+      }
 
-      _handleShareCodeResponse: function(event, ironRequest) {
-        var snapshotId = looseJSON.parse(ironRequest.response)[1];
-        var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
-        console.debug("[quantum-warpscript] _handleShareCodeResponse", {snapshotId: snapshotId, snapshotSecret: snapshotSecret});
+      _handleShareCodeResponse(event, ironRequest) {
+        let snapshotId = looseJSON.parse(ironRequest.response)[1];
+        let snapshotSecret = looseJSON.parse(ironRequest.response)[0];
+        console.debug('[quantum-warpscript] _handleShareCodeResponse', {
+          snapshotId: snapshotId,
+          snapshotSecret: snapshotSecret
+        });
         this._shareCodeError = null;
         this._lastSharedCode = {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
-      },
-      _handleShareCodeError: function(event, error) {
-        console.debug("[quantum-warpscript] _handleShareCodeError", error);
+      }
+
+      _handleShareCodeError(event, error) {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleShareCodeError', error);
+        }
         this._lastSharedCode = {};
         this._shareCodeError = error;
-      },
-      _handleShareResponseResponse: function(event, ironRequest) {
-        var snapshotId = looseJSON.parse(ironRequest.response)[1];
-        var snapshotSecret = looseJSON.parse(ironRequest.response)[0];
-        console.debug("[quantum-warpscript] _handleShareResponseResponse", ironRequest.response);
+      }
+
+      _handleShareResponseResponse(event, ironRequest) {
+        let snapshotId = looseJSON.parse(ironRequest.response)[1];
+        let snapshotSecret = looseJSON.parse(ironRequest.response)[0];
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleShareResponseResponse', ironRequest.response);
+        }
         this._shareResponseError = null;
-        this._lastSharedResponse =  {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
-      },
-      _handleShareResponseError: function(event, error) {
-        console.debug("[quantum-warpscript] _handleShareResponseError", error.response);
+        this._lastSharedResponse = {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
+      }
+
+      _handleShareResponseError(event, error) {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleShareResponseError', error.response);
+        }
         this._lastSharedResponse = {};
         this._shareResponseError = error;
-      },
+      }
 
-      _inputFileRead: function(evt, detail) {
+      _inputFileRead(evt, detail) {
         this.$.loadDialog.cancel();
-        console.debug("[quantum-warpscript] _fileChosen", evt, detail); 
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _fileChosen', evt, detail);
+        }
         this.warpscript = detail;
-      },
-      _dontBubble: function(evt, detail) {
-        console.debug("[quantum-warpscript] _dontBubble");
+      }
+
+      _dontBubble(evt, detail) {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _dontBubble');
+        }
         evt.stopPropagation();
-      },
+      }
+
       /**************************************************************************/
       /* Action listeners                                                       */
+
       /**************************************************************************/
       /**
        * Executes the warpscript request
        */
-      execute: function() {
-        console.debug("[quantum-warpscript] Execute", this.warpscript)
+      execute() {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] Execute', this.warpscript)
+        }
         if (this.showPermalink) {
           this._updateLocation();
         }
         this.warpscriptScript = this.warpscript;
         this.$.warpscriptcaller.generateRequest();
-      },
-      plot: function() {
-        // console.debug([quantum-warpscript] Plot", this.stack)
-        if (this.stack.length) {
-          this.fire("plot",{ warpscript: this.warpscript, stack: this.stack });
+      }
+
+      plot() {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] Plot', this.stack)
         }
-      },
-      map: function() {
-        // console.debug([quantum-warpscript] Map", this.stack)
         if (this.stack.length) {
-          this.fire("map",{ warpscript: this.warpscript, stack: this.stack });
+          this.fire('plot', {warpscript: this.warpscript, stack: this.stack});
         }
-      },
-      shareCode: function() {
-        var script = "// backend: "+JSON.stringify(this.backend)+"\n\n"+this.warpscript;
-        this._codeToShare = "<% '"+ encodeURI(script).replace(/'/g,'%27').replace(/"/g,'%28').replace(/\+/g,'%2B') + "' %> @orbit/snapshot/store";
+      }
+
+      map() {
+        if (this.debug) {
+          console.debug('[quantum-warpscript] Map', this.stack)
+        }
+        if (this.stack.length) {
+          this.fire('map', {warpscript: this.warpscript, stack: this.stack});
+        }
+      }
+
+      shareCode() {
+        let script = '// backend: ' + JSON.stringify(this.backend) + '\n\n' + this.warpscript;
+        this._codeToShare = `<% '${encodeURI(script).replace(/'/g, '%27').replace(/"/g, '%28').replace(/\+/g, '%2B')}' %> @orbit/snapshot/store`;
         this.$.shareCodeRequest.generateRequest();
-      },
-      shareResponse: function() {
-        var randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      }
+
+      shareResponse() {
+        let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });
 
-        this._responseToShare =
-          "<% SNAPSHOT 'snapshot' STORE '<%25 !$snapshot %25>' EVAL @orbit/snapshot/store STOP %> 'STOP' DEF <% STOP %> '" +
-          randomFunction +"' DEF " + this.warpscript +
-          " "+randomFunction;
-
+        this._responseToShare = `<% SNAPSHOT 'snapshot' STORE
+        '<%25 !$snapshot %25>' EVAL @orbit/snapshot/store STOP %>
+        'STOP' DEF <% STOP %> '${randomFunction}' DEF ${this.warpscript} ${randomFunction}`;
         this.$.shareResponseRequest.generateRequest();
-      },
-      saveCollection: function() {
+      }
+
+      saveCollection() {
         this.$.saveDialog.cancel();
         this.collectionWriter.open();
-      },
-      readCollection: function() {
+      }
+
+      readCollection() {
         this.$.loadDialog.cancel();
         this.collectionReader.open();
-      },
-      _openSaveDialog: function() {
-        this.$.saveDialog.open();
-      },
-      _closeSaveDialog: function() {
-        this.$.saveDialog.cancel();
-      },
-      _openLoadDialog: function() {
-        this.$.loadDialog.open();
-      },
-      _closeLoadDialog: function() {
-        this.$.loadDialog.cancel();
-      },
+      }
 
+      _openSaveDialog() {
+        this.$.saveDialog.open();
+      }
+
+      _closeSaveDialog() {
+        this.$.saveDialog.cancel();
+      }
+
+      _openLoadDialog() {
+        this.$.loadDialog.open();
+      }
+
+      _closeLoadDialog() {
+        this.$.loadDialog.cancel();
+      }
 
       /**************************************************************************/
       /* Other methods                                                          */
+
       /**************************************************************************/
-
-      _updateLocation: function() {
-        if (this.selected == this.application) {
-          console.debug("[quantum-warpscript] _updateLocation");
-          this.$$("quantum-permalink-generator").updateLocation(this.application);
+      _updateLocation() {
+        if (this.selected === this.application) {
+          if (this.debug) {
+            console.debug('[quantum-warpscript] _updateLocation');
+          }
+          this.root.querySelector('quantum-permalink-generator').updateLocation(this.application);
         }
-      },
+      }
 
-      _getInfoFromParams: function() {
-        if (this.params.warpscript !== undefined && typeof this.params.warpscript === "string") {
+      _getInfoFromParams() {
+        if (this.params.warpscript !== undefined && typeof this.params.warpscript === 'string') {
           if (this.warpscript === this.params.warpscript) {
-            console.debug("[quantum-warpscript] _getInfoFromParams - Warpscript didn't change");
+            if (this.debug) {
+              console.debug('[quantum-warpscript] _getInfoFromParams - Warpscript didn\'t change');
+            }
           } else {
-            console.debug("[quantum-warpscript] _getInfoFromParams - Warpscript changed");
+            if (this.debug) {
+              console.debug('[quantum-warpscript] _getInfoFromParams - Warpscript changed');
+            }
             this.warpscript = this.params.warpscript;
           }
         }
         if (this.params.stack !== undefined && this.params.stack.length > 0) {
-          this.stack = this.params.stack;          
+          this.stack = this.params.stack;
           this._hasAResponse = true;
           this._hasAnError = false;
           this._warpscriptChangedAfterExecution = false;
-          this._lastSharedResponse = "";
+          this._lastSharedResponse = '';
           this.$.response_container.responseChanged();
         }
         if (this.params.backend !== undefined) {
           this.backend = this.params.backend;
-        }        
-      },
+        }
+      }
+
       /**************************************************************************/
       /* Hotkeys                                                                */
+
       /**************************************************************************/
-      _hotkeyExecute: function(e) {
-        var normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
-        console.debug("[quantum-warpscript] _hotkeyExec", normKeyboardEvt.rootTarget);
-        var nodeName =  normKeyboardEvt.rootTarget.nodeName;
+      _hotkeyExecute(e) {
+        let normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _hotkeyExec', normKeyboardEvt.rootTarget);
+        }
+        let nodeName = normKeyboardEvt.rootTarget.nodeName;
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
           this.execute();
         }
-      },
-      _hotkeyPlot: function(e) {
-        var normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
-        console.debug("[quantum-warpscript] _hotkeyPlot", normKeyboardEvt.rootTarget);
-        var nodeName =  normKeyboardEvt.rootTarget.nodeName;
+      }
+
+      _hotkeyPlot(e) {
+        let normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _hotkeyPlot', normKeyboardEvt.rootTarget);
+        }
+        let nodeName = normKeyboardEvt.rootTarget.nodeName;
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
           this.plot();
         }
-      },
-      _hotkeyHelp: function(e) {
-        var normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
-        console.debug("[quantum-warpscript] _hotkeyHelp", normKeyboardEvt.rootTarget);
-        var nodeName;
+      }
+
+      _hotkeyHelp(e) {
+        let normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _hotkeyHelp', normKeyboardEvt.rootTarget);
+        }
+        let nodeName;
         if (!normKeyboardEvt.rootTarget) {
           nodeName = '';
         } else {
-          nodeName =  normKeyboardEvt.rootTarget.nodeName;
-        }        
+          nodeName = normKeyboardEvt.rootTarget.nodeName;
+        }
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
-          console.debug("[quantum-warpscript] _hotkeyHelp")
-          if (!this.$$("#warpscript-ide-keyboard-shortcuts-overlay").opened) {
-            this.$$("#warpscript-ide-keyboard-shortcuts-overlay").open();
+          if (this.debug) {
+            console.debug('[quantum-warpscript] _hotkeyHelp')
+          }
+          if (this.root.querySelector('#warpscript-ide-keyboard-shortcuts-overlay').opened) {
+            this.root.querySelector('#warpscript-ide-keyboard-shortcuts-overlay').close();
           } else {
-            this.$$("#warpscript-ide-keyboard-shortcuts-overlay").close();
+            this.root.querySelector('#warpscript-ide-keyboard-shortcuts-overlay').open();
           }
         }
-      },
+      }
+    }
 
-
-    })
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumWarpscript.is, QuantumWarpscript);
   </script>
 </dom-module>
