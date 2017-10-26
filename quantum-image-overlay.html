@@ -14,7 +14,7 @@
 
   <template>
     <div>
-      <img src="{{src}}" />
+      <img src="{{src}}"/>
     </div>
     <div>{{caption}}</div>
   </template>
@@ -22,32 +22,42 @@
 </dom-module>
 
 <script>
-(function() {
-  Polymer({
-    is: 'quantum-image-overlay',
-    properties: {
-      src: {
-        type: String
-      },
-      caption: {
-        type: String,
-        value: ""
-      }
-    },
-    behaviors: [
-      Polymer.IronOverlayBehavior
-    ],
-    listeners: {
-      'iron-overlay-canceled': 'onCancel'
-    },
-    attached: function() {
-      console.debug('[quantum-image-overlay] attached');
-    },
-    onCancel: function() {
-      console.debug('[quantum-image-overlay] onCancel', this.getAttribute('imageClicked'));
-      this.removeAttribute('imageClicked');
+  class QuantumImageOverlay extends Polymer.mixinBehaviors([Polymer.IronOverlayBehavior], Polymer.Element) {
+    static get is() {
+      return 'quantum-image-overlay';
     }
 
-  });
-})();
+    static get properties() {
+      return {
+        src: {
+          type: String
+        },
+        caption: {
+          type: String,
+          value: ""
+        },
+        debug: {
+          type: Boolean,
+          value: false,
+        },
+      };
+    }
+
+    ready() {
+      super.ready();
+      this.addEventListener('iron-overlay-canceled', (e) => this.onCancel(e));
+    }
+
+    onCancel() {
+      if (this.debug) {
+        console.debug('[quantum-image-overlay] onCancel', this.getAttribute('imageClicked'));
+      }
+      this.removeAttribute('imageClicked');
+    }
+  }
+
+
+  // Register custom element definition using standard platform API
+  customElements.define(QuantumImageOverlay.is, QuantumImageOverlay);
+
 </script>
