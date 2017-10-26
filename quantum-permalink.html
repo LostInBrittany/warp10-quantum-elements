@@ -79,7 +79,7 @@
       let decoded;
 
       try {
-        let decodedString = decodeURIComponent(encodeURI(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
+        let decodedString = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
         try {
           decoded = JSON.parse(decodedString);
         } catch (e) {
@@ -272,7 +272,7 @@
       if (this.debug) {
         console.debug('[quantum-permalink] _encodeBackend - backendToEncode', backendToEncode);
       }
-      return encodeURIComponent(btoa(encodeURI(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
+      return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
     }
   }
 

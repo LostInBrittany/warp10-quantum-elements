@@ -33,6 +33,7 @@
         --app-secondary-color: black;
         --app-background-color: white;
         --app-on-background-color: white;
+        --paper-material_-_display: block;
         padding: 30px;
       }
 
@@ -102,20 +103,20 @@
     </style>
 
 
-    <h4>{{ localize('chooseYourBackend') }}
-      <iron-icon icon="{{_toggleAction}}" on-click="_toggle"></iron-icon>
+    <h4>[[localize('chooseYourBackend')]]
+      <iron-icon icon="[[_toggleAction]]" on-click="_toggle"></iron-icon>
     </h4>
 
-    <template is="dom-if" if="{{_open}}">
-      <template is="dom-if" if="{{_hasConfiguredBackends}}">
+    <template is="dom-if" if="[[_open]]">
+      <template is="dom-if" if="[[_hasConfiguredBackends]]">
         <paper-radio-group id="backendRadioGroup" on-iron-select="_backendChoosen">
-          <template is="dom-repeat" items="{{configuredBackends}}" is="item">
+          <template is="dom-repeat" items="[[configuredBackends]]" as="item">
             <paper-radio-button
-              id$="backend_{{item.id}}"
+              id$="backend_[[item.id]"
               checked="{{item.checked}}"
-              name$="backend_{{item.id}}"
+              name$="backend_[[item.id]]"
               data-backend$="{{item}}">
-              {{item.label}}
+              [[item.label]]
             </paper-radio-button>
           </template>
           <paper-radio-button
@@ -125,13 +126,11 @@
         </paper-radio-group>
       </template>
 
-      <template is="dom-if" if="{{_chooseAltBackendSelected}}">
+      <template is="dom-if" if="[[_chooseAltBackendSelected]]">
         <paper-material elevation="1">
-
-
-          <template is="dom-if" if="{{_altBackendValidation}}">
+          <template is="dom-if" if="[[_altBackendValidation]]">
             <div class="horizontal_flex">
-              <div>{{ localize('validAltBackend') }}</div>
+              <div>[[localize('validAltBackend')]]</div>
               <div>
                 <iron-icon
                   class="edit_button"
@@ -142,18 +141,14 @@
 
             <div class="horizontal_flex">
               <div class="item">
-                <div class="item_name">
-                  {{ localize('backendUrl')}}
-                </div>
-                <div class="item_value">
-                  {{_altBackendUrl}}
-                </div>
+                <div class="item_name">[[localize('backendUrl')]]</div>
+                <div class="item_value">[[_altBackendUrl]]</div>
               </div>
 
               <div class="more_info">
                 <div class="more_info_label" on-tap="_toggleOtherParamState">
-                  <iron-icon icon$="{{_otherParamsStateIcon}}"></iron-icon>
-                  {{ localize('otherParams') }}
+                  <iron-icon icon$="[[_otherParamsStateIcon]]"></iron-icon>
+                  [[localize('otherParams')]]
                 </div>
               </div>
             </div>
@@ -482,7 +477,7 @@
       /* ************************************************************************/
       _altBackendStatusChanged() {
         if (this._chooseAltBackendSelected) {
-          for (i in this.configuredBackends) {
+          for (let i in this.configuredBackends) {
             this.set(['configuredBackends', i, 'checked'], false);
           }
         }
@@ -493,8 +488,8 @@
           return;
         }
         if (this.debug) {
-          console.debug('[quantum-backend-chooser] _backendChanged - backend ', this.backend)
-          console.debug('[quantum-backend-chooser] _backendChanged - configuredBackends ', this.configuredBackends)
+          console.debug('[quantum-backend-chooser] _backendChanged - backend ', this.backend);
+          console.debug('[quantum-backend-chooser] _backendChanged - configuredBackends ', this.configuredBackends);
         }
         if (!this.backend) {
           return;
@@ -512,12 +507,12 @@
             this.set(['configuredBackends', i, 'checked'], true);
             preconfiguredBackend = true;
             if (this.debug) {
-              console.debug('[quantum-backend-chooser] _backendChanged - default backend found: ', this.configuredBackends[i])
+              console.debug('[quantum-backend-chooser] _backendChanged - default backend found: ', this.configuredBackends[i]);
             }
           } else {
             this.set(['configuredBackends', i, 'checked'], false);
             if (this.debug) {
-              console.debug('[quantum-backend-chooser] _backendChanged - unselect backend: ', this.configuredBackends[i])
+              console.debug('[quantum-backend-chooser] _backendChanged - unselect backend: ', this.configuredBackends[i]);
             }
           }
         }

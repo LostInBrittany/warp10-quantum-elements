@@ -673,8 +673,7 @@
 
       connectedCallback() {
         super.connectedCallback();
-        editor = this.$.editor;
-        editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
+        this.$.editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
         if (this.showPermalink) {
           this.debounce('updateLocation', this._updateLocation, 500);
         }
