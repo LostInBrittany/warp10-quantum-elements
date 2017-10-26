@@ -65,9 +65,9 @@
       }
 
       .horizontal_flex {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-justified;
       }
 
       .edit_button {
@@ -94,9 +94,9 @@
       }
 
       .item_value {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
       }
 
 
@@ -112,7 +112,7 @@
         <paper-radio-group id="backendRadioGroup" on-iron-select="_backendChoosen">
           <template is="dom-repeat" items="[[configuredBackends]]" as="item">
             <paper-radio-button
-              id$="backend_[[item.id]"
+              id$="backend_[[item.id]]"
               checked="{{item.checked}}"
               name$="backend_[[item.id]]"
               data-backend$="{{item}}">

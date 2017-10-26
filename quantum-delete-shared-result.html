@@ -10,12 +10,13 @@
 <link rel="import" href="../warp10-iron/warp10-looseJSON.html">
 
 <link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
 <link rel="import" href="quantum-module-behavior.html">
 
-<dom-module is="quantum-delete-shared-result">
+<dom-module id="quantum-delete-shared-result">
   <template>
     <style>
       :host {
@@ -47,13 +48,13 @@
       }
 
       .item_value {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
       }
 
       .item_vert {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       .clearfix:before,
@@ -81,10 +82,10 @@
       }
 
       .item_centered {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
-        @apply(--layout-around-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
+        @apply --layout-around-justified;
       }
 
       .spacer {

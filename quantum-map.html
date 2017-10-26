@@ -56,7 +56,7 @@ Warp plot widget
       }
 
       #vertGuide {
-        width: 0px;
+        width: 0;
         height: 100%;
         border: solid 1px #aaaaaa;
         z-index: 500;
@@ -133,10 +133,10 @@ Warp plot widget
       }
 
       .item_list {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-center-justified;
+        @apply --layout-wrap;
       }
 
       .item:not(:first-child) {
@@ -162,9 +162,9 @@ Warp plot widget
       }
 
       .item_value {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
         min-height: 44px;
       }
 
@@ -187,9 +187,9 @@ Warp plot widget
       }
 
       .toolbar {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-end-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-end-justified;
         margin-bottom: 10px;
       }
 
@@ -322,7 +322,9 @@ Warp plot widget
           },
           stackedGtsListSlidingWindow: {
             type: Array,
-            computed: 'getStackedGtsListSlidingWindow(stackedGtsList, selectedGts)'
+            value: function () {
+             return [];
+            }
           },
           _baseUrl: {
             type: String,
