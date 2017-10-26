@@ -3,3 +3,4 @@ private-tools
 dist
 node_modules
 build
+.idea

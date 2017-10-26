@@ -24,86 +24,96 @@
         --app-background-color: white;
         --app-on-background-color: white;
         min-height: 300px;
-      }      
+      }
     </style>
 
     <h2 class="title">Recovering shared code...</h2>
 
     <granite-spinner
-        active="code" 
-        size="200"
-        hover></granite-spinner>
+      active="code"
+      size="200"
+      hover></granite-spinner>
 
     <iron-ajax
       id="getSharedCodeRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{warpscript}}'
-      handle-as="text"  on-response="_handleGetSharedCodeResponse" on-error="_handleGetSharedCodeError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}" 
-      ></iron-ajax>        
+      handle-as="text" on-response="_handleGetSharedCodeResponse" on-error="_handleGetSharedCodeError"
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
+    ></iron-ajax>
 
   </template>
   <script>
-    Polymer({
-      is: "quantum-shared-code",
-      behaviors: [
-        QuantumModule
-      ],
-      properties: {
-        /**
-         * The module name
-         */
-        name: {
-          type: String,
-          value: "shared-code"
-        },
-        /**
-         * The name of the currently selected module
-         */
-        selected: {
-          type: String
-        },
-        /**
-         * The snapshot id used to recover the code
-         */
-        snapshotId: {
-          type: String,
-          observer: "_onSnapshotIdChanged"
-        },
-      },
+
+    class QuantumSharedCode extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-shared-code';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * The module name
+           */
+          name: {
+            type: String,
+            value: 'shared-code'
+          },
+          /**
+           * The name of the currently selected module
+           */
+          selected: {
+            type: String
+          },
+          /**
+           * The snapshot id used to recover the code
+           */
+          snapshotId: {
+            type: String,
+            observer: '_onSnapshotIdChanged'
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
 
       /* ************************************************************************/
-      /* Lifecycle methods                                                      
-      /* ************************************************************************/
-      ready: function() {
 
-      },
-
+      /* Observers
       /* ************************************************************************/
-      /* Observers                                                              
-      /* ************************************************************************/ 
-      _onSnapshotIdChanged: function() {
-        if (!this.snapshotId || this.selected !== this.name) return;
+      _onSnapshotIdChanged() {
+        if (!this.snapshotId || this.selected !== this.name) {
+          return;
+        }
         this.getSharedCode();
-      },
+      }
 
       /* ************************************************************************/
-      /* Event listeners                                                              
+
+      /* Event listeners
       /* ************************************************************************/
-      _handleGetSharedCodeResponse: function(evt, ironRequest) {
-        var code = '// Snapshot Id: '+this.snapshotId
-            +'\n// '+ "'"+ this.snapshotId+"' @orbit/snapshot/load EVAL" +'\n\n'+looseJSON.parse(ironRequest.response)[0]               
-        console.debug("[quantum-shared-code] _handleGetSharedCodeResponse",code );
+      _handleGetSharedCodeResponse(evt, ironRequest) {
+        let code =
+          `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${+looseJSON.parse(ironRequest.response)[0]}`;
+        if (this.debug) {
+          console.debug('[quantum-shared-code] _handleGetSharedCodeResponse', code);
+        }
         this.fire('shared-code', code);
-      },
+      }
 
       /* ************************************************************************/
-      /* Instance methods                                                              
+
+      /* Instance methods
       /* ************************************************************************/
-      getSharedCode: function() {        
-        this.warpscript = "'"+ this.snapshotId+"' @orbit/snapshot/load EVAL";
-        this.$.getSharedCodeRequest.generateRequest();    
-      },
-    })
-  </script>  
+      getSharedCode() {
+        this.warpscript = `'${this.snapshotId}' @orbit/snapshot/load EVAL`;
+        this.$.getSharedCodeRequest.generateRequest();
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumSharedCode.is, QuantumSharedCode);
+  </script>
 </dom-module>

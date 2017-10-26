@@ -25,13 +25,13 @@
 <dom-module id="quantum-local-collection-writer">
   <template>
     <style>
-      :host {   
+      :host {
         margin-top: 5vh;
         width: 90vw;
         background: white;
-        transition: box-shadow 0.5s cubic-bezier(.25,.8,.25,1);
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-        overflow : auto;
+        transition: box-shadow 0.5s cubic-bezier(.25, .8, .25, 1);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        overflow: auto;
         border-radius: 2px;
         padding: 15px;
         --app-primary-color: var(--google-blue-500);
@@ -39,49 +39,58 @@
         --app-background-color: white;
         --app-on-background-color: white;
       }
+
       [hidden] {
-        display : none !important;
+        display: none !important;
       }
+
       #closeSaveCollection {
         position: absolute;
         justify-content: flex-end;
         right: 16px;
         top: 16px;
         margin: 0;
-        transition: color 0.5s cubic-bezier(.25,.8,.25,1);
-        color: var(--google-grey-300);        
+        transition: color 0.5s cubic-bezier(.25, .8, .25, 1);
+        color: var(--google-grey-300);
       }
+
       .header {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         margin-top: 30px;
       }
+
       .itemList {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
       }
+
       .item {
         position: relative;
         @apply(--layout-horizontal);
         @apply(--layout-center);
         margin-right: 35px;
       }
-      .item.tag { 
+
+      .item.tag {
         margin-top: 10px;
         background-color: var(--google-blue-100);
         padding: 5px 15px;
         border-radius: 2px;
-      } 
+      }
+
       iron-icon.submit {
         color: var(--google-green-500);
       }
+
       iron-icon.close,
       iron-icon.delete {
         color: var(--google-red-500);
       }
+
       paper-badge.delete {
-        margin-left:15px;
+        margin-left: 15px;
         margin-top: -5px;
       }
 
@@ -89,12 +98,13 @@
         padding: 15px;
         font-family: 'Roboto Mono', sans-serif;
         font-size: 0.75em;
-        -moz-box-shadow:    inset 0 0 5px #AAA;
+        -moz-box-shadow: inset 0 0 5px #AAA;
         -webkit-box-shadow: inset 0 0 5px #AAA;
-        box-shadow:         inset 0 0 5px #AAA; 
+        box-shadow: inset 0 0 5px #AAA;
         max-height: 200px;
-        overflow: auto;       
+        overflow: auto;
       }
+
       .action_bar {
         margin-top: 15px;
         @apply(--layout-horizontal);
@@ -107,208 +117,213 @@
         color: var(--app-on-background-color)
       }
     </style>
-               
-    <app-pouchdb-confict-resolution
-        strategy="firstWriteWins">
-    </app-pouchdb-conflict-resolution>
+
+    <app-pouchdb-confict-resolution strategy="firstWriteWins"></app-pouchdb-confict-resolution>
     <app-pouchdb-document
-        id="document"
-        db-name="warpscript-collection"
-        doc-id="[[_docId]]"
-        data="[[_document]]"
-        upsert>
+      id="document"
+      db-name="warpscript-collection"
+      doc-id="[[_docId]]"
+      data="[[_document]]"
+      upsert>
     </app-pouchdb-document>
 
     <paper-button
-        id = "closeSaveCollection"
-        on-tap = "cancel">
-      <iron-icon icon = "close"></iron-icon>
+      id="closeSaveCollection"
+      on-tap="cancel">
+      <iron-icon icon="close"></iron-icon>
     </paper-button>
 
     <h2>{{localize('title')}}</h2>
-    
-    <div class="header">
-      {{localize('promptName')}}
-    </div>
 
-    <div class="item">
-      <paper-input 
-          id="name" 
-          name="name" 
-          label="{{localize('name')}}" 
-          type="text" 
-          value="{{name}}" 
-          maxlength="64"  
-          required></paper-input>
-    </div>
-
-    <div class="header">
-      {{localize('promptTags')}}
-    </div>
+    <div class="header">{{localize('promptName')}}</div>
 
     <div class="item">
       <paper-input
-          name="newTag" 
-          id="newTag" 
-          label="{{localize('promptTag')}}"
-          type="text" 
-          value="{{_newTag}}"
-          maxlength="64"
-          auto-validate 
-          on-input="_onNewTagInput"
-          on-keypress="_onNewTagAction"></paper-input>
-    </div>    
-    
+        id="name"
+        name="name"
+        label="{{localize('name')}}"
+        type="text"
+        value="{{name}}"
+        maxlength="64"
+        required></paper-input>
+    </div>
+
+    <div class="header">{{localize('promptTags')}}</div>
+
+    <div class="item">
+      <paper-input
+        name="newTag"
+        id="newTag"
+        label="{{localize('promptTag')}}"
+        type="text"
+        value="{{_newTag}}"
+        maxlength="64"
+        auto-validate
+        on-input="_onNewTagInput"
+        on-keypress="_onNewTagAction"></paper-input>
+    </div>
+
     <div class="itemList">
       <template
-          is="dom-repeat"
-          items="[[tags]]"
-          as="tag">
+        is="dom-repeat"
+        items="[[tags]]"
+        as="tag">
         <div class="item tag">
           <span id$="tag-{{tag}}" class="tagname">{{tag}}</span>
           <paper-badge
-              icon="close"
-              class="delete"
-              for$="tag-{{tag}}"
-              label="localize('deleteTag')"
-              on-click="_deleteTag"></paper-badge>    
+            icon="close"
+            class="delete"
+            for$="tag-{{tag}}"
+            label="localize('deleteTag')"
+            on-click="_deleteTag"></paper-badge>
         </div>
       </template>
     </div>
 
- 
-
     <div class="header">
       <h4>{{localize('scriptToSave')}}</h4>
-    </div>    
-
-    <div class="script_container">
-      {{warpscript}}
     </div>
 
-
+    <div class="script_container">{{warpscript}}</div>
 
     <div class="action_bar">
-      <paper-button on-click="_save"><iron-icon icon="done"></iron-icon></paper-button>
+      <paper-button on-click="_save">
+        <iron-icon icon="done"></iron-icon>
+      </paper-button>
     </div>
 
   </template>
   <script>
-    Polymer({
-      is: "quantum-local-collection-writer",
+    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+      static get is() {
+        return 'quantum-local-collection-writer';
+      }
 
-      behaviors : [
-        Polymer.PaperDialogBehavior, 
-        Polymer.AppLocalizeBehavior 
-      ],
-
-      properties: {
-
-        /**
-         * The Warscript collection object
-         */
-        collection: {
-          type: Array,
-          notify: true
-        },
-
-        /**
-         * The warpscript to write
-         */
-        warpscript: {
-          type: String
-        },
-
-        /**
-         * The tags to identify the script
-         */
-        tags: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        },
-
-        /**
-         * The name of the script
-         */
-        name: {
-          type: String
-        },
-
-    
-        language: {
-          value: 'en'
-        },     
-        /* Overriden from AppLocalizeBehavior */
-        resources: {
-          type: Object,
-          value: function() {
-            return {
-              'en': { 
-                'title': 'Save current script into local storage',
-                'promptName': 'Give a name to the script',
-                'name': 'Name',
-                'promptTags': 'Add some tags to qualify the script, separated by `,` or `enter`',
-                'promptTag': 'Add a tag',
-                'deleteTag': 'Remove tag',
-                'scriptToSave': 'The current WarpScript script',
-                'save': 'Save'
-              },
+      static get properties() {
+        return {
+          /**
+           * The Warscript collection object
+           */
+          collection: {
+            type: Array,
+            notify: true
+          },
+          /**
+           * The warpscript to write
+           */
+          warpscript: {
+            type: String
+          },
+          /**
+           * The tags to identify the script
+           */
+          tags: {
+            type: Array,
+            value: function () {
+              return [];
             }
-          }
-        }   
-      },
+          },
+          /**
+           * The name of the script
+           */
+          name: {
+            type: String
+          },
+          language: {
+            value: 'en'
+          },
+          /* Overriden from AppLocalizeBehavior */
+          resources: {
+            type: Object,
+            value: function () {
+              return {
+                en: {
+                  title: 'Save current script into local storage',
+                  promptName: 'Give a name to the script',
+                  name: 'Name',
+                  promptTags: 'Add some tags to qualify the script, separated by `,` or `enter`',
+                  promptTag: 'Add a tag',
+                  deleteTag: 'Remove tag',
+                  scriptToSave: 'The current WarpScript script',
+                  save: 'Save'
+                },
+              }
+            }
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
 
 
       // ***********************************************************************
       // Action listeners
       // ***********************************************************************
-      _onNewTagInput: function(evt, detail) {
-        console.debug("[quantum-local-collection-writer] _onNewTagInput", this._newTag);
-        var tags = this._newTag.split(',');
-        if (tags.length > 1);
-        for (var i=0; i < tags.length-1; i++) {
-          this.push('tags', tags[i]);
+      _onNewTagInput(evt, detail) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
         }
-        this._newTag = tags[tags.length-1];
-      },
-      _onNewTagAction: function(evt, detail) {
-        console.debug("[quantum-local-collection-writer] _onNewTagAction", evt.key);
-        if (evt.key == 'Enter') {
+        let tags = this._newTag.split(',');
+        if (tags.length > 1) {
+          for (let i = 0; i < tags.length - 1; i++) {
+            this.push('tags', tags[i]);
+          }
+          this._newTag = tags[tags.length - 1];
+        }
+      }
+
+      _onNewTagAction(evt, detail) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-writer] _onNewTagAction', evt.key);
+        }
+        if (evt.key === 'Enter') {
           this._addNewTag();
-        } 
-      },
-      _addNewTag: function() {
+        }
+      }
+
+      _addNewTag() {
         if (this.tags.indexOf(this._newTag) < 0) {
           this.push('tags', this._newTag);
-        }        
+        }
         this._emptyNewTag();
-      },
-      _emptyNewTag: function() {
-        this._newTag = "";
-      },
-      _deleteTag: function(evt) {
-        // console.debug("[quantum-local-collection-writer] _deleteTag", evt.model);
-        var tagToDelete = evt.model;
+      }
+
+      _emptyNewTag() {
+        this._newTag = '';
+      }
+
+      _deleteTag(evt) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-writer] _deleteTag', evt.model);
+        }
+        let tagToDelete = evt.model;
         this.splice('tags', tagToDelete.index, 1);
-      },
-      _save: function() {
-        var timestamp = Date.now();
+      }
+
+      _save() {
+        let timestamp = Date.now();
         this._document = {
           timestamp: timestamp,
           name: this.name,
           tags: this.tags,
           warpscript: this.warpscript,
         };
-        console.debug("[quantum-local-collection-writer] _save", this.timestamp, this._document);
-        this.$.document.save().then(function() {
-          console.debug("[quantum-local-collection-writer] _saved", this.timestamp, this._document);
+        if (this.debug) {
+          console.debug('[quantum-local-collection-writer] _save', this.timestamp, this._document);
+        }
+        this.$.document.save().then(function () {
+          if (this.debug) {
+            console.debug('[quantum-local-collection-writer] _saved', this.timestamp, this._document);
+          }
           this.$.document.reset();
           this.close();
-        }.bind(this)); 
-      },
+        }.bind(this));
+      }
+    }
 
-    });
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumLocalCollectionWriter.is, QuantumLocalCollectionWriter);
   </script>
 </dom-module>  

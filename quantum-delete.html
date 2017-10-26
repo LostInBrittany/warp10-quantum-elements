@@ -37,7 +37,10 @@ Quantum delete widget
         --app-background-color: white;
         --app-on-background-color: white;
       }
-      .top-10 { margin-top:10px; }
+
+      .top-10 {
+        margin-top: 10px;
+      }
 
       .right {
         float: right;
@@ -47,9 +50,11 @@ Quantum delete widget
         min-height: 300px;
         font-size: 14px;
       }
+
       #token, #selector {
         width: 100%;
       }
+
       h4 {
         font-weight: bold;
       }
@@ -57,63 +62,70 @@ Quantum delete widget
       granite-alert[hidden] {
         display: none;
       }
+
       paper-button {
         background-color: var(--app-primary-color);
         color: var(--app-on-background-color)
       }
+
       granite-spinner {
         z-index: 100;
       }
     </style>
 
-    <style>      
-      .item { 
-        margin-top: 8px; 
-        margin-bottom: 8px; 
-      } 
+    <style>
+      .item {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
 
-      .item_name { 
-        color: var(--paper-grey-600); 
+      .item_name {
+        color: var(--paper-grey-600);
         font-family: 'Roboto', 'Noto', sans-serif;
-        -webkit-font-smoothing: antialiased; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        font-size: 12px; 
-        font-weight: 400; 
-        letter-spacing: 0.011em; 
-        line-height: 20px; 
-      } 
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.011em;
+        line-height: 20px;
+      }
 
-      .item_value { 
-        @apply(--layout-horizontal); 
+      .item_value {
+        @apply(--layout-horizontal);
         @apply(--layout-center);
-        @apply(--layout-wrap); 
-      } 
+        @apply(--layout-wrap);
+      }
+
       .clearfix:before,
       .clearfix:after {
         content: " "; /* 1 */
         display: table; /* 2 */
       }
+
       .clearfix:after {
         clear: both;
-      }      
+      }
 
       .title {
         text-transform: capitalize;
       }
+
       #chooseDeleteMethod {
         margin-top: 15px;
       }
+
       #chooseDeleteMethod > .item_value > *:first-child {
         margin-right: 15px;
       }
+
       #chooseDeleteMethod paper-toggle-button {
-        --paper-toggle-button-checked-bar-color:  var(--app-primary-color);
-        --paper-toggle-button-checked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-checked-bar-color: var(--app-primary-color);
+        --paper-toggle-button-checked-button-color: var(--app-primary-color);
         --paper-toggle-button-checked-ink-color: var(--app-primary-color);
-        --paper-toggle-button-unchecked-bar-color:  var(--app-primary-color);
-        --paper-toggle-button-unchecked-button-color:  var(--app-primary-color);
+        --paper-toggle-button-unchecked-bar-color: var(--app-primary-color);
+        --paper-toggle-button-unchecked-button-color: var(--app-primary-color);
         --paper-toggle-button-unchecked-ink-color: var(--app-primary-color);
       }
     </style>
@@ -121,37 +133,37 @@ Quantum delete widget
     <h2 class="title">{{name}}</h2>
 
     <granite-spinner
-        active="{{loading}}" 
-        size="200"
-        hover></granite-spinner>
+      active="{{loading}}"
+      size="200"
+      hover></granite-spinner>
 
     <div class="top-10">
       <paper-input
         auto-validate
-        prevent-invalid-input 
+        prevent-invalid-input
         always-float-label
-        name="token" 
+        name="token"
         label="{{localize('writeToken')}}"
-        type="text" 
+        type="text"
         value="{{token}}"
-        required ></paper-input>
+        required></paper-input>
     </div>
 
     <div class="top-10">
       <paper-input
         auto-validate
-        prevent-invalid-input 
+        prevent-invalid-input
         always-float-label
-        name="selector" 
+        name="selector"
         label="{{localize('selector')}}"
-        type="text" 
+        type="text"
         value="{{selector}}"
-        required ></paper-input>
+        required></paper-input>
     </div>
 
     <div id="chooseDeleteMethod" class="top-10 item">
       <div class="item_name">
-          {{localize('deleteMethod')}}
+        {{localize('deleteMethod')}}
       </div>
       <div class="item_value">
         <div>
@@ -159,42 +171,42 @@ Quantum delete widget
         </div>
         <div>
           <paper-toggle-button
-              checked="{{deleteAll}}"></paper-toggle-button>
+            checked="{{deleteAll}}"></paper-toggle-button>
         </div>
         <div>
           {{localize('deleteAll')}}
         </div>
-      </div>      
+      </div>
     </div>
 
     <template is="dom-if" if="{{!deleteAll}}">
       <div id="chooseTimespan" class="top-10 item">
 
         <paper-input
-            auto-validate
-            prevent-invalid-input 
-            always-float-label
-            name="selector" 
-            label="{{localize('startTime')}}"
-            type="text" 
-            value="{{startTime}}"
-            validator="warp10-iso-date-time-or-timestamp-validator"
-            required ></paper-input>
+          auto-validate
+          prevent-invalid-input
+          always-float-label
+          name="selector"
+          label="{{localize('startTime')}}"
+          type="text"
+          value="{{startTime}}"
+          validator="warp10-iso-date-time-or-timestamp-validator"
+          required></paper-input>
         <paper-input
-            auto-validate
-            prevent-invalid-input 
-            always-float-label
-            name="selector" 
-            label="{{localize('endTime')}}"
-            type="text" 
-            value="{{endTime}}"
-            validator="warp10-iso-date-time-or-timestamp-validator"
-            required ></paper-input>
-      </div>   
+          auto-validate
+          prevent-invalid-input
+          always-float-label
+          name="selector"
+          label="{{localize('endTime')}}"
+          type="text"
+          value="{{endTime}}"
+          validator="warp10-iso-date-time-or-timestamp-validator"
+          required></paper-input>
+      </div>
     </template>
 
-     
-    <div  class="top-10">
+
+    <div class="top-10">
       <div class="right">
         <paper-button
           id="btn_execute"
@@ -206,9 +218,9 @@ Quantum delete widget
       </div>
     </div>
 
-    <div class="clearfix"> </div>
+    <div class="clearfix"></div>
 
-    <div  class="top-10">
+    <div class="top-10">
       <granite-alert level="danger" hidden$="{{!_hasAnError}}">
         {{errorMsg}}
       </granite-alert>
@@ -226,140 +238,160 @@ Quantum delete widget
       on-response="_handleResponse"
       on-error="_handleError"></iron-ajax>
 
-      <warp10-iso-date-time-or-timestamp-validator></warp10-iso-date-time-or-timestamp-validator>
+    <warp10-iso-date-time-or-timestamp-validator debug="[[debug]]"></warp10-iso-date-time-or-timestamp-validator>
 
   </template>
 
   <script>
-    Polymer({
-      is: "quantum-delete",
-      behaviors: [
-        QuantumModule,
-        Polymer.AppLocalizeBehavior 
-      ],
+    class QuantumDelete extends Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior, QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-delete';
+      }
 
-      properties: {
-        /**
-         * A WRITE token valable for the GTS to be updated
-         */
-        token: {
-          type: String,
-          value: ""
-        },
-        /**
-         * The Selector to delete
-         */
-        selector: {
-          type: String,
-          value: ""
-        },
-        _baseUrl: {
-          type: String,
-          computed: "_getBaseUrl(backend)"
-        },
-        _disabled: {
-          type: Boolean,
-          computed: "_isDisabled(token, selector)"
-        }, 
-        deleteAll:{
-          type: Boolean,
-          value: false
-        },
-        startTime: {
-          type: String,
-        },
-        endTime: {
-          type: String,
-        },
-        language: {
-          value: 'en'
-        },     
-        /* Overriden from AppLocalizeBehavior */
-        resources: {
-          type: Object,
-          value: function() {
-            return {
-              'en': { 
-                'title': 'Delete',
-                'writeToken': 'Write token',
-                'selector':'Selector to delete',
-                'execute': 'Execute',
-                'deleteAll': "Delete all",
-                'deleteByDate': "By date",
-                'deleteMethod': "Choose delete mode:", 
-                'startTime': "Start time (in ISO 8601 format or in μs since Epoch)", 
-                'endTime': "End time (in ISO 8601 format or in μs since Epoch)",
+      static get properties() {
+        return {
+          /**
+           * A WRITE token valable for the GTS to be updated
+           */
+          token: {
+            type: String,
+            value: ''
+          },
+          /**
+           * The Selector to delete
+           */
+          selector: {
+            type: String,
+            value: ''
+          },
+          _baseUrl: {
+            type: String,
+            computed: '_getBaseUrl(backend)'
+          },
+          _disabled: {
+            type: Boolean,
+            computed: '_isDisabled(token, selector)'
+          },
+          deleteAll: {
+            type: Boolean,
+            value: false
+          },
+          startTime: {
+            type: String,
+          },
+          endTime: {
+            type: String,
+          },
+          language: {
+            value: 'en'
+          },
+          /* Overriden from AppLocalizeBehavior */
+          resources: {
+            type: Object,
+            value: function () {
+              return {
+                'en': {
+                  'title': 'Delete',
+                  'writeToken': 'Write token',
+                  'selector': 'Selector to delete',
+                  'execute': 'Execute',
+                  'deleteAll': 'Delete all',
+                  'deleteByDate': 'By date',
+                  'deleteMethod': 'Choose delete mode:',
+                  'startTime': 'Start time (in ISO 8601 format or in μs since Epoch)',
+                  'endTime': 'End time (in ISO 8601 format or in μs since Epoch)',
+                }
               }
             }
-          }
-        }         
-      },
- 
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
       /**************************************************************************/
       /* Lifecycle methods                                                      */
-      /**************************************************************************/     
-      ready: function() {
+
+      /**************************************************************************/
+      ready() {
+        super.ready();
         this._hasAnError = 0;
         this._hasAResponse = 0;
-      },
-      attached: function() {
-      },
-      
+      }
+
       /**************************************************************************/
       /* Computed porperties                                                    */
-      /**************************************************************************/     
-      _getBaseUrl: function() {
-        console.debug('[quantum-update] _getBaseUrl', this.backend);
-        return this.backend.url + this.backend.deleteEndpoint;
-      },
-      _isDisabled: function() {
-        if (!this.token || !this.selector) {
-          return true;
+
+      /**************************************************************************/
+      _getBaseUrl() {
+        if (this.debug) {
+          console.debug('[quantum-delete] _getBaseUrl', this.backend);
         }
-        return false;
-      },
+        return this.backend.url + this.backend.deleteEndpoint;
+      }
+
+      _isDisabled() {
+        return !this.token || !this.selector;
+      }
 
       /**************************************************************************/
       /* Action Listeners                                                       */
-      /**************************************************************************/      
-      execute: function() {
-        var header = this.backend.headerName+"-Token";
+
+      /**************************************************************************/
+      execute() {
+        let header = this.backend.headerName + '-Token';
         this.$.xhr.params = {
           selector: this.selector
-        }
+        };
         if (this.deleteAll) {
-          this.$.xhr.params.deleteall = true;          
+          this.$.xhr.params.deleteall = true;
         } else {
           this.$.xhr.params.start = this.startTime;
           this.$.xhr.params.end = this.endTime;
         }
-        this.$.xhr.headers = {}
+        this.$.xhr.headers = {};
         this.$.xhr.headers[header] = this.token;
-        console.debug("[quantum-update] _doCall - headers", this.$.xhr.headers);
+        if (this.debug) {
+          console.debug('[quantum-delete] _doCall - headers', this.$.xhr.headers);
+        }
         this.$.xhr.generateRequest();
-      },
+      }
 
       /**************************************************************************/
       /* Event Listeners                                                        */
+
       /**************************************************************************/
-      _editorChangeAction: function(value, oldValue) {
+      _editorChangeAction(value, oldValue) {
         this.fire('editor-content', {value: value, oldValue: oldValue});
         this.content = value.detail.value;
-        // console.debug("[quantum-update] Ide content changed", this.content);
-      },
-      _handleResponse: function(event, ironRequest) {
-        // console.debug("[quantum-update] _handleResponse - Updated!", ironRequest.response);
+        if (this.debug) {
+          console.debug('[quantum-delete] Ide content changed', this.content);
+        }
+      }
+
+      _handleResponse(event, ironRequest) {
+        if (this.debug) {
+          console.debug('[quantum-delete] _handleResponse - Updated!', ironRequest.response);
+        }
         this._hasAResponse = true;
         this._hasAnError = false;
         this.data = ironRequest.response;
-      },
-      _handleError: function(event, ironRequest) {
-        console.debug("[quantum-update] _handleError - Updated!", ironRequest);
-        this._hasAResponse = false;
-        this._hasAnError = true;      
-        this.data = null;
-        this.errorMsg = ironRequest.request.statusText || "Unkown error"
       }
-    });
+
+      _handleError(event, ironRequest) {
+        if (this.debug) {
+          console.debug('[quantum-delete] _handleError - Updated!', ironRequest);
+        }
+        this._hasAResponse = false;
+        this._hasAnError = true;
+        this.data = null;
+        this.errorMsg = ironRequest.request.statusText || 'Unkown error'
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumDelete.is, QuantumDelete);
   </script>
 </dom-module>
