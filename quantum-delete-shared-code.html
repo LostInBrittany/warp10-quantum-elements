@@ -214,7 +214,7 @@
       }
 
       _delete() {
-        this._deleteRequest = `'${this.snapshotId} ${this.snapshotSecret}' @orbit/snapshot/delete`;
+        this._deleteRequest = `'${this.snapshotId}' '${this.snapshotSecret}' @orbit/snapshot/delete`;
         this.$.deleteSharedCodeRequest.generateRequest();
       }
     }
