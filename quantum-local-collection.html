@@ -19,246 +19,229 @@
 
 <dom-module id="quantum-local-collection">
   <template>
-    <style>
-      :host {
-      }
-    </style>
-    
-    <iron-localstorage 
-        name="warpscript-collection"
-        value="{{collection}}"
-        on-iron-localstorage-load-empty="initializeCollection"></iron-localstorage>
+    <iron-localstorage
+      name="warpscript-collection"
+      value="{{collection}}"
+      on-iron-localstorage-load-empty="initializeCollection"></iron-localstorage>
   </template>
   <script>
-    Polymer({
-      is: "quantum-local-collection",
+    class QuantumLocalCollection extends Polymer.Element {
+      static get is() {
+        return 'quantum-local-collection';
+      }
 
-      properties: {
+      static get properties() {
+        return {
+          /**
+           * The Warscript collection object
+           */
+          collection: {
+            type: Array,
+            notify: true
+          },
+        };
+      }
 
-        /**
-         * The Warscript collection object
-         */
-        collection: {
-          type: Array,
-          notify: true
-        },
-
-      },
-      initializeCollection: function() {
+      initializeCollection() {
         this.collection = [];
-      },
-    });
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumLocalCollection.is, QuantumLocalCollection);
   </script>
-</dom-module>  
+</dom-module>
 
 
 <dom-module id="quantum-local-collection-writer">
   <template>
     <style>
-      :host {   
+      :host {
         width: 80vw;
         background: white;
-        transition: box-shadow 0.5s cubic-bezier(.25,.8,.25,1);
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-        overflow : auto;
+        transition: box-shadow 0.5s cubic-bezier(.25, .8, .25, 1);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        overflow: auto;
         border-radius: 2px;
         padding: 15px;
       }
+
       [hidden] {
-        display : none !important;
+        display: none !important;
       }
+
       #closeSaveCollection {
         position: absolute;
         justify-content: flex-end;
         right: 16px;
         top: 16px;
         margin: 0;
-        transition: color 0.5s cubic-bezier(.25,.8,.25,1);
-        color: var(--google-grey-300);        
+        transition: color 0.5s cubic-bezier(.25, .8, .25, 1);
+        color: var(--google-grey-300);
       }
+
       .header {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         margin-top: 30px;
       }
+
       .itemList {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
       }
+
       .item {
         @apply(--layout-horizontal);
         @apply(--layout-center);
-      } 
+      }
+
       iron-icon.submit {
         color: var(--google-green-500);
       }
+
       iron-icon.close,
       iron-icon.delete {
         color: var(--google-red-500);
       }
     </style>
-        
 
-    <quantum-local-collection  collection="{{collection}}"></quantum-local-collection>
+    <quantum-local-collection collection="{{collection}}"></quantum-local-collection>
 
-    <paper-button
-        id = "closeSaveCollection"
-        on-tap = "cancel">
-      <iron-icon icon = "close"></iron-icon>
+    <paper-button id="closeSaveCollection" on-tap="cancel">
+      <iron-icon icon="close"></iron-icon>
     </paper-button>
 
     <h2>{{localize('title')}}</h2>
-    
-    <div class="header">
-      {{localize('promptName')}}
-    </div>
+
+    <div class="header">{{localize('promptName')}}</div>
 
     <div class="item">
-      <paper-input 
-          id="name" 
-          name="name" 
-          label="{{localize('name')}}" 
-          type="text" 
-          value="{{name}}" 
-          maxlength="64"  
-          required></paper-input>
+      <paper-input
+        id="name"
+        name="name"
+        label="{{localize('name')}}"
+        type="text"
+        value="{{name}}"
+        maxlength="64"
+        required></paper-input>
     </div>
 
-    <div class="header">
-      {{localize('promptTags')}}
-    </div>
+    <div class="header">{{localize('promptTags')}}</div>
 
     <div class="itemList">
-      <template
-          is="dom-repeat"
-          items="{{tags}}"
-          as="tag">
+      <template is="dom-repeat" items="{{tags}}" as="tag">
         <div class="item">
           <span>{{tag}}</span>
-          <iron-icon
-            class="delete"
-            icon="cancel" on-tap="_deleteTag" ></iron-icon>
+          <iron-icon class="delete" icon="cancel" on-tap="_deleteTag"></iron-icon>
         </div>
       </template>
     </div>
     <div class="item">
       <paper-input
-          name="newTag" 
-          id="newTag" 
-          label="{{promptTag}}"
-          type="text" 
-          value="{{_newTag}}"
-          maxlength="64"
-          invalid="{{_isInvalidNewTag}}"
-          required></paper-input>
-      <iron-icon
-          class="submit" disabled$="{{_isInvalidNewTag}}"
-          icon="done" on-tap="_addNewTag" ></iron-icon>
-      <iron-icon
-          class="close"
-          icon="clear" on-tap="_closeAddSkill" ></iron-icon>
-      </template>
-    </div>     
+        name="newTag"
+        id="newTag"
+        label="{{promptTag}}"
+        type="text"
+        value="{{_newTag}}"
+        maxlength="64"
+        invalid="{{_isInvalidNewTag}}"
+        required></paper-input>
+      <iron-icon class="submit" disabled$="{{_isInvalidNewTag}}" icon="done" on-tap="_addNewTag"></iron-icon>
+      <iron-icon class="close" icon="clear" on-tap="_closeAddSkill"></iron-icon>
+    </div>
 
     <div class="header">
       <h4>{{scriptToSave}}</h4>
-    </div>    
-
-
-
-
+    </div>
   </template>
   <script>
-    Polymer({
-      is: "quantum-local-collection-writer",
+    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+      static get is() {
+        return 'quantum-local-collection-writer';
+      }
 
-      behaviors : [
-        Polymer.PaperDialogBehavior, 
-        Polymer.AppLocalizeBehavior 
-      ],
-
-      properties: {
-
-        /**
-         * The Warscript collection object
-         */
-        collection: {
-          type: Array,
-          notify: true
-        },
-
-        /**
-         * The warpscript to write
-         */
-        warpscript: {
-          type: String
-        },
-
-        /**
-         * The tags to identify the script
-         */
-        tags: {
-          type: Array
-        },
-
-        /**
-         * The name of the script
-         */
-        name: {
-          type: String
-        },
-
-    
-        language: {
-          value: 'en'
-        },     
-        /* Overriden from AppLocalizeBehavior */
-        resources: {
-          type: Object,
-          value: function() {
-            return {
-              'en': { 
-                'title': 'Save current script into local storage',
-                'promptName': 'Give a name to the script',
-                'name': 'Name',
-                'promptTags': 'Add some tags to qualify the script',
-                'promptTag': 'Add a tag',
-                'scriptToSave': 'The current WarpScript script',
-                'save': 'Save'
-              },
+      static get properties() {
+        return {
+          /**
+           * The Warscript collection object
+           */
+          collection: {
+            type: Array,
+            notify: true
+          },
+          /**
+           * The warpscript to write
+           */
+          warpscript: {
+            type: String
+          },
+          /**
+           * The tags to identify the script
+           */
+          tags: {
+            type: Array
+          },
+          /**
+           * The name of the script
+           */
+          name: {
+            type: String
+          },
+          language: {
+            value: 'en'
+          },
+          /* Overriden from AppLocalizeBehavior */
+          resources: {
+            type: Object,
+            value: function () {
+              return {
+                en: {
+                  title: 'Save current script into local storage',
+                  promptName: 'Give a name to the script',
+                  name: 'Name',
+                  promptTags: 'Add some tags to qualify the script',
+                  promptTag: 'Add a tag',
+                  scriptToSave: 'The current WarpScript script',
+                  save: 'Save'
+                },
+              }
             }
           }
-        }   
-      },
-    });
+        };
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumLocalCollectionWriter.is, QuantumLocalCollectionWriter);
   </script>
-</dom-module>  
+</dom-module>
 
 
 <dom-module id="quantum-local-collection-reader">
   <template>
-    <style>
-      :host {
-      }
-    </style>
-    
   </template>
   <script>
-    Polymer({
-      is: "quantum-local-collection-reader",
+    class QuantumLocalCollectionReader extends Polymer.Element {
+      static get is() {
+        return 'quantum-local-collection-reader';
+      }
 
-      properties: {
+      static get properties() {
+        return {
+          /**
+           * The Warscript collection object
+           */
+          collection: {
+            type: Array,
+            notify: true
+          },
+        };
+      }
+    }
 
-        /**
-         * The Warscript collection object
-         */
-        collection: {
-          type: Array,
-          notify: true
-        },
-
-      },
-    });
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumLocalCollectionReader.is, QuantumLocalCollectionReader);
   </script>
 </dom-module>  
