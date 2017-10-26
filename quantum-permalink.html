@@ -8,93 +8,122 @@
 <link rel="import" href="./quantum-module-behavior.html">
 
 <script>
-  Polymer({
-    is: "quantum-permalink-decoder",
+  class QuantumPermalinkDecoder extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    static get is() {
+      return 'quantum-permalink-decoder';
+    }
 
-    behaviors: [
-      QuantumModule
-    ],
-
-    properties: {
-      encodedPayload: {
-        type: String
-      },
-      encodedBackend:{
-        type: String,
-      },
-      decodedPayload: {
-        type:String,
-        computed: "_decodePayload(encodedPayload)",
-        observer: "_decodedPayloadChanged",
-        notify: true
-      },
-      decodedBackend: {
-        type: String,
-        computed: "_decodeBackend(encodedBackend)",
-        observer: "_decodedBackendChanged",
-        notify: true
-      }
-    },
+    static get properties() {
+      return {
+        encodedPayload: {
+          type: String
+        },
+        encodedBackend: {
+          type: String,
+        },
+        decodedPayload: {
+          type: String,
+          computed: '_decodePayload(encodedPayload)',
+          observer: '_decodedPayloadChanged',
+          notify: true
+        },
+        decodedBackend: {
+          type: String,
+          computed: '_decodeBackend(encodedBackend)',
+          observer: '_decodedBackendChanged',
+          notify: true
+        },
+        debug: {
+          type: Boolean,
+          value: true,
+        },
+      };
+    }
 
     /**************************************************************************/
     /* Computed properties                                                    */
-    /**************************************************************************/    
-    /** 
+
+    /**************************************************************************/
+    /**
      * Decodes payload from permalink
-     * Fires 'payload-change' event 
+     * Fires 'payload-change' event
      */
-    _decodePayload: function(){
-      // console.debug("[quantum-permalink-decoder] decodePayload - encodedPayload :", this.encodedPayload);
-      try {
-        var decoded = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedPayload).replace(/_/g, '/'))));
-        console.debug("[quantum-permalink-decoder] decodePayload - decode :", {encodedPayload: this.encodedPayload, payload: decoded });
-        return decoded;
-      } catch  (e) {
+    _decodePayload() {
+      if (this.debug) {
+        console.debug('[quantum-permalink-decoder] decodePayload - encodedPayload :', this.encodedPayload);
       }
-    }, 
-    /** 
+      try {
+        let decoded = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedPayload).replace(/_/g, '/'))));
+        if (this.debug) {
+          console.debug('[quantum-permalink-decoder] decodePayload - decode :', {
+            encodedPayload: this.encodedPayload,
+            payload: decoded
+          });
+        }
+        return decoded;
+      } catch (e) {
+        // empty
+      }
+    }
+
+    /**
      * Decodes backend from permalink
-     * Fires 'backend-change' event 
+     * Fires 'backend-change' event
      */
-    _decodeBackend: function(){
-      // console.debug([quantum-permalink-decoder] decodeBackend - encodedBackend :", this.encodedBackend);
-      var self = this;
-      var fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
-      var decoded;
+    _decodeBackend() {
+      if (this.debug) {
+        console.debug('[quantum-permalink-decoder] decodeBackend - encodedBackend :', this.encodedBackend);
+      }
+      let self = this;
+      let fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      let decoded;
 
       try {
-        var decodedString = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
+        let decodedString = decodeURIComponent(encodeURI(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
         try {
-          decoded = JSON.parse(decodedString);        
+          decoded = JSON.parse(decodedString);
         } catch (e) {
           decoded = {
-            "url": decodedString
+            url: decodedString
           }
         }
-        fields.forEach(function(field){ 
+        fields.forEach(function (field) {
           if (!decoded[field]) decoded[field] = self.defaultBackend[field];
-        });         
-        console.debug("[quantum-permalink-decoder] decodeBackend - decode :", { encodedBackend: this.encodedBackend, backend: decoded});
+        });
+        if (this.debug) {
+          console.debug('[quantum-permalink-decoder] decodeBackend - decode :', {
+            encodedBackend: this.encodedBackend,
+            backend: decoded
+          });
+        }
         return decoded;
-      } catch  (e) {        
-      }      
-    },
+      } catch (e) {
+        // empty
+      }
+    }
 
     /**************************************************************************/
     /* Observers                                                              */
-    /**************************************************************************/  
-    _decodedPayloadChanged: function(decodedPayload) {
-      console.debug("[quantum-permalink-decoder] _decodePayloadChanged", decodedPayload);
-      this.fire("payload-decoded", decodedPayload)
-    },
-    _decodedBackendChanged: function(decodedBackend) {
-      console.debug("[quantum-permalink-decoder] _decodeBackendChanged", decodedBackend);
-      this.fire("backend-decoded", decodedBackend)
-    },
-    
-  });
-</script>
 
+    /**************************************************************************/
+    _decodedPayloadChanged(decodedPayload) {
+      if (this.debug) {
+        console.debug('[quantum-permalink-decoder] _decodePayloadChanged', decodedPayload);
+      }
+      this.fire('payload-decoded', decodedPayload)
+    }
+
+    _decodedBackendChanged(decodedBackend) {
+      if (this.debug) {
+        console.debug('[quantum-permalink-decoder] _decodeBackendChanged', decodedBackend);
+      }
+      this.fire('backend-decoded', decodedBackend)
+    }
+  }
+
+  // Register custom element definition using standard platform API
+  customElements.define(QuantumPermalinkDecoder.is, QuantumPermalinkDecoder);
+</script>
 
 <dom-module id="quantum-permalink-generator">
   <template>
@@ -102,118 +131,151 @@
       :host {
         display: block;
       }
-      .top-10 { margin-top:10px; }
+
+      .top-10 {
+        margin-top: 10px;
+      }
+
       #displayedPermalink {
         overflow: hidden;
       }
     </style>
 
     <div id="displayedPermalink" class="top-10">
-      <b>Permalink:</b> <a href="#/warpscript/{{permalink}}"  >{{croppedPermalink}}</a>
+      <b>Permalink:</b> <a href="#/warpscript/{{permalink}}">{{croppedPermalink}}</a>
     </div>
   </template>
 </dom-module>
 
 <script>
-  Polymer({
-    is: "quantum-permalink-generator",
-    behaviors: [
-      QuantumModule
-    ],
-    properties: {
-      warpscript: {
-        type: String,
-        value: ""
-      },
-      backend: {
-        type: String,
-        value: ""
-      },
-      permalink: {
-        type: String,
-        notify: true,
-        computed: "_generatePermalink(warpscript, backend)"
-      },
-      croppedPermalink: {
-        type: String,
-        computed: "_cropPermalink(permalink)"
-      },
-      _maxDisplayLength: {
-        type: Number
-      }
-    },
+  class QuantumPermalinkGenerator extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    static get is() {
+      return 'quantum-permalink-generator';
+    }
+
+    static get properties() {
+      return {
+        warpscript: {
+          type: String,
+          value: ''
+        },
+        backend: {
+          type: String,
+          value: ''
+        },
+        permalink: {
+          type: String,
+          notify: true,
+          computed: '_generatePermalink(warpscript, backend)'
+        },
+        croppedPermalink: {
+          type: String,
+          computed: '_cropPermalink(permalink)'
+        },
+        _maxDisplayLength: {
+          type: Number
+        },
+        debug: {
+          type: Boolean,
+          value: true,
+        },
+      };
+    }
 
     /**************************************************************************/
     /* Lifecycle methods                                                      */
+
     /**************************************************************************/
-    created: function(){
+    connectedCallback() {
+      super.connectedCallback();
       this._maxDisplayLength = 60;
-      // console.debug("[quantum-permalink] created called", this._maxDisplayLength);
-    },
+      if (this.debug) {
+        console.debug('[quantum-permalink] created called', this._maxDisplayLength);
+      }
+    }
 
 
     /**************************************************************************/
     /* Computed properties                                                    */
+
     /**************************************************************************/
     /**
      * Crops the permalink to get a display-friendly version
      */
-    _cropPermalink: function() {
-      // console.debug("[quantum-permalink] _cropPermalink",this._maxDisplayLength);
+    _cropPermalink() {
+      if (this.debug) {
+        console.debug('[quantum-permalink] _cropPermalink', this._maxDisplayLength);
+      }
       if (this.permalink.length > this._maxDisplayLength) {
-        return this.permalink.slice(0, this._maxDisplayLength)+"...";
+        return this.permalink.slice(0, this._maxDisplayLength) + '...';
       }
       return this.permalink;
-    },
+    }
+
     /**
      * Generates the permalink
      * @return {string} the permalink
      */
-    _generatePermalink: function(){
-      console.debug("[quantum-permalink] _generatePermalink ws/backend", "/"+this._encodeWarpscript()+"/"+this._encodeBackend());
-      return this._encodeWarpscript()+"/"+this._encodeBackend();
-    },
+    _generatePermalink() {
+      if (this.debug) {
+        console.debug('[quantum-permalink] _generatePermalink ws/backend', '/' + this._encodeWarpscript() + '/' + this._encodeBackend());
+      }
+      return this._encodeWarpscript() + '/' + this._encodeBackend();
+    }
 
     /**************************************************************************/
     /* Other methods                                                          */
+
     /**************************************************************************/
     /**
      * Updates the location according to the permalink
      */
-    updateLocation: function(application) {
-      console.debug("[quantum-permalink] updateLocation called",{application:application, permalink:this.permalink});
-      window.history.pushState({}, null, '#/'+application+"/"+this.permalink);
+    updateLocation(application) {
+      if (this.debug) {
+        console.debug('[quantum-permalink] updateLocation called', {
+          application: application,
+          permalink: this.permalink
+        });
+      }
+      window.history.pushState({}, null, '#/' + application + '/' + this.permalink);
       window.dispatchEvent(new CustomEvent('location-changed'));
-    },
+    }
+
     /**
-     * Encodes Warpscript code into UrlEncoded Base64 
+     * Encodes Warpscript code into UrlEncoded Base64
      * @return {string} the encoded warpscript
      */
-    _encodeWarpscript: function() {
+    _encodeWarpscript() {
       return encodeURIComponent(btoa(unescape(encodeURIComponent(this.warpscript))).replace(/\//g, '_'));
-    },
+    }
+
     /**
      * Encodes backend object, in UrlEncoded Base64.
-     * Only encodes backend fields that differs from the default backend 
+     * Only encodes backend fields that differs from the default backend
      * @return {string} the encoded backend
      */
-    _encodeBackend: function() {
-      // console.debug("[quantum-permalink] _encodeBackend", this.backend);
-      
-      var self = this;
-
-      if (!this.backend) return;
-      
-      var backendToEncode = {};
-      var fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];     
-
-      fields.forEach(function(field){ 
+    _encodeBackend() {
+      if (this.debug) {
+        console.debug('[quantum-permalink] _encodeBackend', this.backend);
+      }
+      let self = this;
+      if (!this.backend) {
+        return;
+      }
+      let backendToEncode = {};
+      let fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      fields.forEach((field) => {
         if (self.backend[field] !== self.defaultBackend[field]) {
-          backendToEncode[field] = self.backend[field];  
+          backendToEncode[field] = self.backend[field];
         }
-      });      
-      console.debug("[quantum-permalink] _encodeBackend - backendToEncode", backendToEncode);
-      return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
-    },
-  });
+      });
+      if (this.debug) {
+        console.debug('[quantum-permalink] _encodeBackend - backendToEncode', backendToEncode);
+      }
+      return encodeURIComponent(btoa(encodeURI(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
+    }
+  }
+
+  // Register custom element definition using standard platform API
+  customElements.define(QuantumPermalinkGenerator.is, QuantumPermalinkGenerator);
 </script>
