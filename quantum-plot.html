@@ -22,7 +22,7 @@
 <link rel="import" href="../warp10-iron/warp10-simple-overlay.html">
 <link rel="import" href="../warp10-iron/warp10-warpscript-caller.html">
 
-<link rel="import" href="../warp10-quantumviz/warp10-display-alt-chart.html">
+<link rel="import" href="../warp10-quantumviz/warp10-display-c3-chart.html">
 <link rel="import" href="../warp10-quantumviz/quantumviz-annotations.html">
 
 
@@ -122,10 +122,10 @@ Warp plot widget
 
     <style>
       .item_list {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-        @apply(--layout-wrap);
+       @apply --layout-horizontal;
+       @apply --layout-center;
+       @apply --layout-center-justified;
+       @apply --layout-wrap;
       }
       .item:not(:first-child) {
         margin-left: 30px;
@@ -148,9 +148,9 @@ Warp plot widget
         line-height: 20px;
       }
       .item_value {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+       @apply --layout-horizontal;
+       @apply --layout-center;
+       @apply --layout-wrap;
         min-height: 44px;
       }
       .clearfix:before,
@@ -168,9 +168,9 @@ Warp plot widget
         height: 200px;
       }
       .toolbar {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-end-justified);
+       @apply --layout-horizontal;
+       @apply --layout-center;
+       @apply --layout-end-justified;
         margin-bottom: 10px;
       }
       .toolbar iron-icon {
@@ -613,6 +613,9 @@ Warp plot widget
 
       getStackedGtsListSlidingWindow: function() {
         var windowEnd, windowInit;
+        if (!this.stackedGtsList) {
+          return [];
+        }
         if (this.stackedGtsList.length < (1 + 2 * this.stackedGtsListHalfLimit)) {
           return this.stackedGtsList;
         }
