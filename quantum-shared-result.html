@@ -25,6 +25,7 @@
         --app-on-background-color: white;
         min-height: 300px;
       }
+
       quantum-permalink-generator {
         display: none;
       }
@@ -33,81 +34,89 @@
     <h2 class="title">Recovering shared result...</h2>
 
     <granite-spinner
-        active="result"
-        size="200"
-        hover></granite-spinner>
+      active="result"
+      size="200"
+      hover></granite-spinner>
 
     <iron-ajax
       id="getSharedResultRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{warpscript}}'
-      handle-as="text"  on-response="_handleGetSharedResultResponse" on-error="_handleGetSharedResultError"
+      handle-as="text" on-response="_handleGetSharedResultResponse" on-error="_handleGetSharedResultError"
       loading="{{loading}}" debounce-duration="{{debounceDuration}}"
-      ></iron-ajax>
+    ></iron-ajax>
 
 
   </template>
   <script>
-    Polymer({
-      is: "quantum-shared-result",
-      behaviors: [
-        QuantumModule
-      ],
-      properties: {
-        /**
-         * The module name
-         */
-        name: {
-          type: String,
-          value: "shared-result"
-        },
-        /**
-         * The name of the currently selected module
-         */
-        selected: {
-          type: String
-        },
-        /**
-         * The snapshot id used to recover the result
-         */
-        snapshotId: {
-          type: String,
-          observer: "_onSnapshotIdChanged"
+    class QuantumSharedResult extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-shared-result';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * The module name
+           */
+          name: {
+            type: String,
+            value: 'shared-result'
+          },
+          /**
+           * The name of the currently selected module
+           */
+          selected: {
+            type: String
+          },
+          /**
+           * The snapshot id used to recover the result
+           */
+          snapshotId: {
+            type: String,
+            observer: '_onSnapshotIdChanged'
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
         }
-      },
+      }
 
       /* ************************************************************************/
-      /* Lifecycle methods
-      /* ************************************************************************/
-      ready: function() {
 
-      },
-
-      /* ************************************************************************/
       /* Observers
       /* ************************************************************************/
-      _onSnapshotIdChanged: function() {
-        if (!this.snapshotId || this.selected !== this.name) return;
+      _onSnapshotIdChanged() {
+        if (!this.snapshotId || this.selected !== this.name) {
+          return;
+        }
         this.getSharedResult();
-      },
+      }
 
       /* ************************************************************************/
+
       /* Event listeners
       /* ************************************************************************/
-      _handleGetSharedResultResponse: function(evt, ironRequest) {
-        var code = '// Snapshot Id: '+this.snapshotId
-            +'\n// '+ "'"+ this.snapshotId+"' @orbit/snapshot/load EVAL" +'\n\n'+looseJSON.parse(ironRequest.response)[0]
-        console.debug("[quantum-shared-code] _handleGetSharedResultResponse",code );
+      _handleGetSharedResultResponse(evt, ironRequest) {
+        let cde = `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${looseJSON.parse(ironRequest.response)[0]}`
+        if (this.debug) {
+          console.debug('[quantum-shared-code] _handleGetSharedResultResponse', code);
+        }
         this.fire('shared-result', code);
-      },
+      }
 
       /* ************************************************************************/
+
       /* Instance methods
       /* ************************************************************************/
-      getSharedResult: function() {
-        this.warpscript = "'"+ this.snapshotId+"' @orbit/snapshot/load EVAL";
+      getSharedResult() {
+        this.warpscript = `'${this.snapshotId}' @orbit/snapshot/load EVAL`;
         this.$.getSharedResultRequest.generateRequest();
-      },
-    })
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumSharedResult.is, QuantumSharedResult);
   </script>
 </dom-module>
