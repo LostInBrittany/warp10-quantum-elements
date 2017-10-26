@@ -108,9 +108,7 @@
       }
     </style>
                
-    <app-pouchdb-confict-resolution
-        strategy="firstWriteWins">
-    </app-pouchdb-conflict-resolution>
+    <app-pouchdb-confict-resolution strategy="firstWriteWins"></app-pouchdb-confict-resolution>
     <app-pouchdb-document
         id="document"
         db-name="warpscript-collection"
@@ -127,9 +125,7 @@
 
     <h2>{{localize('title')}}</h2>
     
-    <div class="header">
-      {{localize('promptName')}}
-    </div>
+    <div class="header">{{localize('promptName')}}</div>
 
     <div class="item">
       <paper-input 
@@ -142,9 +138,7 @@
           required></paper-input>
     </div>
 
-    <div class="header">
-      {{localize('promptTags')}}
-    </div>
+    <div class="header">{{localize('promptTags')}}</div>
 
     <div class="item">
       <paper-input
@@ -176,17 +170,11 @@
       </template>
     </div>
 
- 
-
     <div class="header">
       <h4>{{localize('scriptToSave')}}</h4>
     </div>    
 
-    <div class="script_container">
-      {{warpscript}}
-    </div>
-
-
+    <div class="script_container">{{warpscript}}</div>
 
     <div class="action_bar">
       <paper-button on-click="_save"><iron-icon icon="done"></iron-icon></paper-button>
@@ -194,121 +182,136 @@
 
   </template>
   <script>
-    Polymer({
-      is: "quantum-local-collection-writer",
+    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+      static get is() {
+        return 'quantum-local-collection-writer';
+      }
 
-      behaviors : [
-        Polymer.PaperDialogBehavior, 
-        Polymer.AppLocalizeBehavior 
-      ],
-
-      properties: {
-
-        /**
-         * The Warscript collection object
-         */
-        collection: {
-          type: Array,
-          notify: true
-        },
-
-        /**
-         * The warpscript to write
-         */
-        warpscript: {
-          type: String
-        },
-
-        /**
-         * The tags to identify the script
-         */
-        tags: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        },
-
-        /**
-         * The name of the script
-         */
-        name: {
-          type: String
-        },
-
-    
-        language: {
-          value: 'en'
-        },     
-        /* Overriden from AppLocalizeBehavior */
-        resources: {
-          type: Object,
-          value: function() {
-            return {
-              'en': { 
-                'title': 'Save current script into local storage',
-                'promptName': 'Give a name to the script',
-                'name': 'Name',
-                'promptTags': 'Add some tags to qualify the script, separated by `,` or `enter`',
-                'promptTag': 'Add a tag',
-                'deleteTag': 'Remove tag',
-                'scriptToSave': 'The current WarpScript script',
-                'save': 'Save'
-              },
+      static get properties() {
+        return {
+          /**
+           * The Warscript collection object
+           */
+          collection: {
+            type: Array,
+            notify: true
+          },
+          /**
+           * The warpscript to write
+           */
+          warpscript: {
+            type: String
+          },
+          /**
+           * The tags to identify the script
+           */
+          tags: {
+            type: Array,
+            value: function () {
+              return [];
             }
-          }
-        }   
-      },
+          },
+          /**
+           * The name of the script
+           */
+          name: {
+            type: String
+          },
+          language: {
+            value: 'en'
+          },
+          /* Overriden from AppLocalizeBehavior */
+          resources: {
+            type: Object,
+            value: function () {
+              return {
+                en: {
+                  title: 'Save current script into local storage',
+                  promptName: 'Give a name to the script',
+                  name: 'Name',
+                  promptTags: 'Add some tags to qualify the script, separated by `,` or `enter`',
+                  promptTag: 'Add a tag',
+                  deleteTag: 'Remove tag',
+                  scriptToSave: 'The current WarpScript script',
+                  save: 'Save'
+                },
+              }
+            }
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
 
 
       // ***********************************************************************
       // Action listeners
       // ***********************************************************************
-      _onNewTagInput: function(evt, detail) {
-        console.debug("[quantum-local-collection-writer] _onNewTagInput", this._newTag);
-        var tags = this._newTag.split(',');
-        if (tags.length > 1);
-        for (var i=0; i < tags.length-1; i++) {
-          this.push('tags', tags[i]);
+      _onNewTagInput(evt, detail) {
+        if(this.debug) {
+          console.debug('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
         }
-        this._newTag = tags[tags.length-1];
-      },
-      _onNewTagAction: function(evt, detail) {
-        console.debug("[quantum-local-collection-writer] _onNewTagAction", evt.key);
-        if (evt.key == 'Enter') {
+        let tags = this._newTag.split(',');
+        if (tags.length > 1) {
+          for (let i = 0; i < tags.length - 1; i++) {
+            this.push('tags', tags[i]);
+          }
+          this._newTag = tags[tags.length - 1];
+        }
+      }
+
+      _onNewTagAction(evt, detail) {
+        if(this.debug) {
+          console.debug('[quantum-local-collection-writer] _onNewTagAction', evt.key);
+        }
+        if (evt.key === 'Enter') {
           this._addNewTag();
         } 
-      },
-      _addNewTag: function() {
+      }
+
+      _addNewTag() {
         if (this.tags.indexOf(this._newTag) < 0) {
           this.push('tags', this._newTag);
         }        
         this._emptyNewTag();
-      },
-      _emptyNewTag: function() {
-        this._newTag = "";
-      },
-      _deleteTag: function(evt) {
-        // console.debug("[quantum-local-collection-writer] _deleteTag", evt.model);
-        var tagToDelete = evt.model;
+      }
+
+      _emptyNewTag() {
+        this._newTag = '';
+      }
+
+      _deleteTag(evt) {
+        if(this.debug) {
+          console.debug('[quantum-local-collection-writer] _deleteTag', evt.model);
+        }
+        let tagToDelete = evt.model;
         this.splice('tags', tagToDelete.index, 1);
-      },
-      _save: function() {
-        var timestamp = Date.now();
+      }
+
+      _save() {
+        let timestamp = Date.now();
         this._document = {
           timestamp: timestamp,
           name: this.name,
           tags: this.tags,
           warpscript: this.warpscript,
         };
-        console.debug("[quantum-local-collection-writer] _save", this.timestamp, this._document);
+        if(this.debug) {
+          console.debug('[quantum-local-collection-writer] _save', this.timestamp, this._document);
+        }
         this.$.document.save().then(function() {
-          console.debug("[quantum-local-collection-writer] _saved", this.timestamp, this._document);
+          if(this.debug) {
+            console.debug('[quantum-local-collection-writer] _saved', this.timestamp, this._document);
+          }
           this.$.document.reset();
           this.close();
         }.bind(this)); 
-      },
+      }
+    }
 
-    });
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumLocalCollectionWriter.is, QuantumLocalCollectionWriter);
   </script>
 </dom-module>  
