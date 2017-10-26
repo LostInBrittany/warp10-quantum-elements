@@ -28,13 +28,13 @@
 <dom-module id="quantum-local-collection-reader">
   <template>
     <style>
-      :host {   
+      :host {
         margin-top: 5vh;
         width: 90vw;
         background: white;
-        transition: box-shadow 0.5s cubic-bezier(.25,.8,.25,1);
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-        overflow : auto;
+        transition: box-shadow 0.5s cubic-bezier(.25, .8, .25, 1);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        overflow: auto;
         border-radius: 2px;
         padding: 15px;
         --app-primary-color: var(--google-blue-500);
@@ -42,122 +42,141 @@
         --app-background-color: white;
         --app-on-background-color: white;
       }
+
       [hidden] {
-        display : none !important;
+        display: none !important;
       }
+
       #closeReadCollection {
         position: absolute;
         justify-content: flex-end;
         right: 16px;
         top: 16px;
         margin: 0;
-        transition: color 0.5s cubic-bezier(.25,.8,.25,1);
-        color: var(--google-grey-300);        
+        transition: color 0.5s cubic-bezier(.25, .8, .25, 1);
+        color: var(--google-grey-300);
       }
+
       .header {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         margin-top: 30px;
       }
+
       .collection {
         margin-top: 15px;
         @apply(--layout-vertical);
       }
+
       .record {
         position: relative;
         @apply(--layout-vertical);
         margin-bottom: 15px;
       }
+
       .record > div {
         margin-left: 15px;
         margin-bottom: 10px;
       }
+
       .record_name {
         font-weight: bold;
         font-size: 1.1em;
         margin-left: 0 !important;
         cursor: pointer;
       }
+
       .record_date {
-        
+
       }
+
       .record_tag_list {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
       }
+
       .record_tag {
         font-size: 0.75em;
-        margin-right: 20px; 
+        margin-right: 20px;
         background-color: var(--google-blue-100);
         padding: 5px;
         border-radius: 2px;
       }
+
       .record_warpscript {
         padding: 5px;
         font-family: 'Roboto Mono', sans-serif;
         font-size: 0.75em;
-        -moz-box-shadow:    inset 0 0 2px #AAA;
+        -moz-box-shadow: inset 0 0 2px #AAA;
         -webkit-box-shadow: inset 0 0 2px #AAA;
-        box-shadow:         inset 0 0 2px #AAA; 
+        box-shadow: inset 0 0 2px #AAA;
         max-height: 100px;
-        overflow: auto;       
+        overflow: auto;
       }
-      .filterCriteria {        
+
+      .filterCriteria {
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
       }
+
       .filterCriteria paper-input {
         margin-left: 15px;
         @apply(--layout-flex);
       }
+
       .itemList {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
       }
+
       .item {
         position: relative;
         @apply(--layout-horizontal);
         @apply(--layout-center);
         margin-right: 35px;
       }
-      .item.tag { 
+
+      .item.tag {
         margin-top: 10px;
         background-color: var(--google-blue-100);
         padding: 5px 15px;
         border-radius: 2px;
-      } 
+      }
+
       iron-icon.submit {
         color: var(--google-green-500);
       }
+
       iron-icon.close,
       iron-icon.delete {
         color: var(--google-red-500);
       }
+
       paper-badge.delete {
-        margin-left:15px;
+        margin-left: 15px;
         margin-top: -5px;
-      }      
+      }
     </style>
 
     <app-pouchdb-index
-        db-name="warpscript-collection"
-        name="main"
-        fields='["_id"]'>
+      db-name="warpscript-collection"
+      name="main"
+      fields='["_id"]'>
     </app-pouchdb-index>
     <app-pouchdb-query
-        id="query"
-        db-name="warpscript-collection"
-        selector="_id $gt 0"
-        fields='["_id", "name", "tags", "timestamp", "warpscript"]'
-        sort='["_id"]'
-        data="{{collection}}">
+      id="query"
+      db-name="warpscript-collection"
+      selector="_id $gt 0"
+      fields='["_id", "name", "tags", "timestamp", "warpscript"]'
+      sort='["_id"]'
+      data="{{collection}}">
     </app-pouchdb-query>
 
     <paper-button
-        id = "closeReadCollection"
-        on-tap = "cancel">
-      <iron-icon icon = "close"></iron-icon>
+      id="closeReadCollection"
+      on-tap="cancel">
+      <iron-icon icon="close"></iron-icon>
     </paper-button>
 
     <h2>{{localize('title')}}</h2>
@@ -167,256 +186,284 @@
     </div>
 
     <div class="filterCriteria">
-      <paper-checkbox 
-          id="filterByName" 
-          active="{{_filterByName}}"
-          on-change="_onFilterByNameCheckboxChange">{{localize('filterByName')}}</paper-checkbox>
+      <paper-checkbox
+        id="filterByName"
+        active="{{_filterByName}}"
+        on-change="_onFilterByNameCheckboxChange">{{localize('filterByName')}}
+      </paper-checkbox>
       <template is="dom-if" if="{{_filterByName}}">
-          <paper-input
-              name="filterByNameInput" 
-              label="{{ localize('pattern')}}"
-              type="text" 
-              value="{{_filterByNameInput}}"
-              maxlength="256"></paper-input>
+        <paper-input
+          name="filterByNameInput"
+          label="{{ localize('pattern')}}"
+          type="text"
+          value="{{_filterByNameInput}}"
+          maxlength="256"></paper-input>
       </template>
     </div>
 
     <div class="filterCriteria">
-      <paper-checkbox 
-          id="filterByName" 
-          active="{{_filterByTags}}"
-          on-change="_onFilterByTagsCheckboxChange">{{localize('filterByTags')}}</paper-checkbox>
+      <paper-checkbox
+        id="filterByName"
+        active="{{_filterByTags}}"
+        on-change="_onFilterByTagsCheckboxChange">{{localize('filterByTags')}}
+      </paper-checkbox>
       <template is="dom-if" if="{{_filterByTags}}">
         <paper-input
-            name="newTag" 
-            id="newTag" 
-            label="{{localize('promptTag')}}"
-            type="text" 
-            value="{{_newTag}}"
-            maxlength="64"
-            auto-validate 
-            allowed-pattern="[a-z0-9]"
-            on-input="_onNewTagInput"
-            on-keypress="_onNewTagAction"></paper-input>
+          name="newTag"
+          id="newTag"
+          label="{{localize('promptTag')}}"
+          type="text"
+          value="{{_newTag}}"
+          maxlength="64"
+          auto-validate
+          allowed-pattern="[a-z0-9]"
+          on-input="_onNewTagInput"
+          on-keypress="_onNewTagAction"></paper-input>
       </template>
     </div>
     <div class="filterCriteria">
       <template is="dom-if" if="{{_filterByTags}}">
         <div class="itemList">
           <template
-              is="dom-repeat"
-              items="[[_tags]]"
-              as="tag">
+            is="dom-repeat"
+            items="[[_tags]]"
+            as="tag">
             <div class="item tag">
               <span id$="tag-{{tag}}" class="tagname">{{tag}}</span>
               <paper-badge
-                  icon="close"
-                  class="delete"
-                  for$="tag-{{tag}}"
-                  label="localize('deleteTag')"
-                  on-click="_deleteTag"></paper-badge>    
+                icon="close"
+                class="delete"
+                for$="tag-{{tag}}"
+                label="localize('deleteTag')"
+                on-click="_deleteTag"></paper-badge>
             </div>
           </template>
-        </div>              
+        </div>
       </template>
     </div>
 
     <div class="collection">
-      <template 
-          is="dom-repeat" 
-          id="collectionTemplate"
-          items="{{collection}}" 
-          as="record"
-          filter="{{_filterRecords(_filterByNameInput,_tags,_tags.length)}}">
+      <template
+        is="dom-repeat"
+        id="collectionTemplate"
+        items="{{collection}}"
+        as="record"
+        filter="{{_filterRecords(_filterByNameInput,_tags,_tags.length)}}">
         <div class="record">
-          
-          <div 
-              class="record_name" 
-              on-tap="_load">{{record.name}}</div>
-          
+
+          <div
+            class="record_name"
+            on-tap="_load">{{record.name}}
+          </div>
+
           <div class="record_date">
-            Saved on: 
-            <moment-js 
-                date="{{_fromTimestampToDate(record.timestamp)}}" 
-                format="YYYY-MM-DD HH:mm:ss"
-                utc></moment-js> 
+            Saved on:
+            <moment-js
+              date="{{_fromTimestampToDate(record.timestamp)}}"
+              format="YYYY-MM-DD HH:mm:ss"
+              utc></moment-js>
             (UTC)
           </div>
 
-          <div class="record_tag_list">          
+          <div class="record_tag_list">
             <template is="dom-repeat" items="[[record.tags]]" as="tag">
-              <div class="record_tag">
-                {{tag}}
-              </div>
+              <div class="record_tag">{{tag}}</div>
             </template>
           </div>
 
-          <div class="record_warpscript">
-            {{record.shortWarpscript}}
-          </div>
+          <div class="record_warpscript">{{record.shortWarpscript}}</div>
         </div>
-      </template> 
+      </template>
     </div>
 
   </template>
   <script>
-    Polymer({
-      is: "quantum-local-collection-reader",
+    class QuantumLocalCollectionReader extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+      static get is() {
+        return 'quantum-local-collection-reader';
+      }
 
-      behaviors : [
-        Polymer.PaperDialogBehavior, 
-        Polymer.AppLocalizeBehavior 
-      ],
-
-      properties: {
-
-        _tags: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        },
-
-        _filterByName: {
-          type: Boolean,
-          value: false
-        },
-        _filterByTags: {
-          type: Boolean,
-          value: false
-        },
-        _filterByDate: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * The Warscript collection object
-         */
-        collection: {
-          type: Array,
-          notify: true,
-          observer: "onCollectionChange"
-        },      
-        _filterByNameInput: {
-          type: String,
-          value: ""
-        },
-        _filterByTagsInput: {
-          type: String,
-          value: ""
-        },   
-        language: {
-          value: 'en'
-        },     
-        /* Overriden from AppLocalizeBehavior */
-        resources: {
-          type: Object,
-          value: function() {
-            return {
-              'en': { 
-                'title': 'Load a script from local storage',
-                'filter': 'Search',
-                'filterByName': "By name",
-                'filterByTags': "By tags",
-                'filterByDate': "By date",
-                'pattern': 'Pattern',
-                'promptTag': 'Add tags, separated by `,` or `enter`',
-                'deleteTag': 'Remove tag',              
+      static get properties() {
+        return {
+          _tags: {
+            type: Array,
+            value: function () {
+              return [];
+            }
+          },
+          _filterByName: {
+            type: Boolean,
+            value: false
+          },
+          _filterByTags: {
+            type: Boolean,
+            value: false
+          },
+          _filterByDate: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * The Warscript collection object
+           */
+          collection: {
+            type: Array,
+            notify: true,
+            observer: 'onCollectionChange'
+          },
+          _filterByNameInput: {
+            type: String,
+            value: ''
+          },
+          _filterByTagsInput: {
+            type: String,
+            value: ''
+          },
+          language: {
+            value: 'en'
+          },
+          /* Overriden from AppLocalizeBehavior */
+          resources: {
+            type: Object,
+            value: function () {
+              return {
+                en: {
+                  title: 'Load a script from local storage',
+                  filter: 'Search',
+                  filterByName: 'By name',
+                  filterByTags: 'By tags',
+                  filterByDate: 'By date',
+                  pattern: 'Pattern',
+                  promptTag: 'Add tags, separated by `,` or `enter`',
+                  deleteTag: 'Remove tag',
+                }
               }
             }
-          }
-        }         
-      },
-      listeners: {
-        'iron-overlay-opened': 'onOpen'
-      },
-      onOpen: function() {
-        console.debug("[quantum-local-collection-reader] onOpen - Openend");
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('iron-overlay-opened', (e) => this.onOpen(e));
+      }
+
+      onOpen() {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] onOpen - Openend');
+        }
         this.$.query.refresh();
-      },
-      onCollectionChange: function() {
-        console.debug("[quantum-local-collection-reader] onCollectionChange", this.collection);
-        var collection = [];
-        for (var i in this.collection) {
+      }
+
+      onCollectionChange() {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] onCollectionChange', this.collection);
+        }
+        let collection = [];
+        for (let i in this.collection) {
           if (this.collection[i].warpscript) {
             collection.push(this.collection[i]);
           }
         }
-        if (collection.length != this.collection.length) {
+        if (collection.length !== this.collection.length) {
           this.collection = collection;
-          for (var i in this.collection) {          
+          for (let i in this.collection) {
             this.collection[i].shortWarpscript = this._shortWarpscript(this.collection[i].warpscript);
           }
         }
-      },
-      _onFilterByNameCheckboxChange: function() {
-      },
-      _onFilterByTagsCheckboxChange: function() {
-      },
-      /**
-      * Convert token timestamps to dates
-      */
-      _fromTimestampToDate: function(ts) {
-        if (!ts) return 0;
-        console.debug("[quantum-local-collection-reader] _fromTimestampToDate", ts)
-        return new Date(ts).toISOString();  
-      },
-      _shortWarpscript: function(warpscript) {
-        if (!warpscript) {
-          return "";
-        }
-        var shortWarpscript = this._trimExcessLineFeeds(warpscript).substring(0,256);
+      }
 
-        
-        if (shortWarpscript.length != warpscript.length) {
-          shortWarpscript = shortWarpscript+ "...";
-        }       
-        
-        console.debug("[quantum-local-collection-reader] _shortWarpscript", shortWarpscript);
+      _onFilterByNameCheckboxChange() {
+      }
+
+      _onFilterByTagsCheckboxChange() {
+      }
+
+      /**
+       * Convert token timestamps to dates
+       */
+      _fromTimestampToDate(ts) {
+        if (!ts) {
+          return 0;
+        }
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] _fromTimestampToDate', ts)
+        }
+        return new Date(ts).toISOString();
+      }
+
+      _shortWarpscript(warpscript) {
+        if (!warpscript) {
+          return '';
+        }
+        let shortWarpscript = this._trimExcessLineFeeds(warpscript).substring(0, 256);
+        if (shortWarpscript.length !== warpscript.length) {
+          shortWarpscript = shortWarpscript + '...';
+        }
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] _shortWarpscript', shortWarpscript);
+        }
         return shortWarpscript
-      },
-      _trimExcessLineFeeds: function(warpscript) {
-        var maxNumberOfLineFeeds = 3
-        var numberOfLineFeeds = 0;
-        var i;
+      }
+
+      _trimExcessLineFeeds(warpscript) {
+        let maxNumberOfLineFeeds = 3;
+        let numberOfLineFeeds = 0;
+        let i;
         for (i in warpscript.length) {
-          if (warpscript[i] == "\n") {
+          if (warpscript[i] === '\n') {
             numberOfLineFeeds++;
           }
           if (numberOfLineFeeds >= maxNumberOfLineFeeds) {
             break;
           }
         }
-        return warpscript.substring(0,i);
-      },
-      _load: function(evt) {
+        return warpscript.substring(0, i);
+      }
+
+      _load(evt) {
         this.cancel();
-        console.debug("[quantum-local-collection-reader] _load", evt.model.record);
-        this.fire("warpscript-choosen", evt.model.record.warpscript);
-      },
-      _filterRecords: function(_filterByNameInput,_tags, len) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] _load', evt.model.record);
+        }
+        this.fire('warpscript-choosen', evt.model.record.warpscript);
+      }
+
+      _filterRecords(_filterByNameInput, _tags, len) {
 
         // 3rd param, `len` used to alert function it must execute when _tags.length change
         // In an ideal world it should work without, to test with next Polymer versions
 
-        console.debug("[quantum-local-collection-reader] _filterRecords - Init", _filterByNameInput,_tags);
-        if (!_filterByNameInput && (!_tags || _tags.length == 0) ) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] _filterRecords - Init', _filterByNameInput, _tags);
+        }
+        if (!_filterByNameInput && (!_tags || _tags.length === 0)) {
           // set filter to null to disable filtering
-          console.debug("[quantum-local-collection-reader] _filterRecords - set filter to null to disable filtering");
+          if (this.debug) {
+            console.debug('[quantum-local-collection-reader] _filterRecords - set filter to null to disable filtering');
+          }
           return null;
         } else {
           // return a filter function for the current search string
-          console.debug("[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string");
-          return function(record) {
-            console.debug("[quantum-local-collection-reader] _filterRecords - Filter called", record, _filterByNameInput, _tags);
+          if (this.debug) {
+            console.debug('[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string');
+          }
+          return function (record) {
+            if (this.debug) {
+              console.debug('[quantum-local-collection-reader] _filterRecords - Filter called', record, _filterByNameInput, _tags);
+            }
             if (_filterByNameInput) {
               if (record.name && record.name.toLowerCase().indexOf(_filterByNameInput.toLowerCase()) < 0) {
                 return false;
               }
             }
-           
+
             if (_tags && _tags.length > 0) {
-              for (var i in _tags) {
+              for (let i in _tags) {
                 if (record.tags.indexOf(_tags[i].trim().toLowerCase()) < 0) {
                   return false;
                 }
@@ -425,39 +472,54 @@
             return true;
           };
         }
-      },
+      }
+
       // ***********************************************************************
       // Action listeners
       // ***********************************************************************
-      _onNewTagInput: function(evt, detail) {
-        console.debug("[quantum-local-collection-writer] _onNewTagInput", this._newTag);
-        var tags = this._newTag.split(',');
-        if (tags.length > 1);
-        for (var i=0; i < tags.length-1; i++) {
-          this.push('tags', tags[i]);
+      _onNewTagInput(evt, detail) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
         }
-        this._newTag = tags[tags.length-1];
-      },
-      _onNewTagAction: function(evt, detail) {
-        console.debug("[quantum-local-collection-writer] _onNewTagAction", evt.key);
-        if (evt.key == 'Enter') {
+        let tags = this._newTag.split(',');
+        if (tags.length > 1) {
+          for (let i = 0; i < tags.length - 1; i++) {
+            this.push('tags', tags[i]);
+          }
+          this._newTag = tags[tags.length - 1];
+        }
+      }
+
+      _onNewTagAction(evt, detail) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-writer] _onNewTagAction', evt.key);
+        }
+        if (evt.key === 'Enter') {
           this._addNewTag();
-        } 
-      },
-      _addNewTag: function() {
+        }
+      }
+
+      _addNewTag() {
         if (this._tags.indexOf(this._newTag) < 0) {
           this.push('_tags', this._newTag);
-        }        
+        }
         this._emptyNewTag();
-      },
-      _emptyNewTag: function() {
-        this._newTag = "";
-      },
-      _deleteTag: function(evt) {
-        // console.debug("[quantum-local-collection-reader] _deleteTag", evt.model);
-        var tagToDelete = evt.model;
+      }
+
+      _emptyNewTag() {
+        this._newTag = '';
+      }
+
+      _deleteTag(evt) {
+        if (this.debug) {
+          console.debug('[quantum-local-collection-reader] _deleteTag', evt.model);
+        }
+        let tagToDelete = evt.model;
         this.splice('_tags', tagToDelete.index, 1);
-      },
-    });
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumLocalCollectionReader.is, QuantumLocalCollectionReader);
   </script>
 </dom-module>  
