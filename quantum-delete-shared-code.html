@@ -27,180 +27,199 @@
         --app-secondary-color: black;
         --app-background-color: white;
         --app-on-background-color: white;
-      }      
-      .item { 
-        margin-top: 8px; 
-        margin-bottom: 8px; 
-      } 
+      }
 
-      .item_name { 
-        color: var(--paper-grey-600); 
+      .item {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      .item_name {
+        color: var(--paper-grey-600);
         font-family: 'Roboto', 'Noto', sans-serif;
-        -webkit-font-smoothing: antialiased; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        font-size: 12px; 
-        font-weight: 400; 
-        letter-spacing: 0.011em; 
-        line-height: 20px; 
-      } 
-      .item_value { 
-        @apply(--layout-horizontal); 
-        @apply(--layout-center); 
-        @apply(--layout-wrap); 
-      } 
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.011em;
+        line-height: 20px;
+      }
+
+      .item_value {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+      }
+
       .item_vert {
         @apply(--layout-vertical);
       }
+
       .clearfix:before,
       .clearfix:after {
         content: " "; /* 1 */
         display: table; /* 2 */
       }
+
       .clearfix:after {
         clear: both;
-      }      
+      }
+
       .title {
         text-transform: capitalize;
       }
 
       .delete {
         background-color: var(--app-primary-color);
-        color: var(--app-on-background-color); 
+        color: var(--app-on-background-color);
       }
+
       .cancel {
         background-color: var(--app-primary-contrast-color);
         color: var(--app-on-background-color);
       }
+
       .item_centered {
-        @apply(--layout-horizontal); 
-        @apply(--layout-center); 
-        @apply(--layout-wrap); 
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
         @apply(--layout-around-justified);
         @apply(--layout-center-justified);
       }
+
       .spacer {
         height: 30px;
       }
     </style>
 
 
-      <h2>Deleting shared snapshot</h2>
+    <h2>Deleting shared snapshot</h2>
 
-      <div class="item">
-        <div class="item_name">
-          Snapshot Id: 
-        </div>
-        <div class="item_value">
-          {{snapshotId}}
-          </div>
-      </div>         
-
-      <div class="spacer"></div>
-
-      <div class="item_centered">
-        <paper-button class="cancel" on-click="_cancel">Cancel</paper-button>
-        <paper-button class="delete" on-click="_delete" autofocus>Delete</paper-button>
+    <div class="item">
+      <div class="item_name">
+        Snapshot Id:
       </div>
+      <div class="item_value">
+        {{snapshotId}}
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="item_centered">
+      <paper-button class="cancel" on-click="_cancel">Cancel</paper-button>
+      <paper-button class="delete" on-click="_delete" autofocus>Delete</paper-button>
+    </div>
 
     <iron-ajax
       id="deleteSharedCodeRequest" url="{{_czdWarp10Url}}"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
       method='POST' body='{{_deleteRequest}}'
-      handle-as="text"  on-response="_handleDeleteSharedCodeResponse" on-error="_handleDeleteSharedCodeError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}" 
-      ></iron-ajax>        
+      handle-as="text" on-response="_handleDeleteSharedCodeResponse" on-error="_handleDeleteSharedCodeError"
+      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
+    ></iron-ajax>
 
   </template>
   <script>
-    Polymer({
-      is: "quantum-delete-shared-code",
-      behaviors: [
-        QuantumModule
-      ],
-      properties: {
-        /**
-         * The module name
-         */
-        name: {
-          type: String,
-          value: "delete-shared-code"
-        },
-        /**
-         * The name of the currently selected module
-         */
-        selected: {
-          type: String
-        },
-        /**
-         * The snapshot id 
-         */
-        snapshotId: {
-          type: String,
-        },
+    class QuantumDeleteSharedCode extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-delete-shared-code';
+      }
 
-        /**
-         * The snapshot secret
-         */
-        snapshotSecret: {
-          type: String,
-        },
-        _czdWarp10Url : {
-          type: String,
-          value: 'https://warp.cityzendata.net/api/v0/exec',
-        },
-        _sharingUrlRoot: {
-          type: String,
-          value: function() {
-            return window.location.origin+window.location.pathname;
-          } 
-        },
-      },
-      observers: [
-        "_onSnapshotChanged(snapshotId,snapshotSecret)"
-      ],
+      static get properties() {
+        return {
+          /**
+           * The module name
+           */
+          name: {
+            type: String,
+            value: 'delete-shared-code'
+          },
+          /**
+           * The name of the currently selected module
+           */
+          selected: {
+            type: String
+          },
+          /**
+           * The snapshot id
+           */
+          snapshotId: {
+            type: String,
+          },
+
+          /**
+           * The snapshot secret
+           */
+          snapshotSecret: {
+            type: String,
+          },
+          _czdWarp10Url: {
+            type: String,
+            value: 'https://warp.cityzendata.net/api/v0/exec',
+          },
+          _sharingUrlRoot: {
+            type: String,
+            value: function () {
+              return window.location.origin + window.location.pathname;
+            }
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        }
+      }
+
+      static get observers() {
+        return ['_onSnapshotChanged(snapshotId,snapshotSecret)'];
+      }
 
       /* ************************************************************************/
-      /* Lifecycle methods                                                      
-      /* ************************************************************************/
-      ready: function() {
 
-      },
-
+      /* Observers
       /* ************************************************************************/
-      /* Observers                                                              
-      /* ************************************************************************/ 
-      _onSnapshotChanged: function() {
+      _onSnapshotChanged() {
         if (!this.snapshotId || !this.snapshotSecret || this.selected !== this.name) return;
-        
-        console.debug("[quantum-delete-shared-code] _onSnapshotChanged", this.snapshotId, this.snapshotSecret)
-      },
+        if (this.debug) {
+          console.debug('[quantum-delete-shared-code] _onSnapshotChanged', this.snapshotId, this.snapshotSecret)
+        }
+      }
 
       /* ************************************************************************/
-      /* Event listeners                                                              
+
+      /* Event listeners
       /* ************************************************************************/
-      _handleDeleteSharedCodeResponse: function(evt, ironRequest) {
-        console.debug("[quantum-delete-shared-code] _handleDeleteSharedCodeResponse",ironRequest.response );
-        this.fire('deleted', ironRequest.response);   
-      },
+      _handleDeleteSharedCodeResponse(evt, ironRequest) {
+        if (this.debug) {
+          console.debug('[quantum-delete-shared-code] _handleDeleteSharedCodeResponse', ironRequest.response);
+        }
+        this.fire('deleted', ironRequest.response);
+      }
 
       /* ************************************************************************/
-      /* Action listeners                                                              
-      /* ************************************************************************/
-      _cancel: function() {
-        console.debug("[quantum-delete-shared-code] _cancel",{snapshotId:this.snapshotId, snapshotSecret:this.snapshotSecret} );
-        this.fire('cancel-delete', {snapshotId:this.snapshotId, snapshotSecret:this.snapshotSecret});
-      },
-      _delete: function() {
 
-        this._deleteRequest =  "'"+ this.snapshotId+"' '"+ this.snapshotSecret +"' @orbit/snapshot/delete";
-        this.$.deleteSharedCodeRequest.generateRequest();    
-      },
+      /* Action listeners
+      /* ************************************************************************/
+      _cancel() {
+        if (this.debug) {
+          console.debug('[quantum-delete-shared-code] _cancel', {
+            snapshotId: this.snapshotId,
+            snapshotSecret: this.snapshotSecret
+          });
+        }
+        this.fire('cancel-delete', {snapshotId: this.snapshotId, snapshotSecret: this.snapshotSecret});
+      }
 
-      /* ************************************************************************/
-      /* Instance methods                                                              
-      /* ************************************************************************/
-    })
-  </script>  
+      _delete() {
+        this._deleteRequest = `'${this.snapshotId} ${this.snapshotSecret}' @orbit/snapshot/delete`;
+        this.$.deleteSharedCodeRequest.generateRequest();
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumDeleteSharedCode.is, QuantumDeleteSharedCode);
+  </script>
 </dom-module>
