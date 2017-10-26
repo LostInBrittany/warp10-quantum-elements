@@ -35,7 +35,10 @@ Warp update widget
         --app-background-color: white;
         --app-on-background-color: white;
       }
-      .top-10 { margin-top:10px; }
+
+      .top-10 {
+        margin-top: 10px;
+      }
 
       .right {
         float: right;
@@ -45,56 +48,62 @@ Warp update widget
         min-height: 300px;
         font-size: 14px;
       }
+
       #token {
         width: 100%;
       }
+
       h4 {
         font-weight: bold;
       }
+
       granite-alert[hidden] {
         display: none;
       }
+
       paper-button {
         background-color: var(--app-primary-color);
         color: var(--app-on-background-color)
       }
+
       granite-spinner {
         z-index: 100;
       }
-    </style>
 
-    <style>      
-      .item { 
-        margin-top: 8px; 
-        margin-bottom: 8px; 
-      } 
+      .item {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
 
-      .item_name { 
-        color: var(--paper-grey-600); 
+      .item_name {
+        color: var(--paper-grey-600);
         font-family: 'Roboto', 'Noto', sans-serif;
-        -webkit-font-smoothing: antialiased; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        font-size: 12px; 
-        font-weight: 400; 
-        letter-spacing: 0.011em; 
-        line-height: 20px; 
-      } 
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.011em;
+        line-height: 20px;
+      }
 
-      .item_value { 
-        @apply(--layout-horizontal); 
-        @apply(--layout-center); 
-        @apply(--layout-wrap); 
-      } 
+      .item_value {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+      }
+
       .clearfix:before,
       .clearfix:after {
         content: " "; /* 1 */
         display: table; /* 2 */
       }
+
       .clearfix:after {
         clear: both;
-      }    
+      }
+
       .title {
         text-transform: capitalize;
       }
@@ -103,32 +112,33 @@ Warp update widget
     <h2 class="title">{{name}}</h2>
 
     <granite-spinner
-        active="{{loading}}" 
-        size="200"
-        hover></granite-spinner>
+      active="{{loading}}"
+      size="200"
+      hover></granite-spinner>
 
-    <div class="top-10">          
+    <div class="top-10">
       <paper-input
         auto-validate
-        prevent-invalid-input 
+        prevent-invalid-input
         always-float-label
-        name="token" 
+        name="token"
         label="Write token"
-        type="text" 
+        type="text"
         value="{{token}}"
-        required ></paper-input>
+        required></paper-input>
     </div>
     <div class="item">
       <div class="item_name">
         Data to push:
       </div>
-      <div  class="top-10">
+      <div class="top-10">
         <ace-widget
           id="ingresseditor" theme="ace/theme/eclipse" mode="ace/mode/snippets"
-          softtabs="true" wrapmode="true" value="{{content}}">Type your code here... </ace-widget>
+          softtabs="true" wrapmode="true" value="{{content}}">Type your code here...
+        </ace-widget>
       </div>
     </div>
-    <div  class="top-10">
+    <div class="top-10">
       <div class="right">
         <paper-button
           id="btn_execute"
@@ -139,8 +149,8 @@ Warp update widget
         </paper-button>
       </div>
     </div>
-    <div class="clearfix"> </div>
-    <div  class="top-10">
+    <div class="clearfix"></div>
+    <div class="top-10">
       <granite-alert level="danger" hidden$="{{!_hasAnError}}">
         {{errorMsg}}
       </granite-alert>
@@ -162,97 +172,125 @@ Warp update widget
   </template>
 
   <script>
-    Polymer({
-      is: "quantum-update",
-      behaviors: [
-        QuantumModule
-      ],
-      properties: {
-        /**
-         * A WRITE token valable for the GTS to be updated
-         */
-        token: {
-          type: String,
-          value: ""
-        },
-        /**
-         * The GTS datapoints to be updated
-         */
-        content: {
-          type: String,
-          value: ""
-        },
-          
-        _baseUrl: {
-          type: String,
-          computed: "_getBaseUrl(backend)"
-        },
+    class QuantumUpdate extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-update';
+      }
 
-        _disabled: {
-          type: Boolean,
-          computed: "_isDisabled(token, content)"
-        },
-      },
+      static get properties() {
+        return {
+          /**
+           * A WRITE token valable for the GTS to be updated
+           */
+          token: {
+            type: String,
+            value: ''
+          },
+          /**
+           * The GTS datapoints to be updated
+           */
+          content: {
+            type: String,
+            value: ''
+          },
+
+          _baseUrl: {
+            type: String,
+            computed: '_getBaseUrl(backend)'
+          },
+
+          _disabled: {
+            type: Boolean,
+            computed: '_isDisabled(token, content)'
+          },
+          debug: {
+            type: Boolean,
+            value: false,
+          },
+        };
+      }
 
       /**************************************************************************/
       /* Lifecycle methods                                                      */
-      /**************************************************************************/     
-      ready: function() {
+
+      /**************************************************************************/
+      ready() {
+        super.ready();
         this._hasAnError = 0;
         this._hasAResponse = 0;
-      },
-      attached: function() {
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
         editor = this.$.ingresseditor;
         editor.addEventListener('editor-content', this._editorChangeAction.bind(this));
-      },
+      }
 
       /**************************************************************************/
       /* Computed porperties                                                    */
-      /**************************************************************************/     
-      _getBaseUrl: function() {
-        console.debug('[quantum-update] _getBaseUrl', this.backend);
-        return this.backend.url + this.backend.updateEndpoint;
-      },
-      _isDisabled: function() {
-        // console.debug('[quantum-update] _isDisabled', (!this.token || !this.content))
-        if (!this.token || !this.content) {
-          return true;
+
+      /**************************************************************************/
+      _getBaseUrl() {
+        if (this.debug) {
+          console.debug('[quantum-update] _getBaseUrl', this.backend);
         }
-        return false;
-      },
+        return this.backend.url + this.backend.updateEndpoint;
+      }
+
+      _isDisabled() {
+        if (this.debug) {
+          console.debug('[quantum-update] _isDisabled', (!this.token || !this.content));
+        }
+        return !this.token || !this.content;
+      }
 
       /**************************************************************************/
       /* Action Listeners                                                       */
-      /**************************************************************************/      
-      execute: function() {
-        var header = this.backend.headerName+"-Token";
-        this.$.xhr.headers = {}
+
+      /**************************************************************************/
+      execute() {
+        let header = this.backend.headerName + '-Token';
+        this.$.xhr.headers = {};
         this.$.xhr.headers[header] = this.token;
-        console.debug("[quantum-update] _doCall - headers", this.$.xhr.headers);
+        if (this.debug) {
+          console.debug('[quantum-update] _doCall - headers', this.$.xhr.headers);
+        }
         this.$.xhr.generateRequest();
-      },
+      }
 
       /**************************************************************************/
       /* Event Listeners                                                        */
+
       /**************************************************************************/
-      _editorChangeAction: function(value, oldValue) {
+      _editorChangeAction(value, oldValue) {
         this.fire('editor-content', {value: value, oldValue: oldValue});
         this.content = value.detail.value;
-        // console.debug("[quantum-update] Ide content changed", this.content);
-      },
-      _handleResponse: function(event, ironRequest) {
-        // console.debug("[quantum-update] _handleResponse - Updated!", ironRequest.response);
+        if (this.debug) {
+          console.debug('[quantum-update] Ide content changed', this.content);
+        }
+      }
+
+      _handleResponse(event, ironRequest) {
+        if (this.debug) {
+          console.debug('[quantum-update] _handleResponse - Updated!', ironRequest.response);
+        }
         this._hasAResponse = true;
         this._hasAnError = false;
         this.data = ironRequest.response;
-      },
-      _handleError: function(event, ironRequest) {
-        console.debug("[quantum-update] _handleError - Updated!", ironRequest);
-        this._hasAResponse = false;
-        this._hasAnError = true;      
-        this.data = null;
-        this.errorMsg = ironRequest.request.statusText || "Unkown error"
       }
-    });
+
+      _handleError(event, ironRequest) {
+        if (this.debug) {
+          console.debug('[quantum-update] _handleError - Updated!', ironRequest);
+        }
+        this._hasAResponse = false;
+        this._hasAnError = true;
+        this.data = null;
+        this.errorMsg = ironRequest.request.statusText || 'Unkown error';
+      }
+    }
+
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumUpdate.is, QuantumUpdate);
   </script>
 </dom-module>
