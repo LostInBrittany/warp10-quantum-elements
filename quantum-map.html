@@ -221,7 +221,7 @@ Warp plot widget
     <iron-a11y-keys target="[[_target]]" keys="enter" on-keys-pressed="_hotkeyRegexEnter"></iron-a11y-keys>
     <iron-a11y-keys target="[[_target]]" keys="h ?:keypress" on-keys-pressed="_hotkeyHelp"></iron-a11y-keys>
 
-    <warp10-simple-overlay id="warpscript-plot-keyboard-shortcuts-overlay">
+    <warp10-simple-overlay id="warpscript-plot-keyboard-shortcuts-overlay" debug="[[debug]]">
       <div class="overlay-box">
         <h4>Keyboard Shortcuts:</h4>
         <p><span class="hotkey-key">?</span>, <span class="hotkey-key">h</span> Show / hide this help menu</p>
@@ -238,12 +238,9 @@ Warp plot widget
     </warp10-simple-overlay>
 
 
-    <quantum-image-overlay id="imageOverlay"></quantum-image-overlay>
+    <quantum-image-overlay id="imageOverlay" debug="[[debug]]"></quantum-image-overlay>
 
-    <granite-spinner
-      active="{{loading}}"
-      size="200"
-      hover></granite-spinner>
+    <granite-spinner active="{{loading}}" size="200" hover></granite-spinner>
 
     <div class="right">
       <paper-button
@@ -256,15 +253,8 @@ Warp plot widget
     <h2 class="title">{{name}}</h2>
 
     <div class="toolbar right">
-      <iron-icon
-        id="helpButton"
-        icon="help"
-        on-click="_hotkeyHelp"></iron-icon>
-      <paper-tooltip
-        id="helpButtonTooltip"
-        for="helpButton"
-        fit-to-visible-bounds>Help
-      </paper-tooltip>
+      <iron-icon id="helpButton" icon="help" on-click="_hotkeyHelp"></iron-icon>
+      <paper-tooltip id="helpButtonTooltip" for="helpButton" fit-to-visible-bounds>Help</paper-tooltip>
     </div>
 
     <quantum-gts-tree
@@ -272,171 +262,198 @@ Warp plot widget
       data="{{_gtsStack}}"
       plotted-changed="{{changed}}"
       on-show-image="_handleShowImage"
-      on-hide-image="_handleHideImage"></quantum-gts-tree>
+      on-hide-image="_handleHideImage"
+      debug="[[debug]]"></quantum-gts-tree>
     <template is="dom-if" if="[[!loading]]">
-
-      <warp10-display-map
-        data="[[dataToMap]]"
-        zoom="12"
-      ></warp10-display-map>
-
+      <warp10-display-map data="[[dataToMap]]" zoom="12" debug="[[debug]]"></warp10-display-map>
     </template>
 
     <warp10-warpscript-caller
       id="warpscriptcaller"
       url="{{_baseUrl}}" warpscript="{{warpscript}}"
       on-response="_handleResponse" on-error="_handleError"
+      debug="[[debug]]"
       loading="{{loading}}"></warp10-warpscript-caller>
-
-
   </template>
 
   <script>
-    Polymer({
-      is: "quantum-map",
-      behaviors: [
-        QuantumModule
-      ],
-      properties: {
-        /**
-         * The WarpScript generating the data to plot
-         */
-        warpscript: {
-          type: String
-        },
-        /**
-         * The stack of data to plot
-         */
-        stack: {
-          type: Array,
-        },
-        _gtsStack: {
-          type: Array,
-          computed: "_getGtsStack(stack)",
-          observer: "_onStackChanged"
-        },
-        /**
-         * The name of the currently selected module
-         */
-        selected: {
-          type: String,
-          observer: "_onSelectedChanged"
-        },
-        /**
-         * The interpolation model. Currently supported modes: linear, step, cardinal
-         */
-        _target: {
-          type: Object,
-          value: function() {
-            return document.body;
-          }
-        },
-        stackedGtsList: {
-          type: Array
-        },
-        stackedGtsListSlidingWindow: {
-          type: Array,
-          computed: "getStackedGtsListSlidingWindow(stackedGtsList, selectedGts)"
-        },
-        _baseUrl: {
-          type: String,
-          computed: "_getBaseUrl(backend)"
-        },
+    class QuantumMap extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+      static get is() {
+        return 'quantum-map';
+      }
 
-        _displayMap: {
-          type: Boolean,
-          computed: "_computeDisplayMap(dataToMap)"
-        },
-        color: {
-          type: String,
-          computed: "setColor(selectedGts,gts, changed)"
-        }
-      },
-
-      listeners: {
-        'plotted-changed': '_onMappedChanged'
-      },
+      static get properties() {
+        return {
+          /**
+           * The WarpScript generating the data to plot
+           */
+          warpscript: {
+            type: String
+          },
+          /**
+           * The stack of data to plot
+           */
+          stack: {
+            type: Array,
+          },
+          _gtsStack: {
+            type: Array,
+            computed: '_getGtsStack(stack)',
+            observer: '_onStackChanged'
+          },
+          /**
+           * The name of the currently selected module
+           */
+          selected: {
+            type: String,
+            observer: '_onSelectedChanged'
+          },
+          /**
+           * The interpolation model. Currently supported modes: linear, step, cardinal
+           */
+          _target: {
+            type: Object,
+            value: function () {
+              return document.body;
+            }
+          },
+          stackedGtsList: {
+            type: Array
+          },
+          stackedGtsListSlidingWindow: {
+            type: Array,
+            computed: 'getStackedGtsListSlidingWindow(stackedGtsList, selectedGts)'
+          },
+          _baseUrl: {
+            type: String,
+            computed: '_getBaseUrl(backend)'
+          },
+          _displayMap: {
+            type: Boolean,
+            computed: '_computeDisplayMap(dataToMap)'
+          },
+          color: {
+            type: String,
+            computed: 'setColor(selectedGts,gts, changed)'
+          },
+          debug: {
+            type: Boolean,
+            value: true,
+          },
+        };
+      }
 
       /**************************************************************************/
       /* Lifecycle methods                                                      */
+
       /**************************************************************************/
-      ready: function() {
-      },
-      attached: function() {
+      ready() {
+        super.ready();
+        this.addEventListener('plotted-changed', (e) => this._onMappedChanged(e));
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
         this.dataToMap = {};
-        console.debug("[quantum-map] attached - target", this._target)
+        if (this.debug) {
+          console.debug('[quantum-map] attached - target', this._target);
+        }
         this.init();
-        console.debug("[quantum-map] attached - this", this);
+        if (this.debug) {
+          console.debug('[quantum-map] attached - this', this);
+        }
         this._displayWidth = this.offsetWidth;
-      },
+      }
 
       /**************************************************************************/
       /* Computed properties                                                    */
+
       /**************************************************************************/
-      _getBaseUrl: function() {
+      _getBaseUrl() {
         return this.backend.url + this.backend.execEndpoint;
-      },
-      _computeDisplayMap: function() {
-        console.debug("_computeDisplayMap", this.dataToMap);
+      }
+
+      _computeDisplayMap() {
+        if (this.debug) {
+          console.debug('_computeDisplayMap', this.dataToMap);
+        }
         return (this.dataToMap.length > 0 && this.dataToMap[0].gts && this.dataToMap[0].gts.length > 0);
-      },
-      _getGtsStack: function() {
+      }
+
+      _getGtsStack() {
         return gtsTools.gtsFromJSONList(this.stack);
-      },
+      }
+
       /**************************************************************************/
       /* Observers                                                              */
+
       /**************************************************************************/
-      setColor: function(gts) {
-        // console.debug([quantum-gts-in-selection-overlay] setColor", plottingTools.gtsColor(this.gts));
+      setColor(gts) {
+        if (this.debug) {
+          console.debug('[quantum-gts-in-selection-overlay] setColor', plottingTools.gtsColor(this.gts));
+        }
         return plottingTools.gtsColor(gts);
-      },
-      _onStackChanged: function() {
-        console.debug("[quantum-map] _onStackChanged", this._gtsStack);
+      }
+
+      _onStackChanged() {
+        if (this.debug) {
+          console.debug('[quantum-map] _onStackChanged', this._gtsStack);
+        }
         if (!!this._gtsStack) {
           plottingTools.refresh(gtsTools.flattenGtsIdArray(this._gtsStack));
           this.stackedGtsList = gtsTools.flattenGtsIdArray(this._gtsStack, []);
-          console.debug("[quantum-map] _onStackChanged - do refresh", this.stackedGtsList.slice());
+          if (this.debug) {
+            console.debug('[quantum-map] _onStackChanged - do refresh', this.stackedGtsList.slice());
+          }
           this.fire('plotted-changed', plottingTools);
           this.dataToMap = [{
             gts: this.stackedGtsList,
             params: [{
-              "render": "marker",
-              "color": this.setColor(this.stackedGtsList[0])
+              render: 'marker',
+              color: this.setColor(this.stackedGtsList[0])
             }, {
-              "render": "marker",
-              "color": this.setColor(this.stackedGtsList[1])
+              render: 'marker',
+              color: this.setColor(this.stackedGtsList[1])
             }],
             globalParams: {interpolate: 'cardinal'}
           }];
         }
-      },
-      _onCurrentRegexChanged: function() {
-      },
-      _onSelectedChanged: function(selected) {
+      }
 
+      _onCurrentRegexChanged() {
+      }
+
+      _onSelectedChanged(selected) {
         if (selected === this.name) {
           this._target = document.body;
         } else {
           this._target = null;
         }
-        console.debug("[quantum-map] _onSelectedChanged", {
-          selected: selected,
-          name: this.name,
-          target: this._target,
-          stack: this.stack
-        });
-      },
+        if (this.debug) {
+          console.debug('[quantum-map] _onSelectedChanged', {
+            selected: selected,
+            name: this.name,
+            target: this._target,
+            stack: this.stack
+          });
+        }
+      }
 
-      _onInterpolationModeChanged: function() {
-        console.debug("[quantum-map] _onInterpolationModeChanged", this.interpolationMode);
-      },
+      _onInterpolationModeChanged() {
+        if (this.debug) {
+          console.debug('[quantum-map] _onInterpolationModeChanged', this.interpolationMode);
+        }
+      }
 
       /**************************************************************************/
       /* Event Listeners                                                        */
+
       /**************************************************************************/
-      _handleShowImage: function(evt, obj) {
-        console.debug("[quantum-map] _handleShowImage - response", evt, obj);
-        var dialog = this.$.imageOverlay;
+      _handleShowImage(evt, obj) {
+        if (this.debug) {
+          console.debug('[quantum-map] _handleShowImage - response', evt, obj);
+        }
+        let dialog = this.$.imageOverlay;
         if (obj.type === 'click') {
           dialog.setAttribute('imageClicked', true);
         } else {
@@ -444,40 +461,48 @@ Warp plot widget
         }
         dialog.setAttribute('src', obj.image);
         dialog.setAttribute('caption', obj.caption);
-        // console.debug("[quantum-plot] let's open", dialog.opened);
+        if (this.debug) {
+          console.debug('[quantum-map] let\'s open', dialog.opened);
+        }
         if (!dialog.opened) {
           dialog.open();
         }
-      },
-      _handleHideImage: function(evt, obj) {
-        console.debug("[quantum-map] _handleHideImage - response", evt, obj);
-        var dialog = this.$.imageOverlay;
+      }
+
+      _handleHideImage(evt, obj) {
+        if (this.debug) {
+          console.debug('[quantum-map] _handleHideImage - response', evt, obj);
+        }
+        let dialog = this.$.imageOverlay;
         dialog.noCancelOnOutsideClick = false;
         if (dialog && !dialog.getAttribute('imageClicked')) {
           dialog.cancel();
         }
-      },
-      _handleResponse: function(event, response) {
-        console.debug("[quantum-map] _handleResponse - response", event, response);
-        if (!response.stack ||
-          !response.stack instanceof Array) {
+      }
+
+      _handleResponse(event, response) {
+        if (this.debug) {
+          console.debug('[quantum-map] _handleResponse - response', event, response);
+        }
+        if (!response.stack || !response.stack instanceof Array) {
           this.stack = null;
           return;
         }
         this.stack = response.stack;
-        console.debug("[quantum-map] _handleResponse", this.stack);
+        if (this.debug) {
+          console.debug('[quantum-map] _handleResponse', this.stack);
+        }
         this.dataToMap = [{
           gts: this.stack[0],
-          params: [{
-            "render": "marker"
-          }, {
-            "render": "marker"
-          }],
+          params: [{render: 'marker'}, {render: 'marker'}],
           globalParams: {interpolate: 'cardinal'}
         }];
-        console.debug("[quantum-map] _handleResponse", this.dataToMap);
-      },
-      _onMappedChanged: function(evt) {
+        if (this.debug) {
+          console.debug('[quantum-map] _handleResponse', this.dataToMap);
+        }
+      }
+
+      _onMappedChanged(evt) {
         this.dataToMap = [{
           gts: evt.detail.data,
           params: evt.detail.params,
@@ -485,41 +510,52 @@ Warp plot widget
             interpolate: this.interpolationMode
           }
         }];
-        console.debug("[quantum-map] _onPlottedChanged", this.dataToMap);
-      },
+        if (this.debug) {
+          console.debug('[quantum-map] _onPlottedChanged', this.dataToMap);
+        }
+      }
 
-      _showSelectionOverlay: function(evt) {
+      _showSelectionOverlay(evt) {
         this.selectedMode = true;
-        this.$$('#gts-select-overlay').open();
+        this.root.querySelector('#gts-select-overlay').open();
         this.overlay.timerActivate();
-      },
-      _showRegexOverlay: function(evt) {
-        console.debug("[quantum-map] _showRegexOverlay");
+      }
+
+      _showRegexOverlay(evt) {
+        if (this.debug) {
+          console.debug('[quantum-map] _showRegexOverlay');
+        }
         this._regexMode = true;
         this._regexJustShown = true;
         this.$.gtsRegexOverlay.open();
-      },
-      _hideSelectionOverlay: function(evt) {
-        this.selectedMode = false;
-        this.$$('#gts-select-overlay').close()
-      },
+      }
 
-      _onRegexOverlayOpened: function(evt) {
+      _hideSelectionOverlay(evt) {
+        this.selectedMode = false;
+        this.root.querySelector('#gts-select-overlay').close();
+      }
+
+      _onRegexOverlayOpened(evt) {
         this._regexModeJustOpened = true;
         this.$.regexInput.inputElement.focus();
         this.$.regexInput.$.input.select();
-        console.debug("[quantum-map] _showRegexOverlay", this.$.regexInput.focused);
-      },
-      _onRegexOverlayClosed: function(evt) {
+        if (this.debug) {
+          console.debug('[quantum-map] _showRegexOverlay', this.$.regexInput.focused);
+        }
+      }
+
+      _onRegexOverlayClosed(evt) {
         this._regexMode = false;
-      },
+      }
 
       /**************************************************************************/
       /* Other methods                                                          */
-      /**************************************************************************/
-      init: function() {
-        console.debug("[quantum-map] init - this.stack", this.stack);
 
+      /**************************************************************************/
+      init() {
+        if (this.debug) {
+          console.debug('[quantum-map] init - this.stack', this.stack);
+        }
         this.stackedGtsListHalfLimit = 3;
 
         if (!this.stack) {
@@ -528,150 +564,190 @@ Warp plot widget
           this._onStackChanged(this.stack);
           this.dataToMap = [{
             gts: this.stack[0],
-            params: [{
-              "render": "marker"
-            }, {
-              "render": "marker"
-            }],
+            params: [{render: 'marker'}, {render: 'marker'}],
             globalParams: {interpolate: 'cardinal'}
           }];
         }
-        console.debug("[quantum-map] init - this.dataToMap", this.dataToMap);
-
-
+        if (this.debug) {
+          console.debug('[quantum-map] init - this.dataToMap', this.dataToMap);
+        }
         // Overlay conf for selection TO-DO
         this.overlay = {};
         this.overlay.lifetime = 5000;
         this.overlay.timer = null;
-        this.overlay.timerActivate = function(overlay) {
+        this.overlay.timerActivate = function (overlay) {
           if (this.overlay.timer !== null) {
             window.clearTimeout(this.overlay.timer);
           }
-          this.overlay.timer = window.setTimeout(function() {
+          this.overlay.timer = window.setTimeout(function () {
             this._hideSelectionOverlay();
           }.bind(this), this.overlay.lifetime);
         }.bind(this);
-
-
-      },
+      }
 
       /**************************************************************************/
       /* Hotkeys                                                                */
+
       /**************************************************************************/
 
-      _hotkeyEdit: function(e) {
-        // console.debug("[quantum-plot] _hotkey edit", this.warpscript);
-        if (!this._regexMode) {
-          this.fire("edit", {warpscript: this.warpscript, stack: this.stack, backend: this.backend});
+      _hotkeyEdit(e) {
+        if (this.debug) {
+          console.debug('[quantum-map] _hotkey edit', this.warpscript);
         }
-      },
-      _hotkeyUp: function(e) {
-        // console.debug("[quantum-plot] _hotkey up");
         if (!this._regexMode) {
-          // console.debug([quantum-plot] _hotkey up");
+          this.fire('edit', {warpscript: this.warpscript, stack: this.stack, backend: this.backend});
+        }
+      }
+
+      _hotkeyUp(e) {
+        if (this.debug) {
+          console.debug('[quantum-map] _hotkey up');
+        }
+        if (!this._regexMode) {
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkey up');
+          }
           this._showSelectionOverlay();
-          if ((this.selectedGts == null) || this.selectedGts < 0) {
+          if (this.selectedGts === null || this.selectedGts < 0) {
             this.selectedGts = 0;
           }
           if (this.selectedGts > 0) {
             this.selectedGts -= 1;
           }
         }
-      },
-      _hotkeyDown: function(e) {
-        // console.debug("[quantum-plot] _hotkey down");
+      }
+
+      _hotkeyDown(e) {
+        if (this.debug) {
+          console.debug('[quantum-map] _hotkey down');
+        }
         if (!this._regexMode) {
-          // console.debug([quantum-plot] _hotkey down");
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkey down');
+          }
           this._showSelectionOverlay();
-          if ((this.selectedGts == null) || this.selectedGts < 0) {
+          if (this.selectedGts === null || this.selectedGts < 0) {
             this.selectedGts = 0;
           } else {
             if (this.stackedGtsList.length > this.selectedGts + 1) {
               this.selectedGts += 1;
-              // console.debug("length " + this.stackedGtsList.length + " selected " + this.selectedGts);
+              if (this.debug) {
+                console.debug('length ' + this.stackedGtsList.length + ' selected ' + this.selectedGts);
+              }
             }
           }
         }
-      },
-      _hotkeyRegex: function(e) {
+      }
+
+      _hotkeyRegex(e) {
         if (!this._regexMode) {
           this._showRegexOverlay();
         }
-      },
-      _hotkeyRegexEnter: function(e) {
-        // console.debug("[quantum-plot] _hotkeyRegexEnter - regexMode",this._regexMode);
+      }
+
+      _hotkeyRegexEnter(e) {
+        if (this.debug) {
+          console.debug('[quantum-map] _hotkeyRegexEnter - regexMode', this._regexMode);
+        }
         if (this._regexMode) {
-          console.debug("[quantum-plot] _hotkeyRegexEnter");
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkeyRegexEnter');
+          }
           this.selectRegex();
         }
-      },
-      _hotkeySpace: function(e) {
-        // console.debug("[quantum-plot] _hotkeySpace");
+      }
+
+      _hotkeySpace(e) {
+        if (this.debug) {
+          console.debug('[quantum-map] _hotkeySpace');
+        }
         if (!this._regexMode) {
           this._showSelectionOverlay();
           if (this.selectedGts < 0) {
             this.selectedGts = 0;
           }
-          var gts = this.stackedGtsList[this.selectedGts];
+          let gts = this.stackedGtsList[this.selectedGts];
           if (!plottingTools.isPlotted(gts)) {
             plottingTools.add(gts);
-            // console.debug("[quantum-plot] addToPlot", plottingTools);
+            if (this.debug) {
+              console.debug('[quantum-map] addToPlot', plottingTools);
+            }
           } else {
             plottingTools.remove(gts);
-            // console.debug("[quantum-plot] removeFromPlot", plottingTools);
+            if (this.debug) {
+              console.debug('[quantum-map] removeFromPlot', plottingTools);
+            }
           }
           this.changed++;
           this.fire('plotted-changed', plottingTools);
-          //return this.switchPlotState(this.getStackedGtsList[this.selectedGts]);
         }
-      },
-      _hotkeyAll: function(e) {
+      }
+
+      _hotkeyAll(e) {
         if (!this._regexMode) {
-          // console.debug("[quantum-plot] _hotkeyAll")
-          for (var i in this.stackedGtsList) {
-            var gts = this.stackedGtsList[i];
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkeyAll')
+          }
+          for (let i in this.stackedGtsList) {
+            let gts = this.stackedGtsList[i];
             if (!plottingTools.isPlotted(gts)) {
               plottingTools.add(gts);
-              // console.debug("[quantum-plot] addToPlot", plottingTools);
+              if (this.debug) {
+                console.debug('[quantum-map] addToPlot', plottingTools);
+              }
             }
           }
           this.changed++;
           this.fire('plotted-changed', plottingTools);
         }
-      },
-      _hotkeyNone: function(e) {
+      }
+
+      _hotkeyNone(e) {
         if (!this._regexMode) {
-          // console.debug("[quantum-plot] _hotkeyNone")
-          for (var i in this.stackedGtsList) {
-            var gts = this.stackedGtsList[i];
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkeyNone')
+          }
+          for (let i in this.stackedGtsList) {
+            let gts = this.stackedGtsList[i];
             if (plottingTools.isPlotted(gts)) {
               plottingTools.remove(gts);
-              // console.debug("[quantum-plot] removeFromPlot", plottingTools);
+              if (this.debug) {
+                console.debug('[quantum-map] removeFromPlot', plottingTools);
+              }
             }
           }
           this.changed++;
           this.fire('plotted-changed', plottingTools);
         }
-      },
-      _hotkeyReload: function(e) {
+      }
+
+      _hotkeyReload(e) {
         if (!this._regexMode) {
-          // console.debug([quantum-plot] _hotkey r");
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkey r');
+          }
           this.$.warpscriptcaller.generateRequest();
         }
-      },
-      _hotkeyHelp: function(e) {
-        console.debug("[quantum-plot] _hotkeyHelp")
+      }
+
+      _hotkeyHelp(e) {
+        if (this.debug) {
+          console.debug('[quantum-map] _hotkeyHelp')
+        }
         if (!this._regexMode) {
-          // console.debug("[quantum-plot] _hotkeyHelp")
-          if (!this.$$("#warpscript-plot-keyboard-shortcuts-overlay").opened) {
-            this.$$("#warpscript-plot-keyboard-shortcuts-overlay").open();
+          if (this.debug) {
+            console.debug('[quantum-map] _hotkeyHelp')
+          }
+          if (!this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').opened) {
+            this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').open();
           } else {
-            this.$$("#warpscript-plot-keyboard-shortcuts-overlay").close();
+            this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').close();
           }
         }
-      },
+      }
+    }
 
-
-    });
+    // Register custom element definition using standard platform API
+    customElements.define(QuantumMap.is, QuantumMap);
   </script>
 </dom-module>
