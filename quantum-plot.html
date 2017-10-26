@@ -600,7 +600,7 @@ Warp plot widget
         this.overlay.lifetime = 5000;
         this.overlay.timer = null;
         this.overlay.timerActivate = function(overlay) {
-          if (this.overlay.timer != null) {
+          if (this.overlay.timer !== null) {
             window.clearTimeout(this.overlay.timer);
           }
           this.overlay.timer = window.setTimeout(function() {
