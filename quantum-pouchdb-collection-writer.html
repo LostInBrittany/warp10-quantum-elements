@@ -55,21 +55,21 @@
       }
 
       .header {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         margin-top: 30px;
       }
 
       .itemList {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
       }
 
       .item {
         position: relative;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         margin-right: 35px;
       }
 
@@ -107,9 +107,9 @@
 
       .action_bar {
         margin-top: 15px;
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
+        @apply --layout-center;
       }
 
       .action_bar paper-button {
@@ -118,7 +118,7 @@
       }
     </style>
 
-    <app-pouchdb-confict-resolution strategy="firstWriteWins"></app-pouchdb-confict-resolution>
+    <app-pouchdb-conflict-resolution strategy="firstWriteWins"></app-pouchdb-conflict-resolution>
     <app-pouchdb-document
       id="document"
       db-name="warpscript-collection"

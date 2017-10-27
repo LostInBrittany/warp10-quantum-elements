@@ -124,9 +124,9 @@
       }
 
       .toolbar {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-end-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-end-justified;
         margin-bottom: 10px;
       }
 
@@ -155,10 +155,10 @@
 
     <style>
       .button_bar {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
-        @apply(--layout-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
+        @apply --layout-justified;
       }
 
       .item {
@@ -167,9 +167,9 @@
       }
 
       .item_list {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
       }
 
       .item_name {
@@ -186,18 +186,18 @@
       }
 
       .item_value {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
       }
 
       .item_vert {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       .item_horizontal {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
       }
 
       .clearfix:before,
@@ -240,17 +240,16 @@
       }
 
       paper-dialog .header {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         margin-top: 30px !important;
       }
 
       paper-dialog .actions {
         margin-left: 0;
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-center-justified;
       }
     </style>
 
@@ -673,8 +672,7 @@
 
       connectedCallback() {
         super.connectedCallback();
-        editor = this.$.editor;
-        editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
+        this.$.editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
         if (this.showPermalink) {
           this.debounce('updateLocation', this._updateLocation, 500);
         }

@@ -159,9 +159,9 @@ Warp10 GTS stack tree
               </span>
             </template>
 
-            <template is="dom-if" if="{{node.content}}">
+            <template is="dom-if" if="[[node.content]]">
               <span class="listInfo">
-                List of {{node.content.length}} item<template is="dom-if" if="{{node.content.length > 1}}">s</template>
+                List of [[node.content.length]] item<template is="dom-if" if="[[_hasMoreThanOne(node.content)]]">s</template>
               </span>
               <quantum-gts-tree
                 id="gts-tree"
@@ -228,6 +228,10 @@ Warp10 GTS stack tree
     ready() {
       super.ready();
       this.maxColors = 20;
+    }
+
+    _hasMoreThanOne(tab) {
+      return tab.length > 1;
     }
 
     stringifyData() {

@@ -11,12 +11,13 @@
 <link rel="import" href="../warp10-iron/warp10-looseJSON.html">
 
 <link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-button/paper-button.html">
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
 <link rel="import" href="quantum-module-behavior.html">
 
-<dom-module is="quantum-delete-shared-code">
+<dom-module id="quantum-delete-shared-code">
   <template>
     <style>
       :host {
@@ -48,13 +49,13 @@
       }
 
       .item_value {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
       }
 
       .item_vert {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       .clearfix:before,
@@ -82,11 +83,11 @@
       }
 
       .item_centered {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
-        @apply(--layout-around-justified);
-        @apply(--layout-center-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-wrap;
+        @apply --layout-around-justified;
+        @apply --layout-center-justified;
       }
 
       .spacer {
@@ -114,11 +115,11 @@
     </div>
 
     <iron-ajax
-      id="deleteSharedCodeRequest" url="{{_czdWarp10Url}}"
+      id="deleteSharedCodeRequest" url="[[_czdWarp10Url]]"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
-      method='POST' body='{{_deleteRequest}}'
+      method='POST' body='[[_deleteRequest]]'
       handle-as="text" on-response="_handleDeleteSharedCodeResponse" on-error="_handleDeleteSharedCodeError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}"
+      loading="{{loading}}" debounce-duration="[[debounceDuration]]"
     ></iron-ajax>
 
   </template>
@@ -135,13 +136,13 @@
            */
           name: {
             type: String,
-            value: 'delete-shared-code'
+            value: 'delete-shared-code',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
-            type: String
+            type: String,
           },
           /**
            * The snapshot id
@@ -164,7 +165,7 @@
             type: String,
             value: function () {
               return window.location.origin + window.location.pathname;
-            }
+            },
           },
           debug: {
             type: Boolean,
