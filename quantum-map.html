@@ -392,14 +392,15 @@ Warp plot widget
       /**************************************************************************/
       setColor(gts) {
         if (this.debug) {
-          console.debug('[quantum-gts-in-selection-overlay] setColor', plottingTools.gtsColor(this.gts));
+          console.debug('[quantum-gts-in-selection-overlay] setColor', this.gts);
         }
-        return plottingTools.gtsColor(gts);
+        return  plottingTools.gtsColor(gts);
       }
 
       _onStackChanged() {
         if (this.debug) {
           console.debug('[quantum-map] _onStackChanged', this._gtsStack);
+          console.debug('[quantum-map] _onStackChanged 2', gtsTools.flattenGtsIdArray(this._gtsStack));
         }
         if (!!this._gtsStack) {
           plottingTools.refresh(gtsTools.flattenGtsIdArray(this._gtsStack));
@@ -419,6 +420,8 @@ Warp plot widget
             }],
             globalParams: {interpolate: 'cardinal'}
           }];
+          console.debug('[quantum-map] _onStackChanged', this.dataToMap);
+          this.dataToMap.slice();
         }
       }
 
@@ -707,7 +710,7 @@ Warp plot widget
       _hotkeyNone(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-map] _hotkeyNone')
+            console.debug('[quantum-map] _hotkeyNone');
           }
           for (let i in this.stackedGtsList) {
             let gts = this.stackedGtsList[i];
@@ -734,11 +737,11 @@ Warp plot widget
 
       _hotkeyHelp(e) {
         if (this.debug) {
-          console.debug('[quantum-map] _hotkeyHelp')
+          console.debug('[quantum-map] _hotkeyHelp');
         }
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-map] _hotkeyHelp')
+            console.debug('[quantum-map] _hotkeyHelp');
           }
           if (!this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').opened) {
             this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').open();
