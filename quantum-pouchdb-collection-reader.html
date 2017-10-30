@@ -278,7 +278,8 @@
 
   </template>
   <script>
-    class QuantumLocalCollectionReader extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+    class QuantumLocalCollectionReader extends Polymer.mixinBehaviors(
+      [Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
       static get is() {
         return 'quantum-local-collection-reader';
       }
@@ -287,21 +288,21 @@
         return {
           _tags: {
             type: Array,
-            value: function () {
+            value: function() {
               return [];
-            }
+            },
           },
           _filterByName: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _filterByTags: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _filterByDate: {
             type: Boolean,
-            value: false
+            value: false,
           },
           /**
            * The Warscript collection object
@@ -309,23 +310,23 @@
           collection: {
             type: Array,
             notify: true,
-            observer: 'onCollectionChange'
+            observer: 'onCollectionChange',
           },
           _filterByNameInput: {
             type: String,
-            value: ''
+            value: '',
           },
           _filterByTagsInput: {
             type: String,
-            value: ''
+            value: '',
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   title: 'Load a script from local storage',
@@ -336,9 +337,9 @@
                   pattern: 'Pattern',
                   promptTag: 'Add tags, separated by `,` or `enter`',
                   deleteTag: 'Remove tag',
-                }
-              }
-            }
+                },
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -391,7 +392,7 @@
           return 0;
         }
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] _fromTimestampToDate', ts)
+          console.debug('[quantum-local-collection-reader] _fromTimestampToDate', ts);
         }
         return new Date(ts).toISOString();
       }
@@ -407,7 +408,7 @@
         if (this.debug) {
           console.debug('[quantum-local-collection-reader] _shortWarpscript', shortWarpscript);
         }
-        return shortWarpscript
+        return shortWarpscript;
       }
 
       _trimExcessLineFeeds(warpscript) {
@@ -450,11 +451,13 @@
         } else {
           // return a filter function for the current search string
           if (this.debug) {
-            console.debug('[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string');
+            console.debug(
+              '[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string');
           }
-          return function (record) {
+          return function(record) {
             if (this.debug) {
-              console.debug('[quantum-local-collection-reader] _filterRecords - Filter called', record, _filterByNameInput, _tags);
+              console.debug('[quantum-local-collection-reader] _filterRecords - Filter called', record,
+                _filterByNameInput, _tags);
             }
             if (_filterByNameInput) {
               if (record.name && record.name.toLowerCase().indexOf(_filterByNameInput.toLowerCase()) < 0) {

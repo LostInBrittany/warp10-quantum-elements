@@ -256,26 +256,26 @@ Quantum delete widget
            */
           token: {
             type: String,
-            value: ''
+            value: '',
           },
           /**
            * The Selector to delete
            */
           selector: {
             type: String,
-            value: ''
+            value: '',
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _disabled: {
             type: Boolean,
-            computed: '_isDisabled(token, selector)'
+            computed: '_isDisabled(token, selector)',
           },
           deleteAll: {
             type: Boolean,
-            value: false
+            value: false,
           },
           startTime: {
             type: String,
@@ -284,12 +284,12 @@ Quantum delete widget
             type: String,
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 'en': {
                   'title': 'Delete',
@@ -301,9 +301,9 @@ Quantum delete widget
                   'deleteMethod': 'Choose delete mode:',
                   'startTime': 'Start time (in ISO 8601 format or in μs since Epoch)',
                   'endTime': 'End time (in ISO 8601 format or in μs since Epoch)',
-                }
-              }
-            }
+                },
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -344,7 +344,7 @@ Quantum delete widget
       execute() {
         let header = this.backend.headerName + '-Token';
         this.$.xhr.params = {
-          selector: this.selector
+          selector: this.selector,
         };
         if (this.deleteAll) {
           this.$.xhr.params.deleteall = true;
@@ -388,7 +388,7 @@ Quantum delete widget
         this._hasAResponse = false;
         this._hasAnError = true;
         this.data = null;
-        this.errorMsg = ironRequest.request.statusText || 'Unkown error'
+        this.errorMsg = ironRequest.request.statusText || 'Unkown error';
       }
     }
 

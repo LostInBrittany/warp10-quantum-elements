@@ -57,20 +57,20 @@
            */
           name: {
             type: String,
-            value: 'shared-code'
+            value: 'shared-code',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
-            type: String
+            type: String,
           },
           /**
            * The snapshot id used to recover the code
            */
           snapshotId: {
             type: String,
-            observer: '_onSnapshotIdChanged'
+            observer: '_onSnapshotIdChanged',
           },
           debug: {
             type: Boolean,
@@ -96,7 +96,8 @@
       /* ************************************************************************/
       _handleGetSharedCodeResponse(evt, ironRequest) {
         let code =
-          `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${+looseJSON.parse(ironRequest.response)[0]}`;
+          `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${+looseJSON.parse(
+            ironRequest.response)[0]}`;
         if (this.debug) {
           console.debug('[quantum-shared-code] _handleGetSharedCodeResponse', code);
         }

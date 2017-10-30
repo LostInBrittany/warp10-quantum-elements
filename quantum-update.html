@@ -186,24 +186,24 @@ Warp update widget
            */
           token: {
             type: String,
-            value: ''
+            value: '',
           },
           /**
            * The GTS datapoints to be updated
            */
           content: {
             type: String,
-            value: ''
+            value: '',
           },
 
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
 
           _disabled: {
             type: Boolean,
-            computed: '_isDisabled(token, content)'
+            computed: '_isDisabled(token, content)',
           },
           debug: {
             type: Boolean,

@@ -98,7 +98,7 @@
         return {
           reponse: {
             type: Array,
-            observer: 'responseChanged'
+            observer: 'responseChanged',
           },
           debug: {
             type: Boolean,
@@ -124,7 +124,7 @@
 
       responseChanged() {
         if (this.debug) {
-          console.debug("[quantum-response-container] responseChanged", this.response)
+          console.debug('[quantum-response-container] responseChanged', this.response);
         }
         if ((this.response === null) || (this.response === undefined)) {
           this.showResponse = false;
@@ -133,7 +133,7 @@
 
         this.data = this.response;
         if (this.debug) {
-          console.debug("[quantum-response-container] responseChanged", this.data);
+          console.debug('[quantum-response-container] responseChanged', this.data);
         }
         this.showResponse = this.data !== undefined && (this.data !== null);
       }

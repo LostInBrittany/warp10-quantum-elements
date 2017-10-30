@@ -429,20 +429,11 @@
         <template is="dom-if" if="{{!hidePlot}}">
           <div class="item_value">
             <paper-button
-              on-click="plot"
+              on-click="viz"
               disabled$="{{loading}}"
               hidden$="{{!_hasAResponse}}">
               <iron-icon icon="quantum-icons:timeline"></iron-icon>
-              Plot
-            </paper-button>
-          </div>
-          <div class="item_value">
-            <paper-button
-              on-click="map"
-              disabled$="{{loading}}"
-              hidden$="{{!_hasAResponse}}">
-              <iron-icon icon="quantum-icons:room"></iron-icon>
-              Map
+              Visualize
             </paper-button>
           </div>
         </template>
@@ -557,46 +548,46 @@
           warpscript: {
             type: String,
             value: '',
-            observer: '_onWarpscriptChange'
+            observer: '_onWarpscriptChange',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
             type: String,
-            observer: '_onSelectedChanged'
+            observer: '_onSelectedChanged',
           },
           /**
            * The WarpScript stack received as response
            */
           stack: {
             type: Array,
-            notify: true
+            notify: true,
           },
           _target: {
             type: Object,
-            value: function () {
+            value: function() {
               return document.body;
-            }
+            },
           },
           /**
            * Elapsed time for the call
            */
           elapsed: {
             type: Number,
-            value: -1
+            value: -1,
           },
           _formattedElapsedTime: {
             type: String,
-            computed: '_formatElapsedTime(elapsed)'
+            computed: '_formatElapsedTime(elapsed)',
           },
           _elapsedTimeShown: {
             type: Boolean,
-            computed: '_isElapsedTimeShown(elapsed)'
+            computed: '_isElapsedTimeShown(elapsed)',
           },
           showPermalink: {
             type: Boolean,
-            value: false
+            value: false,
           },
           /**
            * If true, the `quantum-warpscript` component inside this one won't show
@@ -604,56 +595,56 @@
            */
           hidePlot: {
             type: Boolean,
-            value: false
+            value: false,
           },
           /**
            * Parameters to pass to each page
            */
           params: {
             type: Object,
-            value: function () {
+            value: function() {
               return {};
             },
           },
           _hasAResponse: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _hasAnError: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _lastSharedCode: {
             type: String,
-            value: ''
+            value: '',
           },
           _shareCodeDisabled: {
             type: Boolean,
-            computed: '_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)'
+            computed: '_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)',
           },
           _shareCodeError: {
             type: Object,
-            value: null
+            value: null,
           },
           _lastSharedResponse: {
             type: String,
-            value: ''
+            value: '',
           },
           _shareResponseDisabled: {
             type: Boolean,
-            computed: '_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)'
+            computed: '_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)',
           },
           _shareResponseError: {
             type: Object,
-            value: null
+            value: null,
           },
           _warpscriptChangedAfterExecution: {
             type: Boolean,
-            value: true
+            value: true,
           },
           debug: {
             type: Boolean,
@@ -714,7 +705,8 @@
       }
 
       _isShareCodeDisabled() {
-        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) || this._warpscriptChangedAfterExecution );
+        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) ||
+          this._warpscriptChangedAfterExecution );
       }
 
       _isShareResponseDisabled() {
@@ -753,7 +745,7 @@
           console.debug('[quantum-warpscript] _onSelectedChanged', {
             selected: selected,
             name: this.name,
-            target: this._target
+            target: this._target,
           });
         }
       }
@@ -782,7 +774,7 @@
           console.debug('[quantum-warpscript] _handleResponse', {
             stack: this.stack,
             elapsed: this.elapsed,
-            _dataToPlot: this._dataToPlot
+            _dataToPlot: this._dataToPlot,
           });
         }
       }
@@ -830,7 +822,7 @@
         let snapshotSecret = looseJSON.parse(ironRequest.response)[0];
         console.debug('[quantum-warpscript] _handleShareCodeResponse', {
           snapshotId: snapshotId,
-          snapshotSecret: snapshotSecret
+          snapshotSecret: snapshotSecret,
         });
         this._shareCodeError = null;
         this._lastSharedCode = {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
@@ -895,32 +887,26 @@
         this.$.warpscriptcaller.generateRequest();
       }
 
-      plot() {
+      viz() {
         if (this.debug) {
-          console.debug('[quantum-warpscript] Plot', this.stack);
+          console.debug('[quantum-warpscript] Viz', this.stack);
         }
         if (this.stack.length) {
-          this.fire('plot', {warpscript: this.warpscript, stack: this.stack});
-        }
-      }
-
-      map() {
-        if (this.debug) {
-          console.debug('[quantum-warpscript] Map', this.stack);
-        }
-        if (this.stack.length) {
-          this.fire('map', {warpscript: this.warpscript, stack: this.stack});
+          this.fire('visualization', {warpscript: this.warpscript, stack: this.stack});
         }
       }
 
       shareCode() {
         let script = '// backend: ' + JSON.stringify(this.backend) + '\n\n' + this.warpscript;
-        this._codeToShare = `<% '${encodeURI(script).replace(/'/g, '%27').replace(/"/g, '%28').replace(/\+/g, '%2B')}' %> @orbit/snapshot/store`;
+        this._codeToShare = `<% '${encodeURI(script).
+          replace(/'/g, '%27').
+          replace(/"/g, '%28').
+          replace(/\+/g, '%2B')}' %> @orbit/snapshot/store`;
         this.$.shareCodeRequest.generateRequest();
       }
 
       shareResponse() {
-        let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
           let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });

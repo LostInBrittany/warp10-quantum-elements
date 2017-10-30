@@ -182,22 +182,22 @@ Quantum find widget
            */
           token: {
             type: String,
-            value: ''
+            value: '',
           },
           /**
            * The Selector to find
            */
           selector: {
             type: String,
-            value: ''
+            value: '',
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _disabled: {
             type: Boolean,
-            computed: '_isDisabled(token, selector)'
+            computed: '_isDisabled(token, selector)',
           },
           debug: {
             type: Boolean,
@@ -276,7 +276,7 @@ Quantum find widget
         this._hasAResponse = false;
         this._hasAnError = true;
         this.data = null;
-        this.errorMsg = ironRequest.request.statusText || 'Unkown error'
+        this.errorMsg = ironRequest.request.statusText || 'Unkown error';
       }
     }
 

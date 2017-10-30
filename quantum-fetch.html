@@ -292,14 +292,14 @@ Quantum fetch widget
            */
           paramToken: {
             type: String,
-            value: ''
+            value: '',
           },
           /**
            * The Selector to fetch
            */
           paramSelector: {
             type: String,
-            value: ''
+            value: '',
           },
           paramDedup: {
             type: Boolean,
@@ -307,7 +307,7 @@ Quantum fetch widget
           },
           paramFormat: {
             type: Object,
-            value: null
+            value: null,
           },
           paramStartTime: {
             type: String,
@@ -324,23 +324,23 @@ Quantum fetch widget
           },
           fetchByTimespan: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _disabled: {
             type: Boolean,
-            computed: '_isDisabled(paramToken, paramSelector, fetchByTimespan, paramStartTime, paramEndTime, paramTimestamp, paramTimespan, paramFormat, paramDedup)'
+            computed: '_isDisabled(paramToken, paramSelector, fetchByTimespan, paramStartTime, paramEndTime, paramTimestamp, paramTimespan, paramFormat, paramDedup)',
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   title: 'Delete',
@@ -359,9 +359,9 @@ Quantum fetch widget
                   fulltext: 'Fulltext',
                   text: 'Text',
                   json: 'JSON',
-                }
-              }
-            }
+                },
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -394,7 +394,9 @@ Quantum fetch widget
       _isDisabled() {
         // token, selector, fetchByTimespan, paramStartTime, paramEndTime, timestamp, paramTimespan, paramFormat, paramDedup
         if (this.debug) {
-          console.debug('[quantum-fetch] _isDisabled', !this.paramToken || !this.paramSelector || (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) || (!this.fetchByTimespan && (!this.paramStartTime || !this.paramEndTime) ) || !this.paramFormat);
+          console.debug('[quantum-fetch] _isDisabled', !this.paramToken || !this.paramSelector ||
+            (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) ||
+            (!this.fetchByTimespan && (!this.paramStartTime || !this.paramEndTime) ) || !this.paramFormat);
         }
         return !!(!this.paramToken || !this.paramSelector ||
           (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) ||
@@ -456,7 +458,7 @@ Quantum fetch widget
         this._hasAResponse = false;
         this._hasAnError = true;
         this.data = null;
-        this.errorMsg = ironRequest.request.statusText || 'Unkown error'
+        this.errorMsg = ironRequest.request.statusText || 'Unkown error';
       }
     }
 

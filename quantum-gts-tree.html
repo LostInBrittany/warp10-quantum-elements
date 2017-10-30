@@ -161,7 +161,8 @@ Warp10 GTS stack tree
 
             <template is="dom-if" if="[[node.content]]">
               <span class="listInfo">
-                List of [[node.content.length]] item<template is="dom-if" if="[[_hasMoreThanOne(node.content)]]">s</template>
+                List of [[node.content.length]] item<template is="dom-if"
+                                                              if="[[_hasMoreThanOne(node.content)]]">s</template>
               </span>
               <quantum-gts-tree
                 id="gts-tree"
@@ -187,36 +188,36 @@ Warp10 GTS stack tree
       return {
         data: {
           type: Array,
-          observer: 'dataChanged'
+          observer: 'dataChanged',
         },
         stringifiedData: {
           type: String,
-          computed: 'stringifyData(data)'
+          computed: 'stringifyData(data)',
         },
         treeId: {
-          type: String
+          type: String,
         },
         nodeId: {
           type: String,
-          value: 'id'
+          value: 'id',
         },
         nodeLabel: {
           type: String,
-          value: 'label'
+          value: 'label',
         },
         nodeChildren: {
           type: String,
-          value: 'children'
+          value: 'children',
         },
         branch: {
           type: Boolean,
-          value: false
+          value: false,
         },
         // Used internally to detect changes
         plottedChanged: {
           type: Number,
           value: 0,
-          notify: true
+          notify: true,
         },
         debug: {
           type: Boolean,
@@ -286,16 +287,16 @@ Warp10 GTS stack tree
     }
 
     isImage(node) {
-      return node.image !== undefined
+      return node.image !== undefined;
     }
 
     isGts(node) {
-      return node.gts !== undefined
+      return node.gts !== undefined;
     }
 
     gtsColor(gts, plottedChanged) {
       if (gts === undefined) {
-        return ''
+        return '';
       }
       if (this.debug) {
         console.debug('[quantum-gts-tree] gtsColor', plottingTools.color);
@@ -322,17 +323,17 @@ Warp10 GTS stack tree
       if (obj === undefined) {
         return [];
       }
-      return Object.keys(obj).map(function (key) {
+      return Object.keys(obj).map(function(key) {
         return {
           name: key,
-          value: obj[key]
+          value: obj[key],
         };
       });
     }
 
     _lastIndex(index, obj) {
       let array = this._toArray(obj);
-      return (index === array.length - 1)
+      return (index === array.length - 1);
     }
   }
 

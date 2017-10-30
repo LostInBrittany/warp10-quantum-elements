@@ -16,7 +16,7 @@
     static get properties() {
       return {
         encodedPayload: {
-          type: String
+          type: String,
         },
         encodedBackend: {
           type: String,
@@ -25,13 +25,13 @@
           type: String,
           computed: '_decodePayload(encodedPayload)',
           observer: '_decodedPayloadChanged',
-          notify: true
+          notify: true,
         },
         decodedBackend: {
           type: String,
           computed: '_decodeBackend(encodedBackend)',
           observer: '_decodedBackendChanged',
-          notify: true
+          notify: true,
         },
         debug: {
           type: Boolean,
@@ -57,7 +57,7 @@
         if (this.debug) {
           console.debug('[quantum-permalink-decoder] decodePayload - decode :', {
             encodedPayload: this.encodedPayload,
-            payload: decoded
+            payload: decoded,
           });
         }
         return decoded;
@@ -75,25 +75,33 @@
         console.debug('[quantum-permalink-decoder] decodeBackend - encodedBackend :', this.encodedBackend);
       }
       let self = this;
-      let fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      let fields = [
+        'url',
+        'execEndpoint',
+        'findEndpoint',
+        'fetchEndpoint',
+        'updateEndpoint',
+        'deleteEndpoint',
+        'headerName'];
       let decoded;
 
       try {
-        let decodedString = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
+        let decodedString = decodeURIComponent(
+          escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
         try {
           decoded = JSON.parse(decodedString);
         } catch (e) {
           decoded = {
-            url: decodedString
-          }
+            url: decodedString,
+          };
         }
-        fields.forEach(function (field) {
+        fields.forEach(function(field) {
           if (!decoded[field]) decoded[field] = self.defaultBackend[field];
         });
         if (this.debug) {
           console.debug('[quantum-permalink-decoder] decodeBackend - decode :', {
             encodedBackend: this.encodedBackend,
-            backend: decoded
+            backend: decoded,
           });
         }
         return decoded;
@@ -110,14 +118,14 @@
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodePayloadChanged', decodedPayload);
       }
-      this.fire('payload-decoded', decodedPayload)
+      this.fire('payload-decoded', decodedPayload);
     }
 
     _decodedBackendChanged(decodedBackend) {
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodeBackendChanged', decodedBackend);
       }
-      this.fire('backend-decoded', decodedBackend)
+      this.fire('backend-decoded', decodedBackend);
     }
   }
 
@@ -157,23 +165,23 @@
       return {
         warpscript: {
           type: String,
-          value: ''
+          value: '',
         },
         backend: {
           type: String,
-          value: ''
+          value: '',
         },
         permalink: {
           type: String,
           notify: true,
-          computed: '_generatePermalink(warpscript, backend)'
+          computed: '_generatePermalink(warpscript, backend)',
         },
         croppedPermalink: {
           type: String,
-          computed: '_cropPermalink(permalink)'
+          computed: '_cropPermalink(permalink)',
         },
         _maxDisplayLength: {
-          type: Number
+          type: Number,
         },
         debug: {
           type: Boolean,
@@ -193,7 +201,6 @@
         console.debug('[quantum-permalink] created called', this._maxDisplayLength);
       }
     }
-
 
     /**************************************************************************/
     /* Computed properties                                                    */
@@ -218,7 +225,8 @@
      */
     _generatePermalink() {
       if (this.debug) {
-        console.debug('[quantum-permalink] _generatePermalink ws/backend', '/' + this._encodeWarpscript() + '/' + this._encodeBackend());
+        console.debug('[quantum-permalink] _generatePermalink ws/backend', '/' + this._encodeWarpscript() + '/' +
+          this._encodeBackend());
       }
       return this._encodeWarpscript() + '/' + this._encodeBackend();
     }
@@ -234,7 +242,7 @@
       if (this.debug) {
         console.debug('[quantum-permalink] updateLocation called', {
           application: application,
-          permalink: this.permalink
+          permalink: this.permalink,
         });
       }
       window.history.pushState({}, null, '#/' + application + '/' + this.permalink);
@@ -263,7 +271,14 @@
         return;
       }
       let backendToEncode = {};
-      let fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      let fields = [
+        'url',
+        'execEndpoint',
+        'findEndpoint',
+        'fetchEndpoint',
+        'updateEndpoint',
+        'deleteEndpoint',
+        'headerName'];
       fields.forEach((field) => {
         if (self.backend[field] !== self.defaultBackend[field]) {
           backendToEncode[field] = self.backend[field];
@@ -272,7 +287,8 @@
       if (this.debug) {
         console.debug('[quantum-permalink] _encodeBackend - backendToEncode', backendToEncode);
       }
-      return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
+      return encodeURIComponent(
+        btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
     }
   }
 

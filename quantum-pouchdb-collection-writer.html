@@ -194,7 +194,8 @@
 
   </template>
   <script>
-    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors(
+      [Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
       static get is() {
         return 'quantum-local-collection-writer';
       }
@@ -206,36 +207,36 @@
            */
           collection: {
             type: Array,
-            notify: true
+            notify: true,
           },
           /**
            * The warpscript to write
            */
           warpscript: {
-            type: String
+            type: String,
           },
           /**
            * The tags to identify the script
            */
           tags: {
             type: Array,
-            value: function () {
+            value: function() {
               return [];
-            }
+            },
           },
           /**
            * The name of the script
            */
           name: {
-            type: String
+            type: String,
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   title: 'Save current script into local storage',
@@ -245,10 +246,10 @@
                   promptTag: 'Add a tag',
                   deleteTag: 'Remove tag',
                   scriptToSave: 'The current WarpScript script',
-                  save: 'Save'
+                  save: 'Save',
                 },
-              }
-            }
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -256,7 +257,6 @@
           },
         };
       }
-
 
       // ***********************************************************************
       // Action listeners
@@ -313,7 +313,7 @@
         if (this.debug) {
           console.debug('[quantum-local-collection-writer] _save', this.timestamp, this._document);
         }
-        this.$.document.save().then(function () {
+        this.$.document.save().then(function() {
           if (this.debug) {
             console.debug('[quantum-local-collection-writer] _saved', this.timestamp, this._document);
           }

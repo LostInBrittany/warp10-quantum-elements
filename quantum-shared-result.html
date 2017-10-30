@@ -61,26 +61,26 @@
            */
           name: {
             type: String,
-            value: 'shared-result'
+            value: 'shared-result',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
-            type: String
+            type: String,
           },
           /**
            * The snapshot id used to recover the result
            */
           snapshotId: {
             type: String,
-            observer: '_onSnapshotIdChanged'
+            observer: '_onSnapshotIdChanged',
           },
           debug: {
             type: Boolean,
             value: false,
           },
-        }
+        };
       }
 
       /* ************************************************************************/
@@ -99,7 +99,8 @@
       /* Event listeners
       /* ************************************************************************/
       _handleGetSharedResultResponse(evt, ironRequest) {
-        let cde = `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${looseJSON.parse(ironRequest.response)[0]}`
+        let cde = `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${looseJSON.parse(
+          ironRequest.response)[0]}`;
         if (this.debug) {
           console.debug('[quantum-shared-code] _handleGetSharedResultResponse', code);
         }

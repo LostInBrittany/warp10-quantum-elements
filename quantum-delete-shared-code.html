@@ -163,7 +163,7 @@
           },
           _sharingUrlRoot: {
             type: String,
-            value: function () {
+            value: function() {
               return window.location.origin + window.location.pathname;
             },
           },
@@ -171,7 +171,7 @@
             type: Boolean,
             value: false,
           },
-        }
+        };
       }
 
       static get observers() {
@@ -185,7 +185,7 @@
       _onSnapshotChanged() {
         if (!this.snapshotId || !this.snapshotSecret || this.selected !== this.name) return;
         if (this.debug) {
-          console.debug('[quantum-delete-shared-code] _onSnapshotChanged', this.snapshotId, this.snapshotSecret)
+          console.debug('[quantum-delete-shared-code] _onSnapshotChanged', this.snapshotId, this.snapshotSecret);
         }
       }
 
@@ -208,7 +208,7 @@
         if (this.debug) {
           console.debug('[quantum-delete-shared-code] _cancel', {
             snapshotId: this.snapshotId,
-            snapshotSecret: this.snapshotSecret
+            snapshotSecret: this.snapshotSecret,
           });
         }
         this.fire('cancel-delete', {snapshotId: this.snapshotId, snapshotSecret: this.snapshotSecret});
