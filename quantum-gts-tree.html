@@ -162,7 +162,8 @@ Warp10 GTS stack tree
 
             <template is="dom-if" if="[[node.content]]">
               <span class="listInfo">
-                List of [[node.content.length]] item<template is="dom-if" if="[[_hasMoreThanOne(node.content)]]">s</template>
+                List of [[node.content.length]] item<template is="dom-if"
+                                                              if="[[_hasMoreThanOne(node.content)]]">s</template>
               </span>
               <quantum-gts-tree
                 id="gts-tree"

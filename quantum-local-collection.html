@@ -37,7 +37,7 @@
            */
           collection: {
             type: Array,
-            notify: true
+            notify: true,
           },
         };
       }
@@ -157,7 +157,8 @@
     </div>
   </template>
   <script>
-    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors(
+      [Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
       static get is() {
         return 'quantum-local-collection-writer';
       }
@@ -169,33 +170,33 @@
            */
           collection: {
             type: Array,
-            notify: true
+            notify: true,
           },
           /**
            * The warpscript to write
            */
           warpscript: {
-            type: String
+            type: String,
           },
           /**
            * The tags to identify the script
            */
           tags: {
-            type: Array
+            type: Array,
           },
           /**
            * The name of the script
            */
           name: {
-            type: String
+            type: String,
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   title: 'Save current script into local storage',
@@ -204,11 +205,11 @@
                   promptTags: 'Add some tags to qualify the script',
                   promptTag: 'Add a tag',
                   scriptToSave: 'The current WarpScript script',
-                  save: 'Save'
+                  save: 'Save',
                 },
-              }
-            }
-          }
+              };
+            },
+          },
         };
       }
     }
@@ -235,7 +236,7 @@
            */
           collection: {
             type: Array,
-            notify: true
+            notify: true,
           },
         };
       }
