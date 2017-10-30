@@ -5,10 +5,12 @@
 -->
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 <script>
-  class QuantumPermalinkDecoder extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+  /* globals Warp10 */
+  // eslint-disable-next-line new-cap
+  class QuantumPermalinkDecoder extends Warp10.QuantumModuleMixin(Polymer.Element) {
     static get is() {
       return 'quantum-permalink-decoder';
     }
@@ -16,7 +18,7 @@
     static get properties() {
       return {
         encodedPayload: {
-          type: String
+          type: String,
         },
         encodedBackend: {
           type: String,
@@ -25,13 +27,13 @@
           type: String,
           computed: '_decodePayload(encodedPayload)',
           observer: '_decodedPayloadChanged',
-          notify: true
+          notify: true,
         },
         decodedBackend: {
           type: String,
           computed: '_decodeBackend(encodedBackend)',
           observer: '_decodedBackendChanged',
-          notify: true
+          notify: true,
         },
         debug: {
           type: Boolean,
@@ -40,13 +42,13 @@
       };
     }
 
-    /**************************************************************************/
-    /* Computed properties                                                    */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Computed properties                                                    
+    // *************************************************************************
     /**
      * Decodes payload from permalink
      * Fires 'payload-change' event
+     * @return {String} payload
      */
     _decodePayload() {
       if (this.debug) {
@@ -57,7 +59,7 @@
         if (this.debug) {
           console.debug('[quantum-permalink-decoder] decodePayload - decode :', {
             encodedPayload: this.encodedPayload,
-            payload: decoded
+            payload: decoded,
           });
         }
         return decoded;
@@ -69,13 +71,22 @@
     /**
      * Decodes backend from permalink
      * Fires 'backend-change' event
+     * @return {String} backend
      */
     _decodeBackend() {
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] decodeBackend - encodedBackend :', this.encodedBackend);
       }
       let self = this;
-      let fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      let fields = [
+        'url',
+        'execEndpoint',
+        'findEndpoint',
+        'fetchEndpoint',
+        'updateEndpoint',
+        'deleteEndpoint',
+        'headerName',
+      ];
       let decoded;
 
       try {
@@ -84,16 +95,16 @@
           decoded = JSON.parse(decodedString);
         } catch (e) {
           decoded = {
-            url: decodedString
-          }
+            url: decodedString,
+          };
         }
-        fields.forEach(function (field) {
+        fields.forEach(function(field) {
           if (!decoded[field]) decoded[field] = self.defaultBackend[field];
         });
         if (this.debug) {
           console.debug('[quantum-permalink-decoder] decodeBackend - decode :', {
             encodedBackend: this.encodedBackend,
-            backend: decoded
+            backend: decoded,
           });
         }
         return decoded;
@@ -102,22 +113,21 @@
       }
     }
 
-    /**************************************************************************/
-    /* Observers                                                              */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Observers                                                              
+    // *************************************************************************
     _decodedPayloadChanged(decodedPayload) {
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodePayloadChanged', decodedPayload);
       }
-      this.fire('payload-decoded', decodedPayload)
+      this.fire('payload-decoded', decodedPayload);
     }
 
     _decodedBackendChanged(decodedBackend) {
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodeBackendChanged', decodedBackend);
       }
-      this.fire('backend-decoded', decodedBackend)
+      this.fire('backend-decoded', decodedBackend);
     }
   }
 
@@ -148,7 +158,9 @@
 </dom-module>
 
 <script>
-  class QuantumPermalinkGenerator extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+  /* globals Warp10 */
+  // eslint-disable-next-line new-cap
+  class QuantumPermalinkGenerator extends Warp10.QuantumModuleMixin(Polymer.Element) {
     static get is() {
       return 'quantum-permalink-generator';
     }
@@ -157,23 +169,23 @@
       return {
         warpscript: {
           type: String,
-          value: ''
+          value: '',
         },
         backend: {
           type: String,
-          value: ''
+          value: '',
         },
         permalink: {
           type: String,
           notify: true,
-          computed: '_generatePermalink(warpscript, backend)'
+          computed: '_generatePermalink(warpscript, backend)',
         },
         croppedPermalink: {
           type: String,
-          computed: '_cropPermalink(permalink)'
+          computed: '_cropPermalink(permalink)',
         },
         _maxDisplayLength: {
-          type: Number
+          type: Number,
         },
         debug: {
           type: Boolean,
@@ -182,10 +194,9 @@
       };
     }
 
-    /**************************************************************************/
-    /* Lifecycle methods                                                      */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Lifecycle methods                                                      
+    // *************************************************************************
     connectedCallback() {
       super.connectedCallback();
       this._maxDisplayLength = 60;
@@ -195,12 +206,12 @@
     }
 
 
-    /**************************************************************************/
-    /* Computed properties                                                    */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Computed properties                                                    
+    // *************************************************************************
     /**
      * Crops the permalink to get a display-friendly version
+     * @return {String} permalink
      */
     _cropPermalink() {
       if (this.debug) {
@@ -218,23 +229,24 @@
      */
     _generatePermalink() {
       if (this.debug) {
-        console.debug('[quantum-permalink] _generatePermalink ws/backend', '/' + this._encodeWarpscript() + '/' + this._encodeBackend());
+        console.debug('[quantum-permalink] _generatePermalink ws/backend',
+            '/' + this._encodeWarpscript() + '/' + this._encodeBackend());
       }
       return this._encodeWarpscript() + '/' + this._encodeBackend();
     }
 
-    /**************************************************************************/
-    /* Other methods                                                          */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Other methods                                                          
+    // *************************************************************************
     /**
      * Updates the location according to the permalink
+     * @param {String} application
      */
     updateLocation(application) {
       if (this.debug) {
         console.debug('[quantum-permalink] updateLocation called', {
           application: application,
-          permalink: this.permalink
+          permalink: this.permalink,
         });
       }
       window.history.pushState({}, null, '#/' + application + '/' + this.permalink);
@@ -263,7 +275,15 @@
         return;
       }
       let backendToEncode = {};
-      let fields = ['url', 'execEndpoint', 'findEndpoint', 'fetchEndpoint', 'updateEndpoint', 'deleteEndpoint', 'headerName'];
+      let fields = [
+        'url',
+        'execEndpoint',
+        'findEndpoint',
+        'fetchEndpoint',
+        'updateEndpoint',
+        'deleteEndpoint',
+        'headerName',
+      ];
       fields.forEach((field) => {
         if (self.backend[field] !== self.defaultBackend[field]) {
           backendToEncode[field] = self.backend[field];
