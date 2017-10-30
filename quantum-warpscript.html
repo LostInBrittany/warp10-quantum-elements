@@ -36,6 +36,7 @@
 <link rel="import" href="./quantum-permalink.html">
 <link rel="import" href="./quantum-pouchdb-collection.html">"
 <link rel="import" href="./quantum-show-share-links.html">"
+<link rel="import" href="./quantum-icons.html">"
 
 <script src="./ace/mode-warpscript.js"></script>
 
@@ -251,6 +252,10 @@
         @apply --layout-center;
         @apply --layout-center-justified;
       }
+
+      paper-button iron-icon {
+        padding-right: 10px;
+      }
     </style>
 
 
@@ -427,6 +432,7 @@
               on-click="plot"
               disabled$="{{loading}}"
               hidden$="{{!_hasAResponse}}">
+              <iron-icon icon="quantum-icons:timeline"></iron-icon>
               Plot
             </paper-button>
           </div>
@@ -435,6 +441,7 @@
               on-click="map"
               disabled$="{{loading}}"
               hidden$="{{!_hasAResponse}}">
+              <iron-icon icon="quantum-icons:room"></iron-icon>
               Map
             </paper-button>
           </div>
@@ -445,6 +452,7 @@
             on-click="shareResponse"
             disabled$="{{_shareResponseDisabled}}"
             hidden$="{{!_hasAResponse}}">
+            <iron-icon icon="quantum-icons:share"></iron-icon>
             Share response
           </paper-button>
         </div>
@@ -457,6 +465,7 @@
             on-click="shareCode"
             disabled$="{{_shareCodeDisabled}}"
             hidden$="{{!_hasAResponse}}">
+            <iron-icon icon="quantum-icons:share"></iron-icon>
             Share code
           </paper-button>
         </div>
@@ -466,6 +475,7 @@
             class="btn btn-primary btn-lg"
             on-click="execute"
             disabled$="{{loading}}">
+            <iron-icon icon="quantum-icons:check"></iron-icon>
             Execute
           </paper-button>
         </div>
@@ -876,7 +886,7 @@
        */
       execute() {
         if (this.debug) {
-          console.debug('[quantum-warpscript] Execute', this.warpscript)
+          console.debug('[quantum-warpscript] Execute', this.warpscript);
         }
         if (this.showPermalink) {
           this._updateLocation();
@@ -887,7 +897,7 @@
 
       plot() {
         if (this.debug) {
-          console.debug('[quantum-warpscript] Plot', this.stack)
+          console.debug('[quantum-warpscript] Plot', this.stack);
         }
         if (this.stack.length) {
           this.fire('plot', {warpscript: this.warpscript, stack: this.stack});
@@ -896,7 +906,7 @@
 
       map() {
         if (this.debug) {
-          console.debug('[quantum-warpscript] Map', this.stack)
+          console.debug('[quantum-warpscript] Map', this.stack);
         }
         if (this.stack.length) {
           this.fire('map', {warpscript: this.warpscript, stack: this.stack});
@@ -1025,7 +1035,7 @@
         }
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
           if (this.debug) {
-            console.debug('[quantum-warpscript] _hotkeyHelp')
+            console.debug('[quantum-warpscript] _hotkeyHelp');
           }
           if (this.root.querySelector('#warpscript-ide-keyboard-shortcuts-overlay').opened) {
             this.root.querySelector('#warpscript-ide-keyboard-shortcuts-overlay').close();

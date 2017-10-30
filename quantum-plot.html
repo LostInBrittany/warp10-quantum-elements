@@ -280,7 +280,6 @@ Warp plot widget
       debug="[[debug]]"></quantum-gts-tree>
 
     <div id="vertGuide"></div>
-
     <quantumviz-annotations
       id="warp10-quantumviz-annotations"
       time-bounds="{{timeBounds}}"
@@ -474,7 +473,7 @@ Warp plot widget
       connectedCallback() {
         super.connectedCallback();
         if (this.debug) {
-          console.debug('[quantum-plot] attached - target', this._target)
+          console.debug('[quantum-plot] attached - target', this._target);
         }
         this.init();
         this.dataToPlot = [];
@@ -520,10 +519,12 @@ Warp plot widget
       _onStackChanged() {
         if (this.debug) {
           console.debug('[quantum-plot] _onStackChanged', this._gtsStack);
+          console.debug('[quantum-plot] _onStackChanged 2', gtsTools.flattenGtsIdArray(this._gtsStack));
         }
         if (!!this._gtsStack) {
-          plottingTools.refresh(gtsTools.flattenGtsIdArray(this._gtsStack));
-          this.stackedGtsList = gtsTools.flattenGtsIdArray(this._gtsStack, []);
+          let flattenedGtsIdArray = gtsTools.flattenGtsIdArray(this._gtsStack, []);
+          plottingTools.refresh(flattenedGtsIdArray);
+          this.stackedGtsList = flattenedGtsIdArray;
           if (this.debug) {
             console.debug('[quantum-plot] _onStackChanged - do refresh', this.stackedGtsList);
           }
@@ -712,11 +713,11 @@ Warp plot widget
         for (i = 0, len = ref.length; i < len; i++) {
           gts = ref[i];
           if (this.debug) {
-            console.debug('[quantum-plot] selectRegex - matching', gts, gtsTools.serializeGtsMetadata(gts), gtsTools.serializeGtsMetadata(gts).match('' + this._currentRegex))
+            console.debug('[quantum-plot] selectRegex - matching', gts, gtsTools.serializeGtsMetadata(gts), gtsTools.serializeGtsMetadata(gts).match('' + this._currentRegex));
           }
           if (gtsTools.serializeGtsMetadata(gts).match('' + this._currentRegex)) {
             if (this.debug) {
-              console.debug('[quantum-plot] gts selected by regex', gtsTools.serializeGtsMetadata(gts))
+              console.debug('[quantum-plot] gts selected by regex', gtsTools.serializeGtsMetadata(gts));
             }
             // TO-DO this.addToPlot(gts);
             plottingTools.add(gts);
@@ -828,7 +829,7 @@ Warp plot widget
       _hotkeyAll(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyAll')
+            console.debug('[quantum-plot] _hotkeyAll');
           }
           for (let i in this.stackedGtsList) {
             let gts = this.stackedGtsList[i];
@@ -847,7 +848,7 @@ Warp plot widget
       _hotkeyNone(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyNone')
+            console.debug('[quantum-plot] _hotkeyNone');
           }
           for (let i in this.stackedGtsList) {
             let gts = this.stackedGtsList[i];
@@ -874,11 +875,11 @@ Warp plot widget
 
       _hotkeyHelp(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkeyHelp')
+          console.debug('[quantum-plot] _hotkeyHelp');
         }
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyHelp')
+            console.debug('[quantum-plot] _hotkeyHelp');
           }
           if (this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').opened) {
             this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').close();
