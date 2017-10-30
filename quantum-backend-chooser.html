@@ -273,12 +273,14 @@
 
 
   <script>
-    const getStoredCustomBackend = function () {
+    const getStoredCustomBackend = function() {
       return JSON.parse(localStorage.getItem('customBackend') || '{}') || {};
     };
 
+    /* globals QuantumModule */
     // Extend Polymer.Element base class
-    class QuantumBackendChooser extends Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior, QuantumModule], Polymer.Element) {
+    class QuantumBackendChooser extends
+        Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior, QuantumModule], Polymer.Element) {
       static get is() {
         return 'quantum-backend-chooser';
       }
@@ -308,126 +310,127 @@
           configuredBackends: {
             type: Array,
             observer: '_setInitialBackend',
-            value: function () {
+            value: function() {
               return [];
-            }
+            },
           },
 
           _altBackend: {
             type: Object,
-            value: function () {
+            value: function() {
               return {};
-            }
+            },
           },
 
           _otherParamsOpen: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _otherParamsStateIcon: {
             type: String,
-            computed: '_getOtherParamsStateIcon(_otherParamsOpen)'
+            computed: '_getOtherParamsStateIcon(_otherParamsOpen)',
           },
 
           _altBackendUrl: {
             type: String,
-            value: function () {
+            value: function() {
               if (window.location.protocol === 'https:') {
                 return '';
               }
-              return getStoredCustomBackend().url || 'http://127.0.0.1:8080/api/v0'
+              return getStoredCustomBackend().url || 'http://127.0.0.1:8080/api/v0';
             },
           },
           _altBackendDefaultUrl: {
             type: String,
-            value: function () {
+            value: function() {
               if (window.location.protocol === 'https:') {
                 return '';
               }
-              return getStoredCustomBackend().url || 'http://127.0.0.1:8080/api/v0'
+              return getStoredCustomBackend().url || 'http://127.0.0.1:8080/api/v0';
             },
           },
           _altBackendHeaderName: {
             type: String,
-            value: getStoredCustomBackend().headerName || 'X-Warp10'
+            value: getStoredCustomBackend().headerName || 'X-Warp10',
           },
           _altBackendDefaultHeaderName: {
             type: String,
-            value: getStoredCustomBackend().headerName || 'X-Warp10'
+            value: getStoredCustomBackend().headerName || 'X-Warp10',
           },
           _altBackendExecEndpoint: {
             type: String,
-            value: getStoredCustomBackend().execEndpoint || '/exec'
+            value: getStoredCustomBackend().execEndpoint || '/exec',
           },
           _altBackendDefaultExecEndpoint: {
             type: String,
-            value: getStoredCustomBackend().execEndpoint || '/exec'
+            value: getStoredCustomBackend().execEndpoint || '/exec',
           },
           _altBackendFindEndpoint: {
             type: String,
-            value: getStoredCustomBackend().findEndpoint || '/find'
+            value: getStoredCustomBackend().findEndpoint || '/find',
           },
           _altBackendDefaultFindEndpoint: {
             type: String,
-            value: getStoredCustomBackend().findEndpoint || '/find'
+            value: getStoredCustomBackend().findEndpoint || '/find',
           },
           _altBackendFetchEndpoint: {
             type: String,
-            value: getStoredCustomBackend().fetchEndpoint || '/fetch'
+            value: getStoredCustomBackend().fetchEndpoint || '/fetch',
           },
           _altBackendDefaultFetchEndpoint: {
             type: String,
-            value: getStoredCustomBackend().fetchEndpoint || '/fetch'
+            value: getStoredCustomBackend().fetchEndpoint || '/fetch',
           },
           _altBackendUpdateEndpoint: {
             type: String,
-            value: getStoredCustomBackend().updateEndpoint || '/update'
+            value: getStoredCustomBackend().updateEndpoint || '/update',
           },
           _altBackendDefaultUpdateEndpoint: {
             type: String,
-            value: getStoredCustomBackend().updateEndpoint || '/update'
+            value: getStoredCustomBackend().updateEndpoint || '/update',
           },
           _altBackendDeleteEndpoint: {
             type: String,
-            value: getStoredCustomBackend().deleteEndpoint || '/delete'
+            value: getStoredCustomBackend().deleteEndpoint || '/delete',
           },
           _altBackendDefaultDeleteEndpoint: {
             type: String,
-            value: getStoredCustomBackend().deleteEndpoint || '/delete'
+            value: getStoredCustomBackend().deleteEndpoint || '/delete',
           },
           _invalidAltBackend: {
             type: Boolean,
-            computed: '_isInvalidAltBackend(_altBackendUrl,_altBackendHeaderName,_altBackendExecEndpoint,_altBackendFindEndpoint,_altBackendFetchEndpoint,_altBackendUpdateEndpoint,_altBackendDeleteEndpoint)'
+            // eslint-disable-next-line max-len
+            computed: '_isInvalidAltBackend(_altBackendUrl,_altBackendHeaderName,_altBackendExecEndpoint,_altBackendFindEndpoint,_altBackendFetchEndpoint,_altBackendUpdateEndpoint,_altBackendDeleteEndpoint)',
           },
           _altBackendValidation: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _hasConfiguredBackends: {
             type: Boolean,
-            computed: '_getHasConfiguredBackends(configuredBackends)'
+            computed: '_getHasConfiguredBackends(configuredBackends)',
           },
           _chooseAltBackendSelected: {
             type: Boolean,
             value: false,
-            observer: '_altBackendStatusChanged'
+            observer: '_altBackendStatusChanged',
           },
           _open: {
             type: Boolean,
-            value: true
+            value: true,
           },
           _toggleAction: {
             type: String,
-            computed: '_getToggleAction(_open)'
+            computed: '_getToggleAction(_open)',
           },
           /* Overriden from AppLocalizeBehavior */
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   chooseYourBackend: 'Choose your backend',
@@ -440,10 +443,10 @@
                   updateEndpoint: '"Update" endpoint',
                   deleteEndpoint: '"Delete" endpoint',
                   configAltBackend: 'Configure backend',
-                  validAltBackend: 'Configured backend'
+                  validAltBackend: 'Configured backend',
                 },
-              }
-            }
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -477,9 +480,9 @@
       /* ************************************************************************/
       _altBackendStatusChanged() {
         if (this._chooseAltBackendSelected) {
-          for (let i in this.configuredBackends) {
+          this.configuredBackends.forEach((backend, i) => {
             this.set(['configuredBackends', i, 'checked'], false);
-          }
+          });
         }
       }
 
@@ -500,14 +503,15 @@
           if (this.debug) {
             console.debug('[quantum-backend-chooser] _backendChanged - currentBackend', {
               conf: this.configuredBackends[i].url,
-              backend: this.backend.url
+              backend: this.backend.url,
             });
           }
           if (this.configuredBackends[i].url === this.backend.url) {
             this.set(['configuredBackends', i, 'checked'], true);
             preconfiguredBackend = true;
             if (this.debug) {
-              console.debug('[quantum-backend-chooser] _backendChanged - default backend found: ', this.configuredBackends[i]);
+              console.debug('[quantum-backend-chooser] _backendChanged - default backend found: ',
+                  this.configuredBackends[i]);
             }
           } else {
             this.set(['configuredBackends', i, 'checked'], false);
@@ -537,7 +541,7 @@
           this._altBackendExecEndpoint = this._altBackendDefaultExecEndpoint;
           this._altBackendFindEndpoint = this._altBackendDefaultFindEndpoint;
           this._altBackendFetchEndpoint = this._altBackendDefaultFetchEndpoint;
-          this._altBackendUpdateEndpoint = this._altBackendDefaultUpdateEndpoint
+          this._altBackendUpdateEndpoint = this._altBackendDefaultUpdateEndpoint;
           this._altBackendDeleteEndpoint = this._altBackendDefaultDeleteEndpoint;
         }
         if (this.debug) {
@@ -585,7 +589,7 @@
           this._altBackendFindEndpoint,
           this._altBackendFetchEndpoint,
           this._altBackendUpdateEndpoint,
-          this._altBackendDeleteEndpoint
+          this._altBackendDeleteEndpoint,
         ];
 
         let uniqueEndpoints = endpoints.filter((val, index, self) => {
@@ -612,7 +616,7 @@
           findEndpoint: this._altBackendFindEndpoint,
           fetchEndpoint: this._altBackendFetchEndpoint,
           updateEndpoint: this._altBackendUpdateEndpoint,
-          deleteEndpoint: this._altBackendDeleteEndpoint
+          deleteEndpoint: this._altBackendDeleteEndpoint,
         };
         if (this.debug) {
           console.debug('[quantum-backend-chooser] _validateAltBackend', this._altBackend);
@@ -620,7 +624,7 @@
         this.backend = this._altBackend;
         this._altBackendValidation = true;
         this.fire('backend-choosen', this.backend);
-        localStorage.setItem('customBackend', JSON.stringify(this.backend))
+        localStorage.setItem('customBackend', JSON.stringify(this.backend));
       }
 
       _editAltBackend() {
