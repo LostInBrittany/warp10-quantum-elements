@@ -557,7 +557,7 @@
           if (this.debug) {
             console.debug('[quantum-plot] _onStackChanged - do refresh', this.stackedGtsList);
           }
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
           this.dataToMap = [
             {
               gts: this.stackedGtsList,
@@ -599,7 +599,7 @@
         if (this.debug) {
           console.debug('[quantum-plot] _onInterpolationModeChanged', this.interpolationMode);
         }
-        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
       }
 
       // *************************************************************************
@@ -667,7 +667,7 @@
             },
           }];
         if (this.debug) {
-          console.debug('[quantum-map] _onPlottedChanged', this.dataToMap);
+          console.debug('[quantum-map] _onMappedChanged', this.dataToMap);
         }
       }
 
@@ -804,7 +804,7 @@
           }
         }
         this.changed++;
-        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         this.$.gtsRegexOverlay.close();
       }
 
@@ -902,7 +902,7 @@
             }
           }
           this.changed++;
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 
@@ -923,7 +923,7 @@
             }
           }
           this.changed++;
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 
@@ -944,7 +944,7 @@
             }
           }
           this.changed++;
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 

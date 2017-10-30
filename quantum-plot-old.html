@@ -527,7 +527,7 @@ Warp plot widget
           if (this.debug) {
             console.log('[quantum-plot] _onStackChanged - do refresh', this.stackedGtsList);
           }
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 
@@ -724,7 +724,7 @@ Warp plot widget
           }
         }
         this.changed++;
-        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         this.$.gtsRegexOverlay.close();
       }
 
@@ -822,7 +822,7 @@ Warp plot widget
             }
           }
           this.changed++;
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 
@@ -840,7 +840,7 @@ Warp plot widget
             }
           });
           this.changed++;
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 
@@ -858,7 +858,7 @@ Warp plot widget
             }
           });
           this.changed++;
-          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
         }
       }
 

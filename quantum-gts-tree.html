@@ -124,18 +124,18 @@ Warp10 GTS stack tree
       <template is="dom-repeat" items={{data.content}} as="node">
 
         <li>
-          <div hidden$="{{branch}}" class="stack-level" on-click="selectNodeHead" data-node="{{node}}">
+          <div hidden$="{{branch}}" class="stack-level" on-tap="selectNodeHead" data-node="{{node}}">
             Stack level {{index}}
           </div>
           <div>
             <i class="collapsed" hidden$="{{isNotCollapsed(node)}}"
-               on-click="selectNodeHead"></i>
+               on-tap="selectNodeHead"></i>
             <i class="expanded" hidden$="{{isCollapsed(node)}}"
-               on-click="selectNodeHead"></i>
+               on-tap="selectNodeHead"></i>
 
             <template is="dom-if" if="{{isGts(node)}}">
-              <i class="normal" style$="{{gtsColor(node.gts, plottedChanged)}}" on-click="switchPlotState"></i>
-              <span class="gtsInfo" on-click="switchPlotState">
+              <i class="normal" style$="{{gtsColor(node.gts, plottedChanged)}}" on-tap="switchPlotState"></i>
+              <span class="gtsInfo" on-tap="switchPlotState">
                 <span class='gts-classname'>{{node.gts.c}}</span>
                 <span class='gts-separator'>{</span>
                 <template is="dom-repeat" items="{{_toArray(node.gts.l)}}" as="label">
@@ -155,7 +155,7 @@ Warp10 GTS stack tree
               <span class="gtsInfo"
                     on-mouseover="showImageOverlay"
                     on-mouseout="hideImageOverlay"
-                    on-click="showImageOverlay">
+                    on-tap="showImageOverlay">
                   <span class='gts-classname'>{{node.caption}}</span>
               </span>
             </template>
@@ -246,7 +246,7 @@ Warp10 GTS stack tree
       if (this.debug) {
         console.debug('[quantum-gts-tree] dataChanged', this.data);
       }
-      this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+      this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
       this.plottedChanged++;
     }
 
@@ -273,7 +273,7 @@ Warp10 GTS stack tree
           console.log('[quantum-gts-tree] removeFromPlot', plottingTools);
         }
       }
-      this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+      this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools, bubbles: true, composed: true}));
       this.plottedChanged++;
     }
 
