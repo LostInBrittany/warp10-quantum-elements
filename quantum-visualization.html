@@ -5,7 +5,7 @@
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 <link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
@@ -392,7 +392,9 @@
   </template>
 
   <script>
-    class QuantumVisualization extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10, gtsTools, plottingTools */
+    // eslint-disable-next-line new-cap
+    class QuantumVisualization extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-visualization';
       }
