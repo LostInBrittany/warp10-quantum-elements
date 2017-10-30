@@ -31,7 +31,7 @@
 <link rel="import" href="../granite-file-saver/granite-file-saver.html">
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 <link rel="import" href="./quantum-response-container.html">
 <link rel="import" href="./quantum-permalink.html">
 <link rel="import" href="./quantum-pouchdb-collection.html">"
@@ -429,11 +429,20 @@
         <template is="dom-if" if="{{!hidePlot}}">
           <div class="item_value">
             <paper-button
-              on-click="viz"
+              on-click="plot"
               disabled$="{{loading}}"
               hidden$="{{!_hasAResponse}}">
               <iron-icon icon="quantum-icons:timeline"></iron-icon>
-              Visualize
+              Plot
+            </paper-button>
+          </div>
+          <div class="item_value">
+            <paper-button
+              on-click="map"
+              disabled$="{{loading}}"
+              hidden$="{{!_hasAResponse}}">
+              <iron-icon icon="quantum-icons:room"></iron-icon>
+              Map
             </paper-button>
           </div>
         </template>
@@ -521,8 +530,9 @@
   </template>
 
   <script>
-    /* globals looseJSON */
-    class QuantumWarpscript extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10,looseJSON */
+    // eslint-disable-next-line new-cap
+    class QuantumWarpscript extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-warpscript';
       }
@@ -653,10 +663,9 @@
         };
       }
 
-      /**************************************************************************/
-      /* Lifecycle methods                                                      */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Lifecycle methods
+      // ************************************************************************
       ready() {
         super.ready();
         /*
@@ -679,10 +688,9 @@
         }
       }
 
-      /**************************************************************************/
-      /* Computed properties                                                    */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Computed properties
+      // ************************************************************************
       _formatElapsedTime() {
         if (this.elapsed < 1000) {
           return '' + this.elapsed + ' ns';
@@ -706,17 +714,16 @@
 
       _isShareCodeDisabled() {
         return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) ||
-          this._warpscriptChangedAfterExecution );
+            this._warpscriptChangedAfterExecution );
       }
 
       _isShareResponseDisabled() {
         return !!(this.loading || (this._lastSharedResponse && this._lastSharedResponse.snapshotId) );
       }
 
-      /**************************************************************************/
-      /* Observers                                                              */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Observers
+      // ************************************************************************
       _onWarpscriptChange(warpscript) {
         if (this.debug) {
           console.debug('[quantum-warpscript] _onWarpscriptChange', warpscript);
@@ -750,12 +757,11 @@
         }
       }
 
-      /**************************************************************************/
-      /* Event Listeners                                                        */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Event Listeners
+      // ************************************************************************
       _handleResponse(event, response) {
-        if (!response.stack || !response.stack instanceof Array) {
+        if (!response.stack || !(response.stack instanceof Array)) {
           return;
         }
         this.elapsed = response.options.elapsed;
@@ -869,10 +875,9 @@
         evt.stopPropagation();
       }
 
-      /**************************************************************************/
-      /* Action listeners                                                       */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Action listeners
+      // ************************************************************************
       /**
        * Executes the warpscript request
        */
@@ -898,16 +903,15 @@
 
       shareCode() {
         let script = '// backend: ' + JSON.stringify(this.backend) + '\n\n' + this.warpscript;
-        this._codeToShare = `<% '${encodeURI(script).
-          replace(/'/g, '%27').
-          replace(/"/g, '%28').
-          replace(/\+/g, '%2B')}' %> @orbit/snapshot/store`;
+        // eslint-disable-next-line max-len
+        this._codeToShare = `<% '${encodeURI(script).replace(/'/g, '%27').replace(/"/g, '%28').replace(/\+/g, '%2B')}' %> @orbit/snapshot/store`;
         this.$.shareCodeRequest.generateRequest();
       }
 
       shareResponse() {
-        let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+          let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          let r = Math.random() * 16 | 0;
+          let v = c === 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });
 
@@ -943,10 +947,9 @@
         this.$.loadDialog.cancel();
       }
 
-      /**************************************************************************/
-      /* Other methods                                                          */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Other methods
+      // ************************************************************************
       _updateLocation() {
         if (this.selected === this.application) {
           if (this.debug) {
@@ -982,10 +985,9 @@
         }
       }
 
-      /**************************************************************************/
-      /* Hotkeys                                                                */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Hotkeys
+      // ************************************************************************
       _hotkeyExecute(e) {
         let normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
         if (this.debug) {

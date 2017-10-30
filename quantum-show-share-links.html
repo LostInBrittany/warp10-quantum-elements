@@ -16,7 +16,7 @@
 <link rel="import" href="../granite-alert/granite-alert.html">
 <link rel="import" href="../granite-qrcode-generator/granite-qrcode-generator.html">"
 
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 <link rel="import" href="./quantum-iconset.html">
 
 <dom-module id="quantum-show-share-links">
@@ -109,7 +109,9 @@
 
   </template>
   <script>
-    class QuantumShowShareLinks extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10 */
+    // eslint-disable-next-line new-cap
+    class QuantumShowShareLinks extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-show-share-links';
       }

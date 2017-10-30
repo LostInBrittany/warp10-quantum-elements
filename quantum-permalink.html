@@ -5,10 +5,12 @@
 -->
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 <script>
-  class QuantumPermalinkDecoder extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+  /* globals Warp10 */
+  // eslint-disable-next-line new-cap
+  class QuantumPermalinkDecoder extends Warp10.QuantumModuleMixin(Polymer.Element) {
     static get is() {
       return 'quantum-permalink-decoder';
     }
@@ -40,13 +42,13 @@
       };
     }
 
-    /**************************************************************************/
-    /* Computed properties                                                    */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Computed properties                                                    
+    // *************************************************************************
     /**
      * Decodes payload from permalink
      * Fires 'payload-change' event
+     * @return {String} payload
      */
     _decodePayload() {
       if (this.debug) {
@@ -69,6 +71,7 @@
     /**
      * Decodes backend from permalink
      * Fires 'backend-change' event
+     * @return {String} backend
      */
     _decodeBackend() {
       if (this.debug) {
@@ -82,12 +85,12 @@
         'fetchEndpoint',
         'updateEndpoint',
         'deleteEndpoint',
-        'headerName'];
+        'headerName',
+      ];
       let decoded;
 
       try {
-        let decodedString = decodeURIComponent(
-          escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
+        let decodedString = decodeURIComponent(escape(atob(decodeURIComponent(this.encodedBackend).replace(/_/g, '/'))));
         try {
           decoded = JSON.parse(decodedString);
         } catch (e) {
@@ -110,10 +113,9 @@
       }
     }
 
-    /**************************************************************************/
-    /* Observers                                                              */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Observers                                                              
+    // *************************************************************************
     _decodedPayloadChanged(decodedPayload) {
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodePayloadChanged', decodedPayload);
@@ -156,7 +158,9 @@
 </dom-module>
 
 <script>
-  class QuantumPermalinkGenerator extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+  /* globals Warp10 */
+  // eslint-disable-next-line new-cap
+  class QuantumPermalinkGenerator extends Warp10.QuantumModuleMixin(Polymer.Element) {
     static get is() {
       return 'quantum-permalink-generator';
     }
@@ -190,10 +194,9 @@
       };
     }
 
-    /**************************************************************************/
-    /* Lifecycle methods                                                      */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Lifecycle methods                                                      
+    // *************************************************************************
     connectedCallback() {
       super.connectedCallback();
       this._maxDisplayLength = 60;
@@ -202,12 +205,13 @@
       }
     }
 
-    /**************************************************************************/
-    /* Computed properties                                                    */
 
-    /**************************************************************************/
+    // *************************************************************************
+    // Computed properties                                                    
+    // *************************************************************************
     /**
      * Crops the permalink to get a display-friendly version
+     * @return {String} permalink
      */
     _cropPermalink() {
       if (this.debug) {
@@ -225,18 +229,18 @@
      */
     _generatePermalink() {
       if (this.debug) {
-        console.debug('[quantum-permalink] _generatePermalink ws/backend', '/' + this._encodeWarpscript() + '/' +
-          this._encodeBackend());
+        console.debug('[quantum-permalink] _generatePermalink ws/backend',
+            '/' + this._encodeWarpscript() + '/' + this._encodeBackend());
       }
       return this._encodeWarpscript() + '/' + this._encodeBackend();
     }
 
-    /**************************************************************************/
-    /* Other methods                                                          */
-
-    /**************************************************************************/
+    // *************************************************************************
+    // Other methods                                                          
+    // *************************************************************************
     /**
      * Updates the location according to the permalink
+     * @param {String} application
      */
     updateLocation(application) {
       if (this.debug) {
@@ -278,7 +282,8 @@
         'fetchEndpoint',
         'updateEndpoint',
         'deleteEndpoint',
-        'headerName'];
+        'headerName',
+      ];
       fields.forEach((field) => {
         if (self.backend[field] !== self.defaultBackend[field]) {
           backendToEncode[field] = self.backend[field];
@@ -287,8 +292,7 @@
       if (this.debug) {
         console.debug('[quantum-permalink] _encodeBackend - backendToEncode', backendToEncode);
       }
-      return encodeURIComponent(
-        btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
+      return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(backendToEncode)))).replace(/\//g, '_'));
     }
   }
 

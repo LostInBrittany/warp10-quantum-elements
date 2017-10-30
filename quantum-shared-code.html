@@ -11,7 +11,7 @@
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
-<link rel="import" href="quantum-module-behavior.html">
+<link rel="import" href="quantum-module-mixin.html">
 
 <dom-module id="quantum-shared-code">
   <template>
@@ -45,7 +45,9 @@
   </template>
   <script>
 
-    class QuantumSharedCode extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10, looseJSON */
+    // eslint-disable-next-line new-cap
+    class QuantumSharedCode extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-shared-code';
       }
@@ -95,9 +97,8 @@
       /* Event listeners
       /* ************************************************************************/
       _handleGetSharedCodeResponse(evt, ironRequest) {
-        let code =
-          `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${+looseJSON.parse(
-            ironRequest.response)[0]}`;
+        // eslint-disable-next-line max-len
+        let code = `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${looseJSON.parse(ironRequest.response)[0]}`;
         if (this.debug) {
           console.debug('[quantum-shared-code] _handleGetSharedCodeResponse', code);
         }

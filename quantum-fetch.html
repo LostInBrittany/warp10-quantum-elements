@@ -22,7 +22,7 @@
 
 <link rel="import" href="../warp10-iron/warp10-iso-date-time-or-timestamp-validator.html">
 
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 
 <!--
@@ -280,7 +280,10 @@ Quantum fetch widget
   </template>
 
   <script>
-    class QuantumFetch extends Polymer.mixinBehaviors([QuantumModule, Polymer.AppLocalizeBehavior], Polymer.Element) {
+    /* globals Warp10 */
+    class QuantumFetch extends
+        // eslint-disable-next-line new-cap
+        Warp10.QuantumModuleMixin(Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior], Polymer.Element)) {
       static get is() {
         return 'quantum-fetch';
       }
@@ -332,6 +335,7 @@ Quantum fetch widget
           },
           _disabled: {
             type: Boolean,
+        // eslint-disable-next-line max-len
             computed: '_isDisabled(paramToken, paramSelector, fetchByTimespan, paramStartTime, paramEndTime, paramTimestamp, paramTimespan, paramFormat, paramDedup)',
           },
           language: {
@@ -370,23 +374,21 @@ Quantum fetch widget
         };
       }
 
-      /**************************************************************************/
-      /* Lifecycle methods                                                      */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Lifecycle methods                                                      
+      // ************************************************************************
       ready() {
         super.ready();
         this._hasAnError = 0;
         this._hasAResponse = 0;
       }
 
-      /**************************************************************************/
-      /* Computed porperties                                                    */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Computed porperties                                                    
+      // ************************************************************************
       _getBaseUrl() {
         if (this.debug) {
-          console.debug('[quantum-fetch] _getBaseUrl', this.backend);
+          console.log('[quantum-fetch] _getBaseUrl', this.backend);
         }
         return this.backend.url + this.backend.fetchEndpoint;
       }
@@ -394,9 +396,7 @@ Quantum fetch widget
       _isDisabled() {
         // token, selector, fetchByTimespan, paramStartTime, paramEndTime, timestamp, paramTimespan, paramFormat, paramDedup
         if (this.debug) {
-          console.debug('[quantum-fetch] _isDisabled', !this.paramToken || !this.paramSelector ||
-            (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) ||
-            (!this.fetchByTimespan && (!this.paramStartTime || !this.paramEndTime) ) || !this.paramFormat);
+          console.log('[quantum-fetch] _isDisabled', !this.paramToken || !this.paramSelector || (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) || (!this.fetchByTimespan && (!this.paramStartTime || !this.paramEndTime) ) || !this.paramFormat);
         }
         return !!(!this.paramToken || !this.paramSelector ||
           (this.fetchByTimespan && (!this.paramTimestamp || !this.paramTimespan) ) ||
@@ -404,10 +404,9 @@ Quantum fetch widget
           !this.paramFormat);
       }
 
-      /**************************************************************************/
-      /* Action Listeners                                                       */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Action Listeners                                                       
+      // ************************************************************************
       execute() {
         let header = this.backend.headerName + '-Token';
         this.$.xhr.headers = {};
@@ -425,26 +424,25 @@ Quantum fetch widget
         }
         this.$.xhr.headers[header] = this.paramToken;
         if (this.debug) {
-          console.debug('[quantum-fetch] _doCall - headers', this.$.xhr.headers);
+          console.log('[quantum-fetch] _doCall - headers', this.$.xhr.headers);
         }
         this.$.xhr.generateRequest();
       }
 
-      /**************************************************************************/
-      /* Event Listeners                                                        */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Event Listeners                                                        
+      // ************************************************************************
       _editorChangeAction(value, oldValue) {
         this.fire('editor-content', {value: value, oldValue: oldValue});
         this.content = value.detail.value;
         if (this.debug) {
-          console.debug('[quantum-fetch] Ide content changed', this.content);
+          console.log('[quantum-fetch] Ide content changed', this.content);
         }
       }
 
       _handleResponse(event, ironRequest) {
         if (this.debug) {
-          console.debug('[quantum-fetch] _handleResponse - Updated!', ironRequest.response);
+          console.log('[quantum-fetch] _handleResponse - Updated!', ironRequest.response);
         }
         this._hasAResponse = true;
         this._hasAnError = false;
@@ -453,7 +451,7 @@ Quantum fetch widget
 
       _handleError(event, ironRequest) {
         if (this.debug) {
-          console.debug('[quantum-fetch] _handleError - Updated!', ironRequest);
+          console.log('[quantum-fetch] _handleError - Updated!', ironRequest);
         }
         this._hasAResponse = false;
         this._hasAnError = true;

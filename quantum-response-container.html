@@ -89,6 +89,7 @@
 
 
   <script>
+    /* globals looseJSON */
     class QuantumResponseContainer extends Polymer.Element {
       static get is() {
         return 'quantum-response-container';
@@ -124,7 +125,7 @@
 
       responseChanged() {
         if (this.debug) {
-          console.debug('[quantum-response-container] responseChanged', this.response);
+          console.log('[quantum-response-container] responseChanged', this.response);
         }
         if ((this.response === null) || (this.response === undefined)) {
           this.showResponse = false;
@@ -133,7 +134,7 @@
 
         this.data = this.response;
         if (this.debug) {
-          console.debug('[quantum-response-container] responseChanged', this.data);
+          console.log('[quantum-response-container] responseChanged', this.data);
         }
         this.showResponse = this.data !== undefined && (this.data !== null);
       }

@@ -7,6 +7,7 @@
 
 <link rel="import" href="../warp10-iron/warp10-gts-tools.html">
 <link rel="import" href="../warp10-iron/warp10-gts-plotting-tools.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 <!--
 Warp10 GTS stack tree 
@@ -179,7 +180,9 @@ Warp10 GTS stack tree
 </dom-module>
 
 <script>
-  class QuantumGTSTree extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+  /* globals Warp10, plottingTools */
+  // eslint-disable-next-line new-cap
+  class QuantumGTSTree extends Warp10.QuantumModuleMixin(Polymer.Element) {
     static get is() {
       return 'quantum-gts-tree';
     }
