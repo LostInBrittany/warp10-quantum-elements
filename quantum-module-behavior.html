@@ -39,7 +39,7 @@ QuantumModule = {
       */
     payload: {
       type: String,
-      observer: "_payloadChanged",
+      observer: '_payloadChanged',
       notify: true,
     },
 
@@ -60,9 +60,9 @@ QuantumModule = {
       */        
     backend: {
       type: Object,
-      observer: "_backendChanged",
-      notify: true
-    },        
+      observer: '_backendChanged',
+      notify: true,
+    },
 
     /**
       * The default backend
@@ -77,20 +77,20 @@ QuantumModule = {
       *    "headerName": "X-Warp10-Token"            
       *  }
       */
-    defaultBackend: { 
+    defaultBackend: {
       type: Object,
-      value:  {
-        "id": "default",
-        "label": "Default backend",
-        "url": "http://127.0.0.1:8080/api/v0",
-        "execEndpoint": "/exec",
-        "findEndpoint": "/find",
-        "updateEndpoint": "/update",
-        "deleteEndpoint": "/delete",
-        "headerName": "X-Warp10-Token"            
-      }
+      value: {
+        'id': 'default',
+        'label': 'Default backend',
+        'url': 'http://127.0.0.1:8080/api/v0',
+        'execEndpoint': '/exec',
+        'findEndpoint': '/find',
+        'updateEndpoint': '/update',
+        'deleteEndpoint': '/delete',
+        'headerName': 'X-Warp10-Token',
+      },
     },
-    
+
     /**
       * The CityzenData backend, uesed for snapshot capabilities
       *  {
@@ -104,31 +104,31 @@ QuantumModule = {
       *    "headerName": "X-CityzenData-Token"            
       *  }
       */
-    czdBackend: { 
+    czdBackend: {
       type: Object,
       value: {
-        "id": "czd",
-        "label": "Cityzen Data Warp",
-        "url": "https://warp.cityzendata.net/api/v0",
-        "execEndpoint": "/exec",
-        "findEndpoint": "/find",
-        "updateEndpoint": "/update",
-        "deleteEndpoint": "/delete",
-        "headerName": "X-CityzenData-Token"                   
-      }
+        'id': 'czd',
+        'label': 'Cityzen Data Warp',
+        'url': 'https://warp.cityzendata.net/api/v0',
+        'execEndpoint': '/exec',
+        'findEndpoint': '/find',
+        'updateEndpoint': '/update',
+        'deleteEndpoint': '/delete',
+        'headerName': 'X-CityzenData-Token',
+      },
     },
     defaultQuantum: {
       type: String,
-      value: "https://home.cityzendata.net/quantum"
-    }
+      value: 'https://home.cityzendata.net/quantum',
+    },
   },
 
 
   // ***********************************************************************
   // Lifecycle methods                                                      
   // ***********************************************************************
-  ready: function() {  
-    console.debug("[quantum-module-behavior] ready");           
+  ready: function() {
+    console.debug('[quantum-module-behavior] ready');
   },
 
   // ***********************************************************************
@@ -145,7 +145,7 @@ QuantumModule = {
   // Observers methods                                                      
   // ***********************************************************************
   cloneDefaultBackend: function() {
-    return JSON.parse(JSON.stringify(this.defaultBackend));  
-  },     
+    return JSON.parse(JSON.stringify(this.defaultBackend));
+  },
 };
 </script>  
