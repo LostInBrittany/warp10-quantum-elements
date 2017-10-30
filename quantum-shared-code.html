@@ -102,7 +102,7 @@
         if (this.debug) {
           console.debug('[quantum-shared-code] _handleGetSharedCodeResponse', code);
         }
-        this.fire('shared-code', code);
+        this.dispatchEvent(new CustomEvent('shared-code', {detail: code}));
       }
 
       /* ************************************************************************/

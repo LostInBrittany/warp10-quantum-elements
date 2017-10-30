@@ -407,7 +407,7 @@ Warp plot widget
           if (this.debug) {
             console.debug('[quantum-map] _onStackChanged - do refresh', this.stackedGtsList.slice());
           }
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
           this.dataToMap = [{
             gts: this.stackedGtsList,
             params: [{
@@ -599,7 +599,8 @@ Warp plot widget
           console.debug('[quantum-map] _hotkey edit', this.warpscript);
         }
         if (!this._regexMode) {
-          this.fire('edit', {warpscript: this.warpscript, stack: this.stack, backend: this.backend});
+          this.dispatchEvent(new CustomEvent('edit', 
+              {detail: {warpscript: this.warpscript, stack: this.stack, backend: this.backend}}));
         }
       }
 
@@ -683,7 +684,7 @@ Warp plot widget
             }
           }
           this.changed++;
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
       }
 
@@ -701,7 +702,7 @@ Warp plot widget
             }
           });
           this.changed++;
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
       }
 
@@ -719,7 +720,7 @@ Warp plot widget
             }
           });
           this.changed++;
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
       }
 

@@ -433,7 +433,7 @@
         if (this.debug) {
           console.log('[quantum-local-collection-reader] _load', evt.model.record);
         }
-        this.fire('warpscript-choosen', evt.model.record.warpscript);
+        this.dispatchEvent(new CustomEvent('warpscript-choosen', {detail: evt.model.record.warpscript}));
       }
 
       _filterRecords(_filterByNameInput, _tags, len) {

@@ -107,7 +107,7 @@
         if (this.debug) {
           console.debug('[quantum-shared-code] _handleGetSharedResultResponse', code);
         }
-        this.fire('shared-result', code);
+        this.dispatchEvent(new CustomEvent('shared-result', {detail: code}));
       }
 
       /* ************************************************************************/

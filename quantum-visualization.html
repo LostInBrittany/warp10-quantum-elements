@@ -162,8 +162,8 @@
 
       .clearfix:before,
       .clearfix:after {
-        content: " "; /* 1 */
-        display: table; /* 2 */
+        content: " ";
+        display: table;
       }
 
       .clearfix:after {
@@ -485,10 +485,9 @@
         };
       }
 
-      /**************************************************************************/
-      /* Lifecycle methods                                                      */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Lifecycle methods                                                      
+      // *************************************************************************
       ready() {
         super.ready();
         this.addEventListener('plotted-changed', (e) => this._onPlottedChanged(e));
@@ -509,10 +508,9 @@
         this._displayWidth = this.offsetWidth;
       }
 
-      /**************************************************************************/
-      /* Computed properties                                                    */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Computed properties                                                    
+      // *************************************************************************
       _getBaseUrl() {
         return this.backend.url + this.backend.execEndpoint;
       }
@@ -535,14 +533,13 @@
         return gtsTools.gtsFromJSONList(this.stack);
       }
 
-      /**************************************************************************/
-      /* Observers                                                              */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Observers                                                              
+      // *************************************************************************
       _onVertGuideChanged(event) {
         if (this.vertGuide > 0) {
           this.$.vertGuide.style.display = 'inline-block';
-          this.$.vertGuide.style.left = (30 + this.vertGuide) + 'px'; //plot padding-left need to be added
+          this.$.vertGuide.style.left = (30 + this.vertGuide) + 'px'; // plot padding-left need to be added
         } else {
           this.$.vertGuide.style.display = 'none';
         }
@@ -553,14 +550,14 @@
           console.debug('[quantum-plot] _onStackChanged', this._gtsStack);
           console.debug('[quantum-plot] _onStackChanged 2', gtsTools.flattenGtsIdArray(this._gtsStack));
         }
-        if (!!this._gtsStack) {
+        if (this._gtsStack) {
           let flattenedGtsIdArray = gtsTools.flattenGtsIdArray(this._gtsStack, []);
           plottingTools.refresh(flattenedGtsIdArray);
           this.stackedGtsList = flattenedGtsIdArray;
           if (this.debug) {
             console.debug('[quantum-plot] _onStackChanged - do refresh', this.stackedGtsList);
           }
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
           this.dataToMap = [
             {
               gts: this.stackedGtsList,
@@ -602,13 +599,12 @@
         if (this.debug) {
           console.debug('[quantum-plot] _onInterpolationModeChanged', this.interpolationMode);
         }
-        this.fire('plotted-changed', plottingTools);
+        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
       }
 
-      /**************************************************************************/
-      /* Event Listeners                                                        */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Event Listeners                                                        
+      // *************************************************************************
       _handleShowImage(evt, obj) {
         let dialog = this.$.imageOverlay;
         if (obj.type === 'click') {
@@ -642,7 +638,7 @@
         if (this.debug) {
           console.debug('[quantum-plot] _handleResponse - response', response);
         }
-        if (!response.stack || !response.stack instanceof Array) {
+        if (!response.stack || !(response.stack instanceof Array)) {
           this.stack = null;
           return;
         }
@@ -722,10 +718,9 @@
         this._regexMode = false;
       }
 
-      /**************************************************************************/
-      /* Other methods                                                          */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Other methods                                                          
+      // *************************************************************************
       init() {
         if (this.debug) {
           console.debug('[quantum-plot] attached() - this.stack', this.stack);
@@ -759,7 +754,7 @@
       }
 
       getStackedGtsListSlidingWindow() {
-        let windowEnd, windowInit;
+        let windowEnd; let windowInit;
         if (!this.stackedGtsList) {
           return [];
         }
@@ -789,7 +784,7 @@
       }
 
       selectRegex() {
-        let gts, i, len, ref;
+        let gts; let i; let len; let ref;
         ref = this.stackedGtsList;
         if (this.debug) {
           console.debug('[quantum-plot] selectRegex called with regex', '/' + this._currentRegex + '/', ref);
@@ -809,21 +804,21 @@
           }
         }
         this.changed++;
-        this.fire('plotted-changed', plottingTools);
+        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         this.$.gtsRegexOverlay.close();
       }
 
-      /**************************************************************************/
-      /* Hotkeys                                                                */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Hotkeys                                                                
+      // *************************************************************************
 
       _hotkeyEdit(e) {
         if (this.debug) {
           console.debug('[quantum-plot] _hotkey edit', this.warpscript);
         }
         if (!this._regexMode) {
-          this.fire('edit', {warpscript: this.warpscript, stack: this.stack, backend: this.backend});
+          this.dispatchEvent(new CustomEvent('edit',
+              {detail: {warpscript: this.warpscript, stack: this.stack, backend: this.backend}}));
         }
       }
 
@@ -907,7 +902,7 @@
             }
           }
           this.changed++;
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
       }
 
@@ -928,7 +923,7 @@
             }
           }
           this.changed++;
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
       }
 
@@ -949,7 +944,7 @@
             }
           }
           this.changed++;
-          this.fire('plotted-changed', plottingTools);
+          this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
       }
 
@@ -977,7 +972,6 @@
           }
         }
       }
-
     }
 
     // Register custom element definition using standard platform API
@@ -1042,6 +1036,7 @@
   </template>
 
   <script>
+    /* globals plottingTools */
     class QuantumGTSInSelectionOverlay extends Polymer.Element {
       static get is() {
         return 'quantum-gts-in-selection-overlay';
