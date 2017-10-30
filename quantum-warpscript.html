@@ -262,8 +262,7 @@
     <h2 class="title">WarpScript</h2>
 
     <iron-a11y-keys target="[[_target]]" keys="e" on-keys-pressed="_hotkeyExecute"></iron-a11y-keys>
-    <iron-a11y-keys target="[[_target]]" keys="p" on-keys-pressed="_hotkeyPlot"></iron-a11y-keys>
-    <iron-a11y-keys target="[[_target]]" keys="m" on-keys-pressed="_hotkeyMap"></iron-a11y-keys>
+    <iron-a11y-keys target="[[_target]]" keys="v" on-keys-pressed="_hotkeyViz"></iron-a11y-keys>
     <iron-a11y-keys target="[[_target]]" keys="h ?:keypress" on-keys-pressed="_hotkeyHelp"></iron-a11y-keys>
 
     <warp10-simple-overlay id="warpscript-ide-keyboard-shortcuts-overlay">
@@ -272,8 +271,7 @@
         <p><span class="hotkey-key">?</span>, <span class="hotkey-key">h</span> Show / hide this help menu</p>
         <p><span class="hotkey-key">Esc</span> Close dialogs</p>
         <p><span class="hotkey-key">e</span> Execute WarpScript</p>
-        <p><span class="hotkey-key">p</span> Plot response</p>
-        <p><span class="hotkey-key">m</span> Map response</p>
+        <p><span class="hotkey-key">v</span> visualize response</p>
         <p><span class="hotkey-key">Ctrl+Space</span> Editor autocompletion</p>
       </div>
     </warp10-simple-overlay>
@@ -1000,14 +998,14 @@
         }
       }
 
-      _hotkeyPlot(e) {
+      _hotkeyViz(e) {
         let normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
         if (this.debug) {
-          console.debug('[quantum-warpscript] _hotkeyPlot', normKeyboardEvt.rootTarget);
+          console.debug('[quantum-warpscript] _hotkeyViz', normKeyboardEvt.rootTarget);
         }
         let nodeName = normKeyboardEvt.rootTarget.nodeName;
         if ((nodeName !== 'TEXTAREA') && (nodeName !== 'INPUT')) {
-          this.plot();
+          this.viz();
         }
       }
 
