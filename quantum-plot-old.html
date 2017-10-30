@@ -1,11 +1,10 @@
 <!--
-@author Xavier MARIN (@lostinbrittany)
+@author Horacio Gonzalez (@lostinbrittany)
 @copyright (c) 2016 Cityzen Data
 @license Apache 2.0
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="./quantum-module-mixin.html">
 
 <link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
@@ -23,8 +22,7 @@
 <link rel="import" href="../warp10-iron/warp10-simple-overlay.html">
 <link rel="import" href="../warp10-iron/warp10-warpscript-caller.html">
 
-<link rel="import" href="../warp10-quantumviz/warp10-display-c3-chart.html">
-<link rel="import" href="../warp10-quantumviz/warp10-display-map.html">
+<link rel="import" href="../warp10-quantumviz/warp10-display-dy-chart.html">
 <link rel="import" href="../warp10-quantumviz/quantumviz-annotations.html">
 
 
@@ -33,9 +31,19 @@
 
 <link rel="import" href="./quantum-gts-tree.html">
 <link rel="import" href="./quantum-image-overlay.html">
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
-<dom-module id="quantum-visualization">
+<!--
+Warp plot widget
+
+    <quantum-plot
+        warpscript="{{warpscript}}"
+        backend="{{backend}}"
+        data="{{data}}">
+    </quantum-plot>
+-->
+
+<dom-module id="quantum-plot">
   <template>
     <style is="custom-style">
       :host {
@@ -113,7 +121,7 @@
         color: var(--app-on-background-color)
       }
 
-      paper-toggle-button.timestamps {
+      paper-toggle-button {
         margin-left: 10px;
         margin-right: 10px;
         --paper-toggle-button-checked-bar-color: var(--app-primary-color);
@@ -123,7 +131,9 @@
         --paper-toggle-button-unchecked-button-color: var(--app-primary-color);
         --paper-toggle-button-unchecked-ink-color: var(--app-primary-color);
       }
+    </style>
 
+    <style>
       .item_list {
         @apply --layout-horizontal;
         @apply --layout-center;
@@ -162,8 +172,8 @@
 
       .clearfix:before,
       .clearfix:after {
-        content: " ";
-        display: table;
+        content: " "; /* 1 */
+        display: table; /* 2 */
       }
 
       .clearfix:after {
@@ -202,23 +212,6 @@
         height: 500px;
       }
     </style>
-
-    <div class="item_list">
-      <div class="item">
-        <div class="item_name">Show sparkline</div>
-        <div class="item_value">No
-          <paper-toggle-button checked="{{_showSparkline}}"></paper-toggle-button>
-          Yes
-        </div>
-      </div>
-      <div class="item">
-        <div class="item_name">Show map</div>
-        <div class="item_value">No
-          <paper-toggle-button checked="{{_showMap}}"></paper-toggle-button>
-          Yes
-        </div>
-      </div>
-    </div>
 
 
     <iron-a11y-keys target="[[_target]]" keys="e" on-keys-pressed="_hotkeyEdit"></iron-a11y-keys>
@@ -287,63 +280,57 @@
       debug="[[debug]]"></quantum-gts-tree>
 
     <div id="vertGuide"></div>
+    <quantumviz-annotations
+      id="warp10-quantumviz-annotations"
+      time-bounds="{{timeBounds}}"
+      chart-area="{{chartArea}}"
+      data="{{dataToPlot}}"
+      vert-guide="{{vertGuide}}"
+      width="{{_displayWidth}}"
+      selected-timestamp="{{annotationsSelectedTimestamp}}"
+      debug="[[debug]]"
+      timestamps="{{timestamps}}"></quantumviz-annotations>
 
-    <template is="dom-if" if="{{_showSparkline}}">
-      <quantumviz-annotations
-        id="warp10-quantumviz-annotations"
-        time-bounds="{{timeBounds}}"
-        chart-area="{{chartArea}}"
-        data="{{dataToPlot}}"
-        vert-guide="{{vertGuide}}"
-        width="{{_displayWidth}}"
-        selected-timestamp="{{annotationsSelectedTimestamp}}"
-        debug="[[debug]]"
-        timestamps="{{timestamps}}"></quantumviz-annotations>
+    <warp10-display-chart
+      id="warp10-display-chart"
+      width="{{_displayWidth}}"
+      height="500"
+      data="{{dataToPlot}}"
+      current-values="{{currentValues}}"
+      time-bounds="{{timeBounds}}"
+      chart-area="{{chartArea}}"
+      debug="[[debug]]"
+      timestamps="{{timestamps}}"></warp10-display-chart>
 
-      <warp10-display-chart
-        id="warp10-display-chart"
-        width="{{_displayWidth}}"
-        height="500"
-        data="{{dataToPlot}}"
-        current-values="{{currentValues}}"
-        time-bounds="{{timeBounds}}"
-        chart-area="{{chartArea}}"
-        debug="[[debug]]"
-        timestamps="{{timestamps}}"></warp10-display-chart>
-
-      <template is="dom-if" if="{{_displayChart}}">
-        <div class="item_list">
-          <div class="item ">
-            <div class="item_name">Interpolation</div>
-            <paper-radio-group
-              id="interpolationRadioGroup"
-              selected="{{interpolationMode}}">
-              <paper-radio-button
-                id="interpolation_linear"
-                name="linear">
-                Linear
-              </paper-radio-button>
-              <paper-radio-button
-                id="interpolation_step"
-                name="step-before">
-                Step
-              </paper-radio-button>
-            </paper-radio-group>
-          </div>
-          <div class="item">
-            <div class="item_name">X-axis scale</div>
-            <div class="item_value">Date
-              <paper-toggle-button checked="{{timestamps}}" class="timestamps"></paper-toggle-button>
-              Timestamp
-            </div>
+    <template is="dom-if" if="{{_displayChart}}">
+      <div class="item_list">
+        <div class="item ">
+          <div class="item_name">Interpolation</div>
+          <paper-radio-group
+            id="interpolationRadioGroup"
+            selected="{{interpolationMode}}">
+            <paper-radio-button
+              id="interpolation_linear"
+              name="linear">
+              Linear
+            </paper-radio-button>
+            <paper-radio-button
+              id="interpolation_step"
+              name="step-before">
+              Step
+            </paper-radio-button>
+          </paper-radio-group>
+        </div>
+        <div class="item">
+          <div class="item_name">X-axis scale</div>
+          <div class="item_value">Date
+            <paper-toggle-button checked="{{timestamps}}"></paper-toggle-button>
+            Timestamp
           </div>
         </div>
-      </template>
+      </div>
+      <div class="spacer"></div>
     </template>
-    <template is="dom-if" if="{{_showMap}}">
-      <warp10-display-map data="[[dataToMap]]" zoom="12" debug="[[debug]]"></warp10-display-map>
-    </template>
-    <div class="spacer"></div>
 
     <warp10-simple-overlay id="gts-select-overlay" debug="[[debug]]">
       <div class="overlayGtsSelectorBox">
@@ -389,14 +376,17 @@
       url="{{_baseUrl}}" warpscript="{{warpscript}}"
       on-response="_handleResponse" on-error="_handleError"
       loading="{{loading}}"></warp10-warpscript-caller>
+
+
   </template>
 
   <script>
+
     /* globals Warp10, gtsTools, plottingTools */
     // eslint-disable-next-line new-cap
-    class QuantumVisualization extends Warp10.QuantumModuleMixin(Polymer.Element) {
+    class QuantumPlot extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
-        return 'quantum-visualization';
+        return 'quantum-plot';
       }
 
       static get properties() {
@@ -466,18 +456,6 @@
             type: Boolean,
             computed: '_computeDisplayChart(dataToPlot)',
           },
-          _displayMap: {
-            type: Boolean,
-            computed: '_computeDisplayMap(dataToMap)',
-          },
-          _showMap: {
-            type: Boolean,
-            value: true,
-          },
-          _showSparkline: {
-            type: Boolean,
-            value: true,
-          },
           debug: {
             type: Boolean,
             value: true,
@@ -491,19 +469,18 @@
       ready() {
         super.ready();
         this.addEventListener('plotted-changed', (e) => this._onPlottedChanged(e));
-        this.addEventListener('plotted-changed', (e) => this._onMappedChanged(e));
       }
 
       connectedCallback() {
         super.connectedCallback();
         if (this.debug) {
-          console.debug('[quantum-visualization] attached - target', this._target);
+          console.log('[quantum-plot] attached - target', this._target);
         }
         this.init();
         this.dataToPlot = [];
         if (this.debug) {
-          console.debug('[quantum-visualization] attached - this', this);
-          console.debug('[quantum-visualization] attached - width', this.offsetWidth);
+          console.log('[quantum-plot] attached - this', this);
+          console.log('[quantum-plot] attached - width', this.offsetWidth);
         }
         this._displayWidth = this.offsetWidth;
       }
@@ -517,16 +494,9 @@
 
       _computeDisplayChart() {
         if (this.debug) {
-          console.debug('[quantum-visualization] _computeDisplayChart', this.dataToPlot);
+          console.log('_computeDisplayChart', this.dataToPlot);
         }
         return (this.dataToPlot.length > 0 && this.dataToPlot[0].gts && this.dataToPlot[0].gts.length > 0);
-      }
-
-      _computeDisplayMap() {
-        if (this.debug) {
-          console.debug('[quantum-visualization] _computeDisplayMap', this.dataToMap);
-        }
-        return (this.dataToMap.length > 0 && this.dataToMap[0].gts && this.dataToMap[0].gts.length > 0);
       }
 
       _getGtsStack() {
@@ -547,32 +517,17 @@
 
       _onStackChanged() {
         if (this.debug) {
-          console.debug('[quantum-plot] _onStackChanged', this._gtsStack);
-          console.debug('[quantum-plot] _onStackChanged 2', gtsTools.flattenGtsIdArray(this._gtsStack));
+          console.log('[quantum-plot] _onStackChanged', this._gtsStack);
+          console.log('[quantum-plot] _onStackChanged 2', gtsTools.flattenGtsIdArray(this._gtsStack));
         }
         if (this._gtsStack) {
           let flattenedGtsIdArray = gtsTools.flattenGtsIdArray(this._gtsStack, []);
           plottingTools.refresh(flattenedGtsIdArray);
           this.stackedGtsList = flattenedGtsIdArray;
           if (this.debug) {
-            console.debug('[quantum-plot] _onStackChanged - do refresh', this.stackedGtsList);
+            console.log('[quantum-plot] _onStackChanged - do refresh', this.stackedGtsList);
           }
           this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
-          this.dataToMap = [
-            {
-              gts: this.stackedGtsList,
-              params: [
-                {
-                  render: 'marker',
-                  color: this.setColor(this.stackedGtsList[0]),
-                }, {
-                  render: 'marker',
-                  color: this.setColor(this.stackedGtsList[1]),
-                }],
-              globalParams: {interpolate: 'cardinal'},
-            }];
-          console.debug('[quantum-map] _onStackChanged', this.dataToMap);
-          this.dataToMap.slice();
         }
       }
 
@@ -586,7 +541,7 @@
           this._target = null;
         }
         if (this.debug) {
-          console.debug('[quantum-plot] _onSelectedChanged', {
+          console.log('[quantum-plot] _onSelectedChanged', {
             selected: selected,
             name: this.name,
             target: this._target,
@@ -597,9 +552,11 @@
 
       _onInterpolationModeChanged() {
         if (this.debug) {
-          console.debug('[quantum-plot] _onInterpolationModeChanged', this.interpolationMode);
+          console.log('[quantum-plot] _onInterpolationModeChanged', this.interpolationMode);
         }
-        this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
+
+        this.dispatchEvent(new CustomEvent('plotted-changed',
+          {detail: plottingTools}));
       }
 
       // *************************************************************************
@@ -615,14 +572,14 @@
         dialog.setAttribute('src', obj.image);
         dialog.setAttribute('caption', obj.caption);
         if (this.debug) {
-          console.debug('[quantum-plot] let\'s open', dialog.opened);
+          console.log('[quantum-plot] let\'s open', dialog.opened);
         }
         if (!dialog.opened) {
           dialog.open();
         }
         if (this.debug) {
-          console.debug('[quantum-plot] dialog.noCancelOnOutsideClick', dialog.noCancelOnOutsideClick);
-          console.debug('[quantum-plot] and now it should be open', dialog.opened);
+          console.log('[quantum-plot] dialog.noCancelOnOutsideClick', dialog.noCancelOnOutsideClick);
+          console.log('[quantum-plot] and now it should be open', dialog.opened);
         }
       }
 
@@ -636,7 +593,7 @@
 
       _handleResponse(event, response) {
         if (this.debug) {
-          console.debug('[quantum-plot] _handleResponse - response', response);
+          console.log('[quantum-plot] _handleResponse - response', response);
         }
         if (!response.stack || !(response.stack instanceof Array)) {
           this.stack = null;
@@ -644,44 +601,20 @@
         }
         this.stack = response.stack;
         if (this.debug) {
-          console.debug('[quantum-plot] _handleResponse', this.stack);
-        }
-        this.dataToMap = [
-          {
-            gts: this.stack[0],
-            params: [{render: 'marker'}, {render: 'marker'}],
-            globalParams: {interpolate: 'cardinal'},
-          }];
-        if (this.debug) {
-          console.debug('[quantum-map] _handleResponse', this.dataToMap);
-        }
-      }
-
-      _onMappedChanged(evt) {
-        this.dataToMap = [
-          {
-            gts: evt.detail.data,
-            params: evt.detail.params,
-            globalParams: {
-              interpolate: this.interpolationMode,
-            },
-          }];
-        if (this.debug) {
-          console.debug('[quantum-map] _onPlottedChanged', this.dataToMap);
+          console.log('[quantum-plot] _handleResponse', this.stack);
         }
       }
 
       _onPlottedChanged(evt) {
-        this.dataToPlot = [
-          {
-            gts: evt.detail.data,
-            params: evt.detail.params,
-            globalParams: {
-              interpolate: this.interpolationMode,
-            },
-          }];
+        this.dataToPlot = [{
+          gts: evt.detail.data,
+          params: evt.detail.params,
+          globalParams: {
+            interpolate: this.interpolationMode,
+          },
+        }];
         if (this.debug) {
-          console.debug('[quantum-plot] _onPlottedChanged', this.dataToPlot);
+          console.log('[quantum-plot] _onPlottedChanged', this.dataToPlot);
         }
       }
 
@@ -693,7 +626,7 @@
 
       _showRegexOverlay(evt) {
         if (this.debug) {
-          console.debug('[quantum-plot] _showRegexOverlay');
+          console.log('[quantum-plot] _showRegexOverlay');
         }
         this._regexMode = true;
         this._regexJustShown = true;
@@ -710,7 +643,7 @@
         this.$.regexInput.inputElement.focus();
         this.$.regexInput.$.input.select();
         if (this.debug) {
-          console.debug('[quantum-plot] _showRegexOverlay', this.$.regexInput.focused);
+          console.log('[quantum-plot] _showRegexOverlay', this.$.regexInput.focused);
         }
       }
 
@@ -723,19 +656,13 @@
       // *************************************************************************
       init() {
         if (this.debug) {
-          console.debug('[quantum-plot] attached() - this.stack', this.stack);
+          console.log('[quantum-plot] attached() - this.stack', this.stack);
         }
         this.stackedGtsListHalfLimit = 3;
         if (!this.stack) {
           this.$.warpscriptcaller.generateRequest();
         } else {
           this._onStackChanged(this.stack);
-          this.dataToMap = [
-            {
-              gts: this.stack[0],
-              params: [{render: 'marker'}, {render: 'marker'}],
-              globalParams: {interpolate: 'cardinal'},
-            }];
         }
 
         // Overlay conf for selection TO-DO
@@ -776,28 +703,21 @@
         return this.stackedGtsList.slice(windowInit, windowEnd + 1);
       }
 
-      setColor(gts) {
-        if (this.debug) {
-          console.debug('[quantum-gts-in-selection-overlay] setColor', this.gts);
-        }
-        return plottingTools.gtsColor(gts);
-      }
-
       selectRegex() {
         let gts; let i; let len; let ref;
         ref = this.stackedGtsList;
         if (this.debug) {
-          console.debug('[quantum-plot] selectRegex called with regex', '/' + this._currentRegex + '/', ref);
+          console.log('[quantum-plot] selectRegex called with regex', '/' + this._currentRegex + '/', ref);
         }
         for (i = 0, len = ref.length; i < len; i++) {
           gts = ref[i];
           if (this.debug) {
-            console.debug('[quantum-plot] selectRegex - matching', gts, gtsTools.serializeGtsMetadata(gts),
-              gtsTools.serializeGtsMetadata(gts).match('' + this._currentRegex));
+            console.log('[quantum-plot] selectRegex - matching', gts, gtsTools.serializeGtsMetadata(gts),
+                gtsTools.serializeGtsMetadata(gts).match('' + this._currentRegex));
           }
           if (gtsTools.serializeGtsMetadata(gts).match('' + this._currentRegex)) {
             if (this.debug) {
-              console.debug('[quantum-plot] gts selected by regex', gtsTools.serializeGtsMetadata(gts));
+              console.log('[quantum-plot] gts selected by regex', gtsTools.serializeGtsMetadata(gts));
             }
             // TO-DO this.addToPlot(gts);
             plottingTools.add(gts);
@@ -814,21 +734,21 @@
 
       _hotkeyEdit(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkey edit', this.warpscript);
+          console.log('[quantum-plot] _hotkey edit', this.warpscript);
         }
         if (!this._regexMode) {
           this.dispatchEvent(new CustomEvent('edit',
-              {detail: {warpscript: this.warpscript, stack: this.stack, backend: this.backend}}));
+            {detail: {warpscript: this.warpscript, stack: this.stack, backend: this.backend}}));
         }
       }
 
       _hotkeyUp(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkey up');
+          console.log('[quantum-plot] _hotkey up');
         }
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkey up');
+            console.log('[quantum-plot] _hotkey up');
           }
           this._showSelectionOverlay();
           if (this.selectedGts === null || this.selectedGts < 0) {
@@ -842,11 +762,11 @@
 
       _hotkeyDown(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkey down');
+          console.log('[quantum-plot] _hotkey down');
         }
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkey down');
+            console.log('[quantum-plot] _hotkey down');
           }
           this._showSelectionOverlay();
           if (this.selectedGts === null || this.selectedGts < 0) {
@@ -855,7 +775,7 @@
             if (this.stackedGtsList.length > this.selectedGts + 1) {
               this.selectedGts += 1;
               if (this.debug) {
-                console.debug('length ' + this.stackedGtsList.length + ' selected ' + this.selectedGts);
+                console.log('length ' + this.stackedGtsList.length + ' selected ' + this.selectedGts);
               }
             }
           }
@@ -870,11 +790,11 @@
 
       _hotkeyRegexEnter(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkeyRegexEnter - regexMode', this._regexMode);
+          console.log('[quantum-plot] _hotkeyRegexEnter - regexMode', this._regexMode);
         }
         if (this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyRegexEnter');
+            console.log('[quantum-plot] _hotkeyRegexEnter');
           }
           this.selectRegex();
         }
@@ -882,7 +802,7 @@
 
       _hotkeySpace(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkeySpace');
+          console.log('[quantum-plot] _hotkeySpace');
         }
         if (!this._regexMode) {
           this._showSelectionOverlay();
@@ -893,12 +813,12 @@
           if (!plottingTools.isPlotted(gts)) {
             plottingTools.add(gts);
             if (this.debug) {
-              console.debug('[quantum-plot] addToPlot', plottingTools);
+              console.log('[quantum-plot] addToPlot', plottingTools);
             }
           } else {
             plottingTools.remove(gts);
             if (this.debug) {
-              console.debug('[quantum-plot] removeFromPlot', plottingTools);
+              console.log('[quantum-plot] removeFromPlot', plottingTools);
             }
           }
           this.changed++;
@@ -909,19 +829,16 @@
       _hotkeyAll(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyAll');
+            console.log('[quantum-plot] _hotkeyAll');
           }
-          for (let i in this.stackedGtsList) {
-            if (this.stackedGtsList.hasOwnProperty(i)) {
-              let gts = this.stackedGtsList[i];
-              if (!plottingTools.isPlotted(gts)) {
-                plottingTools.add(gts);
-                if (this.debug) {
-                  console.debug('[quantum-plot] addToPlot', plottingTools);
-                }
+          this.stackedGtsList.forEach((gts) => {
+            if (!plottingTools.isPlotted(gts)) {
+              plottingTools.add(gts);
+              if (this.debug) {
+                console.log('[quantum-plot] addToPlot', plottingTools);
               }
             }
-          }
+          });
           this.changed++;
           this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
@@ -930,19 +847,16 @@
       _hotkeyNone(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyNone');
+            console.log('[quantum-plot] _hotkeyNone');
           }
-          for (let i in this.stackedGtsList) {
-            if (this.stackedGtsList.hasOwnProperty(i)) {
-              let gts = this.stackedGtsList[i];
-              if (plottingTools.isPlotted(gts)) {
-                plottingTools.remove(gts);
-                if (this.debug) {
-                  console.debug('[quantum-plot] removeFromPlot', plottingTools);
-                }
+          this.stackedGtsList.forEach((gts) => {
+            if (plottingTools.isPlotted(gts)) {
+              plottingTools.remove(gts);
+              if (this.debug) {
+                console.log('[quantum-plot] removeFromPlot', plottingTools);
               }
             }
-          }
+          });
           this.changed++;
           this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
         }
@@ -951,7 +865,7 @@
       _hotkeyReload(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkey r');
+            console.log('[quantum-plot] _hotkey r');
           }
           this.$.warpscriptcaller.generateRequest();
         }
@@ -959,11 +873,11 @@
 
       _hotkeyHelp(e) {
         if (this.debug) {
-          console.debug('[quantum-plot] _hotkeyHelp');
+          console.log('[quantum-plot] _hotkeyHelp');
         }
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-plot] _hotkeyHelp');
+            console.log('[quantum-plot] _hotkeyHelp');
           }
           if (this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').opened) {
             this.root.querySelector('#warpscript-plot-keyboard-shortcuts-overlay').close();
@@ -975,9 +889,14 @@
     }
 
     // Register custom element definition using standard platform API
-    customElements.define(QuantumVisualization.is, QuantumVisualization);
+    customElements.define(QuantumPlot.is, QuantumPlot);
   </script>
 </dom-module>
+
+<!--
+  /******************************************************************************/
+  /******************************************************************************/
+-->
 
 <dom-module id="quantum-gts-in-selection-overlay">
   <template>
@@ -1073,23 +992,23 @@
 
       setColor() {
         if (this.debug) {
-          console.debug('[quantum-gts-in-selection-overlay] setColor', plottingTools.gtsColor(this.gts));
+          console.log('[quantum-gts-in-selection-overlay] setColor', plottingTools.gtsColor(this.gts));
         }
         return plottingTools.gtsColor(this.gts);
       }
 
       setSelectedStyle() {
         if (this.debug) {
-          console.debug('[quantum-gts-in-selection-overlay] setSelectedStyle - selectedGts', this.selectedGts);
-          console.debug('[quantum-gts-in-selection-overlay] setSelectedStyle - gts', this.gts);
-          console.debug('[quantum-gts-in-selection-overlay] setSelectedStyle - stackedGtsList', this.stackedGtsList);
+          console.log('[quantum-gts-in-selection-overlay] setSelectedStyle - selectedGts', this.selectedGts);
+          console.log('[quantum-gts-in-selection-overlay] setSelectedStyle - gts', this.gts);
+          console.log('[quantum-gts-in-selection-overlay] setSelectedStyle - stackedGtsList', this.stackedGtsList);
         }
         if (this.selectedGts < 0) {
           return '';
         }
         if (this.stackedGtsList[this.selectedGts].id === this.gts.id) {
           if (this.debug) {
-            console.debug('[quantum-plot] Selected gts', this.gts.id);
+            console.log('[quantum-plot] Selected gts', this.gts.id);
           }
           return 'background-color:rgba(200,200,200,0.5);';
         }
