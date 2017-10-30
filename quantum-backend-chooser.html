@@ -622,7 +622,7 @@
         }
         this.backend = this._altBackend;
         this._altBackendValidation = true;
-        this.fire('backend-choosen', this.backend);
+        this.dispatchEvent(new CustomEvent('backend-choosen', {detail: this.backend}));
         localStorage.setItem('customBackend', JSON.stringify(this.backend));
       }
 
@@ -642,7 +642,7 @@
             console.log('[quantum-backend-chooser] _backendChoosen - backend', this.backend);
           }
         }
-        this.fire('backend-choosen', this.backend);
+        this.dispatchEvent(new CustomEvent('backend-choosen', {detail: this.backend}));
       }
 
       // Lifecycle methods

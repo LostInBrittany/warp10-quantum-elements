@@ -246,7 +246,7 @@ Warp10 GTS stack tree
       if (this.debug) {
         console.debug('[quantum-gts-tree] dataChanged', this.data);
       }
-      this.fire('plotted-changed', plottingTools);
+      this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
       this.plottedChanged++;
     }
 
@@ -273,7 +273,7 @@ Warp10 GTS stack tree
           console.log('[quantum-gts-tree] removeFromPlot', plottingTools);
         }
       }
-      this.fire('plotted-changed', plottingTools);
+      this.dispatchEvent(new CustomEvent('plotted-changed', {detail: plottingTools}));
       this.plottedChanged++;
     }
 
@@ -315,11 +315,11 @@ Warp10 GTS stack tree
       let image = e.model.node.image;
       let caption = e.model.node.caption;
       let type = e.type;
-      this.fire('show-image', {image: image, caption: caption, type: type});
+      this.dispatchEvent(new CustomEvent('show-image', {detail: {image: image, caption: caption, type: type}}));
     }
 
     hideImageOverlay(e) {
-      this.fire('hide-image');
+      this.dispatchEvent(new CustomEvent('hide-image'));
     }
 
     _toArray(obj) {

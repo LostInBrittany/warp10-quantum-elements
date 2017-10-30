@@ -433,7 +433,7 @@ Quantum fetch widget
       // Event Listeners                                                        
       // ************************************************************************
       _editorChangeAction(value, oldValue) {
-        this.fire('editor-content', {value: value, oldValue: oldValue});
+        this.dispatchEvent(new CustomEvent('editor-content', {detail: {value: value, oldValue: oldValue}}));
         this.content = value.detail.value;
         if (this.debug) {
           console.log('[quantum-fetch] Ide content changed', this.content);

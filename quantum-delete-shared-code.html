@@ -197,7 +197,7 @@
         if (this.debug) {
           console.log('[quantum-delete-shared-code] _handleDeleteSharedCodeResponse', ironRequest.response);
         }
-        this.fire('deleted', ironRequest.response);
+        this.dispatchEvent(new CustomEvent('deleted', {detail: ironRequest.response}));
       }
 
       // ************************************************************************
@@ -210,7 +210,8 @@
             snapshotSecret: this.snapshotSecret,
           });
         }
-        this.fire('cancel-delete', {snapshotId: this.snapshotId, snapshotSecret: this.snapshotSecret});
+        this.dispatchEvent(new CustomEvent('cancel-delete',
+            {detail: {snapshotId: this.snapshotId, snapshotSecret: this.snapshotSecret}}));
       }
 
       _delete() {
