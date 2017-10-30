@@ -896,7 +896,8 @@
           console.debug('[quantum-warpscript] Viz', this.stack);
         }
         if (this.stack.length) {
-          this.fire('visualization', {warpscript: this.warpscript, stack: this.stack});
+          this.dispatchEvent(new CustomEvent('plot',
+            {detail: {warpscript: this.warpscript, stack: this.stack}}));
         }
       }
 

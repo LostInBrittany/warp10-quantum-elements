@@ -554,7 +554,9 @@ Warp plot widget
         if (this.debug) {
           console.log('[quantum-plot] _onInterpolationModeChanged', this.interpolationMode);
         }
-        this.fire('plotted-changed', plottingTools);
+
+        this.dispatchEvent(new CustomEvent('plotted-changed',
+          {detail: plottingTools}));
       }
 
       // *************************************************************************
@@ -735,7 +737,8 @@ Warp plot widget
           console.log('[quantum-plot] _hotkey edit', this.warpscript);
         }
         if (!this._regexMode) {
-          this.fire('edit', {warpscript: this.warpscript, stack: this.stack, backend: this.backend});
+          this.dispatchEvent(new CustomEvent('edit',
+            {detail: {warpscript: this.warpscript, stack: this.stack, backend: this.backend}}));
         }
       }
 
