@@ -11,7 +11,7 @@
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
-<link rel="import" href="quantum-module-behavior.html">
+<link rel="import" href="quantum-module-mixin.html">
 
 <dom-module id="quantum-shared-result">
   <template>
@@ -49,7 +49,10 @@
 
   </template>
   <script>
-    class QuantumSharedResult extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    
+    /* globals Warp10, looseJSON */
+    // eslint-disable-next-line new-cap
+    class QuantumSharedResult extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-shared-result';
       }
@@ -61,26 +64,26 @@
            */
           name: {
             type: String,
-            value: 'shared-result'
+            value: 'shared-result',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
-            type: String
+            type: String,
           },
           /**
            * The snapshot id used to recover the result
            */
           snapshotId: {
             type: String,
-            observer: '_onSnapshotIdChanged'
+            observer: '_onSnapshotIdChanged',
           },
           debug: {
             type: Boolean,
             value: false,
           },
-        }
+        };
       }
 
       /* ************************************************************************/
@@ -99,7 +102,8 @@
       /* Event listeners
       /* ************************************************************************/
       _handleGetSharedResultResponse(evt, ironRequest) {
-        let cde = `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${looseJSON.parse(ironRequest.response)[0]}`
+        // eslint-disable-next-line max-len
+        let code = `// Snapshot Id: ${this.snapshotId}\n// '${this.snapshotId}' @orbit/snapshot/load EVAL\n\n${looseJSON.parse(ironRequest.response)[0]}`;
         if (this.debug) {
           console.debug('[quantum-shared-code] _handleGetSharedResultResponse', code);
         }

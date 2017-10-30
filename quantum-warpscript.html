@@ -31,7 +31,7 @@
 <link rel="import" href="../granite-file-saver/granite-file-saver.html">
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 <link rel="import" href="./quantum-response-container.html">
 <link rel="import" href="./quantum-permalink.html">
 <link rel="import" href="./quantum-pouchdb-collection.html">"
@@ -530,8 +530,9 @@
   </template>
 
   <script>
-    /* globals looseJSON */
-    class QuantumWarpscript extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10,looseJSON */
+    // eslint-disable-next-line new-cap
+    class QuantumWarpscript extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-warpscript';
       }
@@ -557,46 +558,46 @@
           warpscript: {
             type: String,
             value: '',
-            observer: '_onWarpscriptChange'
+            observer: '_onWarpscriptChange',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
             type: String,
-            observer: '_onSelectedChanged'
+            observer: '_onSelectedChanged',
           },
           /**
            * The WarpScript stack received as response
            */
           stack: {
             type: Array,
-            notify: true
+            notify: true,
           },
           _target: {
             type: Object,
-            value: function () {
+            value: function() {
               return document.body;
-            }
+            },
           },
           /**
            * Elapsed time for the call
            */
           elapsed: {
             type: Number,
-            value: -1
+            value: -1,
           },
           _formattedElapsedTime: {
             type: String,
-            computed: '_formatElapsedTime(elapsed)'
+            computed: '_formatElapsedTime(elapsed)',
           },
           _elapsedTimeShown: {
             type: Boolean,
-            computed: '_isElapsedTimeShown(elapsed)'
+            computed: '_isElapsedTimeShown(elapsed)',
           },
           showPermalink: {
             type: Boolean,
-            value: false
+            value: false,
           },
           /**
            * If true, the `quantum-warpscript` component inside this one won't show
@@ -604,56 +605,56 @@
            */
           hidePlot: {
             type: Boolean,
-            value: false
+            value: false,
           },
           /**
            * Parameters to pass to each page
            */
           params: {
             type: Object,
-            value: function () {
+            value: function() {
               return {};
             },
           },
           _hasAResponse: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _hasAnError: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _lastSharedCode: {
             type: String,
-            value: ''
+            value: '',
           },
           _shareCodeDisabled: {
             type: Boolean,
-            computed: '_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)'
+            computed: '_isShareCodeDisabled(_warpscriptChangedAfterExecution, loading,_lastSharedCode)',
           },
           _shareCodeError: {
             type: Object,
-            value: null
+            value: null,
           },
           _lastSharedResponse: {
             type: String,
-            value: ''
+            value: '',
           },
           _shareResponseDisabled: {
             type: Boolean,
-            computed: '_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)'
+            computed: '_isShareResponseDisabled(_warpscriptChangedAfterExecution,loading,_lastSharedResponse)',
           },
           _shareResponseError: {
             type: Object,
-            value: null
+            value: null,
           },
           _warpscriptChangedAfterExecution: {
             type: Boolean,
-            value: true
+            value: true,
           },
           debug: {
             type: Boolean,
@@ -662,10 +663,9 @@
         };
       }
 
-      /**************************************************************************/
-      /* Lifecycle methods                                                      */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Lifecycle methods                                                      
+      // ************************************************************************
       ready() {
         super.ready();
         /*
@@ -688,10 +688,9 @@
         }
       }
 
-      /**************************************************************************/
-      /* Computed properties                                                    */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Computed properties                                                    
+      // ************************************************************************
       _formatElapsedTime() {
         if (this.elapsed < 1000) {
           return '' + this.elapsed + ' ns';
@@ -714,17 +713,17 @@
       }
 
       _isShareCodeDisabled() {
-        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) || this._warpscriptChangedAfterExecution );
+        return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) ||
+            this._warpscriptChangedAfterExecution );
       }
 
       _isShareResponseDisabled() {
         return !!(this.loading || (this._lastSharedResponse && this._lastSharedResponse.snapshotId) );
       }
 
-      /**************************************************************************/
-      /* Observers                                                              */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Observers                                                              
+      // ************************************************************************
       _onWarpscriptChange(warpscript) {
         if (this.debug) {
           console.debug('[quantum-warpscript] _onWarpscriptChange', warpscript);
@@ -753,17 +752,16 @@
           console.debug('[quantum-warpscript] _onSelectedChanged', {
             selected: selected,
             name: this.name,
-            target: this._target
+            target: this._target,
           });
         }
       }
 
-      /**************************************************************************/
-      /* Event Listeners                                                        */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Event Listeners                                                        
+      // ************************************************************************
       _handleResponse(event, response) {
-        if (!response.stack || !response.stack instanceof Array) {
+        if (!response.stack || !(response.stack instanceof Array)) {
           return;
         }
         this.elapsed = response.options.elapsed;
@@ -782,7 +780,7 @@
           console.debug('[quantum-warpscript] _handleResponse', {
             stack: this.stack,
             elapsed: this.elapsed,
-            _dataToPlot: this._dataToPlot
+            _dataToPlot: this._dataToPlot,
           });
         }
       }
@@ -830,7 +828,7 @@
         let snapshotSecret = looseJSON.parse(ironRequest.response)[0];
         console.debug('[quantum-warpscript] _handleShareCodeResponse', {
           snapshotId: snapshotId,
-          snapshotSecret: snapshotSecret
+          snapshotSecret: snapshotSecret,
         });
         this._shareCodeError = null;
         this._lastSharedCode = {snapshotId: snapshotId, snapshotSecret: snapshotSecret};
@@ -877,10 +875,9 @@
         evt.stopPropagation();
       }
 
-      /**************************************************************************/
-      /* Action listeners                                                       */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Action listeners                                                       
+      // ************************************************************************
       /**
        * Executes the warpscript request
        */
@@ -915,13 +912,15 @@
 
       shareCode() {
         let script = '// backend: ' + JSON.stringify(this.backend) + '\n\n' + this.warpscript;
+        // eslint-disable-next-line max-len
         this._codeToShare = `<% '${encodeURI(script).replace(/'/g, '%27').replace(/"/g, '%28').replace(/\+/g, '%2B')}' %> @orbit/snapshot/store`;
         this.$.shareCodeRequest.generateRequest();
       }
 
       shareResponse() {
-        let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-          let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+          let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          let r = Math.random() * 16 | 0;
+          let v = c === 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });
 
@@ -957,10 +956,9 @@
         this.$.loadDialog.cancel();
       }
 
-      /**************************************************************************/
-      /* Other methods                                                          */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Other methods                                                          
+      // ************************************************************************
       _updateLocation() {
         if (this.selected === this.application) {
           if (this.debug) {
@@ -996,10 +994,9 @@
         }
       }
 
-      /**************************************************************************/
-      /* Hotkeys                                                                */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Hotkeys                                                                
+      // ************************************************************************
       _hotkeyExecute(e) {
         let normKeyboardEvt = Polymer.dom(e.detail.keyboardEvent);
         if (this.debug) {

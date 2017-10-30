@@ -194,7 +194,8 @@
 
   </template>
   <script>
-    class QuantumLocalCollectionWriter extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+    class QuantumLocalCollectionWriter extends
+        Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
       static get is() {
         return 'quantum-local-collection-writer';
       }
@@ -206,36 +207,36 @@
            */
           collection: {
             type: Array,
-            notify: true
+            notify: true,
           },
           /**
            * The warpscript to write
            */
           warpscript: {
-            type: String
+            type: String,
           },
           /**
            * The tags to identify the script
            */
           tags: {
             type: Array,
-            value: function () {
+            value: function() {
               return [];
-            }
+            },
           },
           /**
            * The name of the script
            */
           name: {
-            type: String
+            type: String,
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   title: 'Save current script into local storage',
@@ -245,10 +246,10 @@
                   promptTag: 'Add a tag',
                   deleteTag: 'Remove tag',
                   scriptToSave: 'The current WarpScript script',
-                  save: 'Save'
+                  save: 'Save',
                 },
-              }
-            }
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -263,7 +264,7 @@
       // ***********************************************************************
       _onNewTagInput(evt, detail) {
         if (this.debug) {
-          console.debug('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
+          console.log('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
         }
         let tags = this._newTag.split(',');
         if (tags.length > 1) {
@@ -276,7 +277,7 @@
 
       _onNewTagAction(evt, detail) {
         if (this.debug) {
-          console.debug('[quantum-local-collection-writer] _onNewTagAction', evt.key);
+          console.log('[quantum-local-collection-writer] _onNewTagAction', evt.key);
         }
         if (evt.key === 'Enter') {
           this._addNewTag();
@@ -296,7 +297,7 @@
 
       _deleteTag(evt) {
         if (this.debug) {
-          console.debug('[quantum-local-collection-writer] _deleteTag', evt.model);
+          console.log('[quantum-local-collection-writer] _deleteTag', evt.model);
         }
         let tagToDelete = evt.model;
         this.splice('tags', tagToDelete.index, 1);
@@ -311,11 +312,11 @@
           warpscript: this.warpscript,
         };
         if (this.debug) {
-          console.debug('[quantum-local-collection-writer] _save', this.timestamp, this._document);
+          console.log('[quantum-local-collection-writer] _save', this.timestamp, this._document);
         }
-        this.$.document.save().then(function () {
+        this.$.document.save().then(function() {
           if (this.debug) {
-            console.debug('[quantum-local-collection-writer] _saved', this.timestamp, this._document);
+            console.log('[quantum-local-collection-writer] _saved', this.timestamp, this._document);
           }
           this.$.document.reset();
           this.close();

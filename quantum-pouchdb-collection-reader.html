@@ -278,7 +278,8 @@
 
   </template>
   <script>
-    class QuantumLocalCollectionReader extends Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
+    class QuantumLocalCollectionReader extends
+        Polymer.mixinBehaviors([Polymer.PaperDialogBehavior, Polymer.AppLocalizeBehavior], Polymer.Element) {
       static get is() {
         return 'quantum-local-collection-reader';
       }
@@ -287,21 +288,21 @@
         return {
           _tags: {
             type: Array,
-            value: function () {
+            value: function() {
               return [];
-            }
+            },
           },
           _filterByName: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _filterByTags: {
             type: Boolean,
-            value: false
+            value: false,
           },
           _filterByDate: {
             type: Boolean,
-            value: false
+            value: false,
           },
           /**
            * The Warscript collection object
@@ -309,23 +310,23 @@
           collection: {
             type: Array,
             notify: true,
-            observer: 'onCollectionChange'
+            observer: 'onCollectionChange',
           },
           _filterByNameInput: {
             type: String,
-            value: ''
+            value: '',
           },
           _filterByTagsInput: {
             type: String,
-            value: ''
+            value: '',
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 en: {
                   title: 'Load a script from local storage',
@@ -336,9 +337,9 @@
                   pattern: 'Pattern',
                   promptTag: 'Add tags, separated by `,` or `enter`',
                   deleteTag: 'Remove tag',
-                }
-              }
-            }
+                },
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -354,14 +355,14 @@
 
       onOpen() {
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] onOpen - Openend');
+          console.log('[quantum-local-collection-reader] onOpen - Openend');
         }
         this.$.query.refresh();
       }
 
       onCollectionChange() {
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] onCollectionChange', this.collection);
+          console.log('[quantum-local-collection-reader] onCollectionChange', this.collection);
         }
         let collection = [];
         for (let i in this.collection) {
@@ -371,9 +372,9 @@
         }
         if (collection.length !== this.collection.length) {
           this.collection = collection;
-          for (let i in this.collection) {
-            this.collection[i].shortWarpscript = this._shortWarpscript(this.collection[i].warpscript);
-          }
+          this.collection.forEach((item) => {
+            item.shortWarpscript = this._shortWarpscript(item.warpscript);
+          });
         }
       }
 
@@ -385,13 +386,15 @@
 
       /**
        * Convert token timestamps to dates
+       * @param {String} ts
+       * @return {String} date
        */
       _fromTimestampToDate(ts) {
         if (!ts) {
           return 0;
         }
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] _fromTimestampToDate', ts)
+          console.log('[quantum-local-collection-reader] _fromTimestampToDate', ts);
         }
         return new Date(ts).toISOString();
       }
@@ -405,9 +408,9 @@
           shortWarpscript = shortWarpscript + '...';
         }
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] _shortWarpscript', shortWarpscript);
+          console.log('[quantum-local-collection-reader] _shortWarpscript', shortWarpscript);
         }
-        return shortWarpscript
+        return shortWarpscript;
       }
 
       _trimExcessLineFeeds(warpscript) {
@@ -428,33 +431,32 @@
       _load(evt) {
         this.cancel();
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] _load', evt.model.record);
+          console.log('[quantum-local-collection-reader] _load', evt.model.record);
         }
         this.fire('warpscript-choosen', evt.model.record.warpscript);
       }
 
       _filterRecords(_filterByNameInput, _tags, len) {
-
         // 3rd param, `len` used to alert function it must execute when _tags.length change
         // In an ideal world it should work without, to test with next Polymer versions
 
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] _filterRecords - Init', _filterByNameInput, _tags);
+          console.log('[quantum-local-collection-reader] _filterRecords - Init', _filterByNameInput, _tags);
         }
         if (!_filterByNameInput && (!_tags || _tags.length === 0)) {
           // set filter to null to disable filtering
           if (this.debug) {
-            console.debug('[quantum-local-collection-reader] _filterRecords - set filter to null to disable filtering');
+            console.log('[quantum-local-collection-reader] _filterRecords - set filter to null to disable filtering');
           }
           return null;
         } else {
           // return a filter function for the current search string
           if (this.debug) {
-            console.debug('[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string');
+            console.log('[quantum-local-collection-reader] _filterRecords - return a filter function for the current search string');
           }
-          return function (record) {
+          return (record) => {
             if (this.debug) {
-              console.debug('[quantum-local-collection-reader] _filterRecords - Filter called', record, _filterByNameInput, _tags);
+              console.log('[quantum-local-collection-reader] _filterRecords - Filter called', record, _filterByNameInput, _tags);
             }
             if (_filterByNameInput) {
               if (record.name && record.name.toLowerCase().indexOf(_filterByNameInput.toLowerCase()) < 0) {
@@ -479,7 +481,7 @@
       // ***********************************************************************
       _onNewTagInput(evt, detail) {
         if (this.debug) {
-          console.debug('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
+          console.log('[quantum-local-collection-writer] _onNewTagInput', this._newTag);
         }
         let tags = this._newTag.split(',');
         if (tags.length > 1) {
@@ -492,7 +494,7 @@
 
       _onNewTagAction(evt, detail) {
         if (this.debug) {
-          console.debug('[quantum-local-collection-writer] _onNewTagAction', evt.key);
+          console.log('[quantum-local-collection-writer] _onNewTagAction', evt.key);
         }
         if (evt.key === 'Enter') {
           this._addNewTag();
@@ -512,7 +514,7 @@
 
       _deleteTag(evt) {
         if (this.debug) {
-          console.debug('[quantum-local-collection-reader] _deleteTag', evt.model);
+          console.log('[quantum-local-collection-reader] _deleteTag', evt.model);
         }
         let tagToDelete = evt.model;
         this.splice('_tags', tagToDelete.index, 1);
