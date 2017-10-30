@@ -429,20 +429,11 @@
         <template is="dom-if" if="{{!hidePlot}}">
           <div class="item_value">
             <paper-button
-              on-click="plot"
+              on-click="viz"
               disabled$="{{loading}}"
               hidden$="{{!_hasAResponse}}">
               <iron-icon icon="quantum-icons:timeline"></iron-icon>
-              Plot
-            </paper-button>
-          </div>
-          <div class="item_value">
-            <paper-button
-              on-click="map"
-              disabled$="{{loading}}"
-              hidden$="{{!_hasAResponse}}">
-              <iron-icon icon="quantum-icons:room"></iron-icon>
-              Map
+              Visualize
             </paper-button>
           </div>
         </template>
