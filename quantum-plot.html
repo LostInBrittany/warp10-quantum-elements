@@ -108,6 +108,10 @@
         text-transform: capitalize;
       }
 
+      .space-right {
+        margin-right: 16px;
+      }
+
       paper-button {
         background-color: var(--app-primary-color);
         color: var(--app-on-background-color)
@@ -203,22 +207,7 @@
       }
     </style>
 
-    <div class="item_list">
-      <div class="item">
-        <div class="item_name">Show sparkline</div>
-        <div class="item_value">No
-          <paper-toggle-button checked="{{_showSparkline}}"></paper-toggle-button>
-          Yes
-        </div>
-      </div>
-      <div class="item">
-        <div class="item_name">Show map</div>
-        <div class="item_value">No
-          <paper-toggle-button checked="{{_showMap}}"></paper-toggle-button>
-          Yes
-        </div>
-      </div>
-    </div>
+
 
 
     <iron-a11y-keys target="[[_target]]" keys="e" on-keys-pressed="_hotkeyEdit"></iron-a11y-keys>
@@ -288,6 +277,14 @@
 
     <div id="vertGuide"></div>
 
+
+    <div class="toolbar">
+      <div class="space-right">
+          Show sparkline 
+      </div>
+      <paper-toggle-button checked="{{_showSparkline}}"></paper-toggle-button>
+    </div>
+
     <template is="dom-if" if="{{_showSparkline}}">
       <quantumviz-annotations
         id="warp10-quantumviz-annotations"
@@ -340,6 +337,14 @@
         </div>
       </template>
     </template>
+
+    <div class="toolbar">
+      <div class="space-right">
+        Show map
+      </div>
+      <paper-toggle-button checked="{{_showMap}}"></paper-toggle-button>
+    </div>
+
     <template is="dom-if" if="{{_showMap}}">
       <warp10-display-map data="[[dataToMap]]" zoom="12" debug="[[debug]]"></warp10-display-map>
     </template>
@@ -472,7 +477,7 @@
           },
           _showMap: {
             type: Boolean,
-            value: true,
+            value: false,
           },
           _showSparkline: {
             type: Boolean,
