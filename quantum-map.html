@@ -31,7 +31,7 @@
 
 <link rel="import" href="./quantum-gts-tree.html">
 <link rel="import" href="./quantum-image-overlay.html">
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 <!--
 Warp plot widget
@@ -277,7 +277,9 @@ Warp plot widget
   </template>
 
   <script>
-    class QuantumMap extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10, gtsTools, plottingTools */
+    // eslint-disable-next-line new-cap
+    class QuantumMap extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-map';
       }
@@ -288,7 +290,7 @@ Warp plot widget
            * The WarpScript generating the data to plot
            */
           warpscript: {
-            type: String
+            type: String,
           },
           /**
            * The stack of data to plot
@@ -299,44 +301,44 @@ Warp plot widget
           _gtsStack: {
             type: Array,
             computed: '_getGtsStack(stack)',
-            observer: '_onStackChanged'
+            observer: '_onStackChanged',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
             type: String,
-            observer: '_onSelectedChanged'
+            observer: '_onSelectedChanged',
           },
           /**
            * The interpolation model. Currently supported modes: linear, step, cardinal
            */
           _target: {
             type: Object,
-            value: function () {
+            value: function() {
               return document.body;
-            }
+            },
           },
           stackedGtsList: {
-            type: Array
+            type: Array,
           },
           stackedGtsListSlidingWindow: {
             type: Array,
-            value: function () {
+            value: function() {
              return [];
-            }
+            },
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _displayMap: {
             type: Boolean,
-            computed: '_computeDisplayMap(dataToMap)'
+            computed: '_computeDisplayMap(dataToMap)',
           },
           color: {
             type: String,
-            computed: 'setColor(selectedGts,gts, changed)'
+            computed: 'setColor(selectedGts,gts, changed)',
           },
           debug: {
             type: Boolean,
@@ -345,10 +347,9 @@ Warp plot widget
         };
       }
 
-      /**************************************************************************/
-      /* Lifecycle methods                                                      */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Lifecycle methods                                                      
+      // *************************************************************************
       ready() {
         super.ready();
         this.addEventListener('plotted-changed', (e) => this._onMappedChanged(e));
@@ -367,10 +368,9 @@ Warp plot widget
         this._displayWidth = this.offsetWidth;
       }
 
-      /**************************************************************************/
-      /* Computed properties                                                    */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Computed properties                                                    
+      // *************************************************************************
       _getBaseUrl() {
         return this.backend.url + this.backend.execEndpoint;
       }
@@ -386,15 +386,14 @@ Warp plot widget
         return gtsTools.gtsFromJSONList(this.stack);
       }
 
-      /**************************************************************************/
-      /* Observers                                                              */
-
-      /**************************************************************************/
+      // *************************************************************************
+      // Observers                                                              
+      // *************************************************************************
       setColor(gts) {
         if (this.debug) {
           console.debug('[quantum-gts-in-selection-overlay] setColor', this.gts);
         }
-        return  plottingTools.gtsColor(gts);
+        return plottingTools.gtsColor(gts);
       }
 
       _onStackChanged() {
@@ -402,7 +401,7 @@ Warp plot widget
           console.debug('[quantum-map] _onStackChanged', this._gtsStack);
           console.debug('[quantum-map] _onStackChanged 2', gtsTools.flattenGtsIdArray(this._gtsStack));
         }
-        if (!!this._gtsStack) {
+        if (this._gtsStack) {
           plottingTools.refresh(gtsTools.flattenGtsIdArray(this._gtsStack));
           this.stackedGtsList = gtsTools.flattenGtsIdArray(this._gtsStack, []);
           if (this.debug) {
@@ -413,12 +412,12 @@ Warp plot widget
             gts: this.stackedGtsList,
             params: [{
               render: 'marker',
-              color: this.setColor(this.stackedGtsList[0])
+              color: this.setColor(this.stackedGtsList[0]),
             }, {
               render: 'marker',
-              color: this.setColor(this.stackedGtsList[1])
+              color: this.setColor(this.stackedGtsList[1]),
             }],
-            globalParams: {interpolate: 'cardinal'}
+            globalParams: {interpolate: 'cardinal'},
           }];
           console.debug('[quantum-map] _onStackChanged', this.dataToMap);
           this.dataToMap.slice();
@@ -439,7 +438,7 @@ Warp plot widget
             selected: selected,
             name: this.name,
             target: this._target,
-            stack: this.stack
+            stack: this.stack,
           });
         }
       }
@@ -450,10 +449,10 @@ Warp plot widget
         }
       }
 
-      /**************************************************************************/
+      // *************************************************************************
       /* Event Listeners                                                        */
 
-      /**************************************************************************/
+      // *************************************************************************
       _handleShowImage(evt, obj) {
         if (this.debug) {
           console.debug('[quantum-map] _handleShowImage - response', evt, obj);
@@ -489,7 +488,7 @@ Warp plot widget
         if (this.debug) {
           console.debug('[quantum-map] _handleResponse - response', event, response);
         }
-        if (!response.stack || !response.stack instanceof Array) {
+        if (!response.stack || !(response.stack instanceof Array)) {
           this.stack = null;
           return;
         }
@@ -500,7 +499,7 @@ Warp plot widget
         this.dataToMap = [{
           gts: this.stack[0],
           params: [{render: 'marker'}, {render: 'marker'}],
-          globalParams: {interpolate: 'cardinal'}
+          globalParams: {interpolate: 'cardinal'},
         }];
         if (this.debug) {
           console.debug('[quantum-map] _handleResponse', this.dataToMap);
@@ -512,8 +511,8 @@ Warp plot widget
           gts: evt.detail.data,
           params: evt.detail.params,
           globalParams: {
-            interpolate: this.interpolationMode
-          }
+            interpolate: this.interpolationMode,
+          },
         }];
         if (this.debug) {
           console.debug('[quantum-map] _onPlottedChanged', this.dataToMap);
@@ -553,10 +552,10 @@ Warp plot widget
         this._regexMode = false;
       }
 
-      /**************************************************************************/
+      // *************************************************************************
       /* Other methods                                                          */
 
-      /**************************************************************************/
+      // *************************************************************************
       init() {
         if (this.debug) {
           console.debug('[quantum-map] init - this.stack', this.stack);
@@ -570,7 +569,7 @@ Warp plot widget
           this.dataToMap = [{
             gts: this.stack[0],
             params: [{render: 'marker'}, {render: 'marker'}],
-            globalParams: {interpolate: 'cardinal'}
+            globalParams: {interpolate: 'cardinal'},
           }];
         }
         if (this.debug) {
@@ -580,20 +579,20 @@ Warp plot widget
         this.overlay = {};
         this.overlay.lifetime = 5000;
         this.overlay.timer = null;
-        this.overlay.timerActivate = function (overlay) {
+        this.overlay.timerActivate = function(overlay) {
           if (this.overlay.timer !== null) {
             window.clearTimeout(this.overlay.timer);
           }
-          this.overlay.timer = window.setTimeout(function () {
+          this.overlay.timer = window.setTimeout(function() {
             this._hideSelectionOverlay();
           }.bind(this), this.overlay.lifetime);
         }.bind(this);
       }
 
-      /**************************************************************************/
+      // *************************************************************************
       /* Hotkeys                                                                */
 
-      /**************************************************************************/
+      // *************************************************************************
 
       _hotkeyEdit(e) {
         if (this.debug) {
@@ -691,17 +690,16 @@ Warp plot widget
       _hotkeyAll(e) {
         if (!this._regexMode) {
           if (this.debug) {
-            console.debug('[quantum-map] _hotkeyAll')
+            console.debug('[quantum-map] _hotkeyAll');
           }
-          for (let i in this.stackedGtsList) {
-            let gts = this.stackedGtsList[i];
+          this.stackedGtsList.forEach((gts) => {
             if (!plottingTools.isPlotted(gts)) {
               plottingTools.add(gts);
               if (this.debug) {
                 console.debug('[quantum-map] addToPlot', plottingTools);
               }
             }
-          }
+          });
           this.changed++;
           this.fire('plotted-changed', plottingTools);
         }
@@ -712,15 +710,14 @@ Warp plot widget
           if (this.debug) {
             console.debug('[quantum-map] _hotkeyNone');
           }
-          for (let i in this.stackedGtsList) {
-            let gts = this.stackedGtsList[i];
+          this.stackedGtsList.forEach((gts) => {
             if (plottingTools.isPlotted(gts)) {
               plottingTools.remove(gts);
               if (this.debug) {
                 console.debug('[quantum-map] removeFromPlot', plottingTools);
               }
             }
-          }
+          });
           this.changed++;
           this.fire('plotted-changed', plottingTools);
         }
