@@ -684,7 +684,12 @@
         super.connectedCallback();
         this.$.editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
         if (this.showPermalink) {
-          this.debounce('updateLocation', this._updateLocation, 500);
+          if (!this._updateLocationDebouncer) {
+            this.debouncer = window.setTimeout(() => {
+              this._updateLocation();
+              this._updateLocationDebouncer = false;
+            });
+          }
         }
       }
 
@@ -731,7 +736,12 @@
         this._warpscriptChangedAfterExecution = true;
         this._lastSharedCode = false;
         if (this.showPermalink) {
-          this.debounce('updateLocation', this._updateLocation, 500);
+          if (!this._updateLocationDebouncer) {
+            this.debouncer = window.setTimeout(() => {
+              this._updateLocation();
+              this._updateLocationDebouncer = false;
+            });
+          }
         }
         let date = new Date().toISOString();
         this._filename = 'WarpsSript-' + date.slice(0, 4) + date.slice(5, 7)

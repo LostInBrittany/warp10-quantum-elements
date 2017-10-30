@@ -151,10 +151,16 @@
     // Observers methods                                                      
     // ***********************************************************************
     _payloadChanged(payload) {
-      this.fire('payload-change', payload);
+      this.dispatchEvent(new CustomEvent('payload-change',
+        {detail: {
+          payload: payload,
+        }}));
     }
     _backendChanged(backend) {
-      this.fire('backend-change', backend);
+      this.dispatchEvent(new CustomEvent('backend-change',
+        {detail: {
+          backend: backend,
+        }}));
     }
 
     // ***********************************************************************

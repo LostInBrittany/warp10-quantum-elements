@@ -120,14 +120,21 @@
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodePayloadChanged', decodedPayload);
       }
-      this.fire('payload-decoded', decodedPayload);
+
+      this.dispatchEvent(new CustomEvent('payload-decoded',
+        {detail: {
+          decodedPayload: decodedPayload,
+        }}));
     }
 
     _decodedBackendChanged(decodedBackend) {
       if (this.debug) {
         console.debug('[quantum-permalink-decoder] _decodeBackendChanged', decodedBackend);
       }
-      this.fire('backend-decoded', decodedBackend);
+      this.dispatchEvent(new CustomEvent('backend-decoded',
+        {detail: {
+          decodedBackend: decodedBackend,
+        }}));
     }
   }
 
