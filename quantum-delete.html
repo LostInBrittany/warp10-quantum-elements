@@ -16,7 +16,7 @@
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
 <link rel="import" href="../warp10-iron/warp10-iso-date-time-or-timestamp-validator.html">
-<link rel="import" href="./quantum-module-behavior.html">
+<link rel="import" href="./quantum-module-mixin.html">
 
 
 <!--
@@ -244,7 +244,10 @@ Quantum delete widget
   </template>
 
   <script>
-    class QuantumDelete extends Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior, QuantumModule], Polymer.Element) {
+    /* globals Warp10 */
+    class QuantumDelete extends
+        // eslint-disable-next-line new-cap
+        Warp10.QuantumModuleMixin(Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior], Polymer.Element)) {
       static get is() {
         return 'quantum-delete';
       }
@@ -256,26 +259,26 @@ Quantum delete widget
            */
           token: {
             type: String,
-            value: ''
+            value: '',
           },
           /**
            * The Selector to delete
            */
           selector: {
             type: String,
-            value: ''
+            value: '',
           },
           _baseUrl: {
             type: String,
-            computed: '_getBaseUrl(backend)'
+            computed: '_getBaseUrl(backend)',
           },
           _disabled: {
             type: Boolean,
-            computed: '_isDisabled(token, selector)'
+            computed: '_isDisabled(token, selector)',
           },
           deleteAll: {
             type: Boolean,
-            value: false
+            value: false,
           },
           startTime: {
             type: String,
@@ -284,12 +287,12 @@ Quantum delete widget
             type: String,
           },
           language: {
-            value: 'en'
+            value: 'en',
           },
           /* Overriden from AppLocalizeBehavior */
           resources: {
             type: Object,
-            value: function () {
+            value: function() {
               return {
                 'en': {
                   'title': 'Delete',
@@ -301,9 +304,9 @@ Quantum delete widget
                   'deleteMethod': 'Choose delete mode:',
                   'startTime': 'Start time (in ISO 8601 format or in μs since Epoch)',
                   'endTime': 'End time (in ISO 8601 format or in μs since Epoch)',
-                }
-              }
-            }
+                },
+              };
+            },
           },
           debug: {
             type: Boolean,
@@ -312,23 +315,21 @@ Quantum delete widget
         };
       }
 
-      /**************************************************************************/
-      /* Lifecycle methods                                                      */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Lifecycle methods            
+      // ************************************************************************
       ready() {
         super.ready();
         this._hasAnError = 0;
         this._hasAResponse = 0;
       }
 
-      /**************************************************************************/
-      /* Computed porperties                                                    */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Computed porperties                                                    
+      // ************************************************************************
       _getBaseUrl() {
         if (this.debug) {
-          console.debug('[quantum-delete] _getBaseUrl', this.backend);
+          console.log('[quantum-delete] _getBaseUrl', this.backend);
         }
         return this.backend.url + this.backend.deleteEndpoint;
       }
@@ -337,14 +338,13 @@ Quantum delete widget
         return !this.token || !this.selector;
       }
 
-      /**************************************************************************/
-      /* Action Listeners                                                       */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Action Listeners                  
+      // ************************************************************************
       execute() {
         let header = this.backend.headerName + '-Token';
         this.$.xhr.params = {
-          selector: this.selector
+          selector: this.selector,
         };
         if (this.deleteAll) {
           this.$.xhr.params.deleteall = true;
@@ -355,26 +355,25 @@ Quantum delete widget
         this.$.xhr.headers = {};
         this.$.xhr.headers[header] = this.token;
         if (this.debug) {
-          console.debug('[quantum-delete] _doCall - headers', this.$.xhr.headers);
+          console.log('[quantum-delete] _doCall - headers', this.$.xhr.headers);
         }
         this.$.xhr.generateRequest();
       }
 
-      /**************************************************************************/
-      /* Event Listeners                                                        */
-
-      /**************************************************************************/
+      // ************************************************************************
+      // Event Listeners                                                     
+      // ************************************************************************
       _editorChangeAction(value, oldValue) {
         this.fire('editor-content', {value: value, oldValue: oldValue});
         this.content = value.detail.value;
         if (this.debug) {
-          console.debug('[quantum-delete] Ide content changed', this.content);
+          console.log('[quantum-delete] Ide content changed', this.content);
         }
       }
 
       _handleResponse(event, ironRequest) {
         if (this.debug) {
-          console.debug('[quantum-delete] _handleResponse - Updated!', ironRequest.response);
+          console.log('[quantum-delete] _handleResponse - Updated!', ironRequest.response);
         }
         this._hasAResponse = true;
         this._hasAnError = false;
@@ -383,12 +382,12 @@ Quantum delete widget
 
       _handleError(event, ironRequest) {
         if (this.debug) {
-          console.debug('[quantum-delete] _handleError - Updated!', ironRequest);
+          console.log('[quantum-delete] _handleError - Updated!', ironRequest);
         }
         this._hasAResponse = false;
         this._hasAnError = true;
         this.data = null;
-        this.errorMsg = ironRequest.request.statusText || 'Unkown error'
+        this.errorMsg = ironRequest.request.statusText || 'Unkown error';
       }
     }
 

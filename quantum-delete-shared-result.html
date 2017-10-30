@@ -14,7 +14,7 @@
 
 <link rel="import" href="../granite-spinner/granite-spinner.html">
 
-<link rel="import" href="quantum-module-behavior.html">
+<link rel="import" href="quantum-module-mixin.html">
 
 <dom-module id="quantum-delete-shared-result">
   <template>
@@ -122,7 +122,9 @@
 
   </template>
   <script>
-    class QuantumDeleteSharedResult extends Polymer.mixinBehaviors([QuantumModule], Polymer.Element) {
+    /* globals Warp10 */
+    // eslint-disable-next-line new-cap
+    class QuantumDeleteSharedResult extends Warp10.QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-delete-shared-result';
       }
@@ -134,13 +136,13 @@
            */
           name: {
             type: String,
-            value: 'delete-shared-result'
+            value: 'delete-shared-result',
           },
           /**
            * The name of the currently selected module
            */
           selected: {
-            type: String
+            type: String,
           },
           /**
            * The snapshot id
@@ -161,9 +163,9 @@
           },
           _sharingUrlRoot: {
             type: String,
-            value: function () {
+            value: function() {
               return window.location.origin + window.location.pathname;
-            }
+            },
           },
           debug: {
             type: Boolean,
@@ -176,37 +178,34 @@
         return ['_onSnapshotChanged(snapshotId,snapshotSecret)'];
       }
 
-      /* ************************************************************************/
-
-      /* Observers
-      /* ************************************************************************/
+      // ************************************************************************
+      // Observers
+      // ************************************************************************
       _onSnapshotChanged() {
         if (!this.snapshotId || !this.snapshotSecret || this.selected !== this.name) return;
         if (this.debug) {
-          console.debug('[quantum-delete-shared-result] _onSnapshotChanged', this.snapshotId, this.snapshotSecret)
+          console.log('[quantum-delete-shared-result] _onSnapshotChanged', this.snapshotId, this.snapshotSecret);
         }
       }
 
-      /* ************************************************************************/
-
-      /* Event listeners
-      /* ************************************************************************/
+      // ************************************************************************
+      // Event listeners
+      // ************************************************************************
       _handleDeleteSharedResultResponse(evt, ironRequest) {
         if (this.debug) {
-          console.debug('[quantum-delete-shared-result] _handleDeleteSharedResultResponse', ironRequest.response);
+          console.log('[quantum-delete-shared-result] _handleDeleteSharedResultResponse', ironRequest.response);
         }
         this.fire('deleted', ironRequest.response);
       }
 
-      /* ************************************************************************/
-
-      /* Action listeners
-      /* ************************************************************************/
+      // ************************************************************************
+      // Action listeners
+      // ************************************************************************
       _cancel() {
         if (this.debug) {
-          console.debug('[quantum-delete-shared-result] _cancel', {
+          console.log('[quantum-delete-shared-result] _cancel', {
             snapshotId: this.snapshotId,
-            snapshotSecret: this.snapshotSecret
+            snapshotSecret: this.snapshotSecret,
           });
         }
         this.fire('cancel-delete', {snapshotId: this.snapshotId, snapshotSecret: this.snapshotSecret});
