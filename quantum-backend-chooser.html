@@ -550,6 +550,9 @@
 
       _setInitialBackend() {
         if (!this._isAttached) return;
+        if (this.debug) {
+          console.log('[quantum-backend-chooser] _setInitialBackend - configuredBackends', this.configuredBackends);
+        }
 
         if (!this.backend) {
           if (this.configuredBackends.length > 0) {
@@ -648,6 +651,9 @@
       // Lifecycle methods
       connectedCallback() {
         super.connectedCallback();
+          if (this.debug) {
+            console.log('[quantum-backend-chooser] connectedCallback');
+          }
         this._isAttached = true;
         this._setInitialBackend();
       }
