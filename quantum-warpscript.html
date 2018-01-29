@@ -708,7 +708,7 @@
 
       _isShareCodeDisabled() {
         return !!(this.loading || (this._lastSharedCode && this._lastSharedCode.snapshotId) ||
-            this._warpscriptChangedAfterExecution );
+          this._warpscriptChangedAfterExecution );
       }
 
       _isShareResponseDisabled() {
@@ -909,7 +909,7 @@
       }
 
       shareResponse() {
-          let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        let randomFunction = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
           let r = Math.random() * 16 | 0;
           let v = c === 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
@@ -982,6 +982,10 @@
         }
         if (this.params.backend !== undefined) {
           this.backend = this.params.backend;
+        }
+
+        if (this.showPermalink) {
+          this._updateLocation();
         }
       }
 
