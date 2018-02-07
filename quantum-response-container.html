@@ -6,7 +6,12 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <link rel="import" href="../warp10-iron/warp10-looseJSON.html">
+<link rel="import" href="./quantum-gts-tree.html">
+<link rel="import" href="./renderJsonImport.html">
 
+<link rel="import" href="../paper-tabs/paper-tab.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
 <dom-module id="quantum-response-container">
 
   <template>
@@ -58,8 +63,6 @@
         word-wrap: break-word;
       }
 
-    </style>
-    <style>
       .clearfix:before, .clearfix:after {
         content: " "; /* 1 */
         display: table; /* 2 */
@@ -68,22 +71,87 @@
       .clearfix:after {
         clear: both;
       }
+
+      .renderjson {
+        font-size: 1.2em;
+      }
+
+      .renderjson .disclosure {
+        font-size: 1.2em;
+        color: white;
+      }
+
+      .renderjson .syntax {
+        color: lightgrey;
+      }
+
+      .renderjson .string {
+        color: white;
+      }
+
+      .renderjson .number {
+        color: cornflowerblue;
+      }
+
+      .renderjson .boolean {
+        color: orangered;
+      }
+
+      .renderjson .key {
+        color: green;
+      }
+
+      .renderjson .keyword {
+        color: darkgreen;
+      }
+
+      .renderjson a {
+        color: white;
+        text-decoration: none;
+      }
+      paper-tabs {
+        background-color: var(--app-primary-color);
+        color: #fff;
+        --paper-tabs-selection-bar-color: white;
+        --paper-tab-ink: white;
+      }
+
     </style>
-    <template is="dom-if" if="{{showResponse}}">
-      <h4>Response:</h4>
-      <div class="response-panel">
-        <div class="right" on-click="hide">X</div>
-        <div class="clearfix"></div>
-        <template is="dom-repeat" items="{{data}}" as="line">
-          <div class="line">
-            <div class="line-number">{{index}}:</div>
-            <div class="line-content-container">
-              <div class="line-content">{{stringify(line)}}</div>
-            </div>
-          </div>
-          <div class="clearfix"></div>
-        </template>
+    <template is="dom-if" if="{{showResponse}}"><div class="toolbar">
+      <div class="space-right">
+        Full JSON
       </div>
+      <paper-toggle-button checked="{{_fullJson}}"></paper-toggle-button>
+    </div>
+      <h4>Response:</h4>
+  <!--    <paper-tabs selected="{{selected}}">
+        <paper-tab>Raw</paper-tab>
+        <paper-tab>Json Tree</paper-tab>
+      </paper-tabs>
+      <iron-pages selected="{{selected}}">
+        <div>-->
+          <div class="response-panel">
+            <div class="right" on-click="hide">X</div>
+            <div class="clearfix"></div>
+            <template is="dom-repeat" items="{{data}}" as="line">
+              <div class="line">
+                <div class="line-number">{{index}}:</div>
+                <div class="line-content-container">
+                  <div class="line-content">{{stringify(line, _fullJson)}}</div>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+            </template>
+
+          </div>
+      <!--       </div>
+             <div>
+               <div class="response-panel">
+                 <div id="jsonTree"></div>
+               </div>
+             </div>
+           </iron-pages>-->
+
     </template>
   </template>
 
@@ -105,6 +173,10 @@
             type: Boolean,
             value: false,
           },
+          _fullJson: {
+            type: Boolean,
+            value: false,
+          },
         };
       }
 
@@ -116,6 +188,7 @@
         super.ready();
         this.showResponse = false;
         this.data = [];
+        this.selected = 0;
       }
 
       connectedCallback() {
@@ -124,6 +197,7 @@
       }
 
       responseChanged() {
+     //   this.root.querySelector('#jsonTree').appendChild(renderjson.set_icons('+', '-')({}));
         if (this.debug) {
           console.log('[quantum-response-container] responseChanged', this.response);
         }
@@ -137,14 +211,19 @@
           console.log('[quantum-response-container] responseChanged', this.data);
         }
         this.showResponse = this.data !== undefined && (this.data !== null);
+        window.setTimeout(() => {
+          if (this.root.querySelector('#jsonTree')) {
+           // this.root.querySelector('#jsonTree').appendChild(renderjson.set_icons('+', '-')(this.data));
+          }
+        });
       }
 
       hide() {
         this.showResponse = false;
       }
 
-      stringify(line) {
-        return looseJSON.stringify(line);
+      stringify(line, truncated) {
+        return looseJSON.stringify(line, truncated);
       }
     }
 
