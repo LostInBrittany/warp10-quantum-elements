@@ -521,7 +521,7 @@
   <script>
     /* globals Warp10,looseJSON */
     // eslint-disable-next-line new-cap
-    class QuantumWarpscript extends Warp10.QuantumModuleMixin(Polymer.Element) {
+    class QuantumWarpscript extends Warp10QuantumModuleMixin(Polymer.Element) {
       static get is() {
         return 'quantum-warpscript';
       }
@@ -760,6 +760,7 @@
       // Event Listeners
       // ************************************************************************
       _handleResponse(event, response) {
+        console.log(event, response)
         if (!response.stack || !(response.stack instanceof Array)) {
           return;
         }
@@ -792,7 +793,11 @@
           if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
             this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
           } else {
-            this.errorMsg = error.request.statusText;
+            if(!error.request.xhr.statusText || '' === error.request.xhr.statusText) {
+              this.errorMsg = 'Unable to reach ' + error.request.url
+            } else {
+              this.errorMsg = error.request.statusText;
+            }
           }
         } else {
           this.errorMsg = 'ERROR line #' + error.errorLine + ': ' + error.errorMsg;
