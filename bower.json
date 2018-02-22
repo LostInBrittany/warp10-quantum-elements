@@ -54,7 +54,7 @@
     "paper-tooltip": "PolymerElements/paper-tooltip#^2.0.0",
     "font-roboto": "PolymerElements/font-roboto-local#^1.0.1",
     "moment-js": "saeidzebardast/moment-js#^0.7.2",
-    "ace-widget": "LostInBrittany/ace-widget#~1.2.3",
+    "ace-widget": "LostInBrittany/ace-widget#~1.3.5",
     "granite-ajax-saver": "LostInBrittany/granite-ajax-saver#^1.1.0",
     "granite-alert": "LostInBrittany/granite-alert#^1.2.0",
     "granite-file-saver": "LostInBrittany/granite-file-saver#^1.1.0",
