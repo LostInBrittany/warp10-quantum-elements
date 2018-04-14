@@ -24,9 +24,10 @@
       }
 
       .response-panel {
-        min-height: 20px;
-        padding: 19px;
-        margin-bottom: 20px;
+        margin-top: 1.5rem;
+        min-height: 1.5rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
         background-color: #002240;
         border: 1px solid #e3e3e3;
         border-radius: 4px;
@@ -40,25 +41,24 @@
 
       .line {
         width: 100%;
-        font-size: 12px;
+        font-size: 1rem;
         font-family: monospace;
       }
 
       .line-number {
         float: left;
-        width: 30px;
+        width: 3rem;
         text-align: right;
         color: white;
       }
 
       .line-content-container {
         float: left;
-        width: 100%;
-        margin-left: -30px;
+        width: calc(100% - 3rem);
       }
 
       .line-content {
-        margin-left: 50px;
+        margin-left: 1rem;
         color: white;
         word-wrap: break-word;
       }
@@ -116,41 +116,59 @@
         --paper-tab-ink: white;
       }
 
-    </style>
-    <template is="dom-if" if="{{showResponse}}"><div class="toolbar">
-      <div class="space-right">
-        Full JSON
-      </div>
-      <paper-toggle-button checked="{{_fullJson}}"></paper-toggle-button>
-    </div>
-      <h4>Response:</h4>
-  <!--    <paper-tabs selected="{{selected}}">
-        <paper-tab>Raw</paper-tab>
-        <paper-tab>Json Tree</paper-tab>
-      </paper-tabs>
-      <iron-pages selected="{{selected}}">
-        <div>-->
-          <div class="response-panel">
-            <div class="right" on-click="hide">X</div>
-            <div class="clearfix"></div>
-            <template is="dom-repeat" items="{{data}}" as="line">
-              <div class="line">
-                <div class="line-number">{{index}}:</div>
-                <div class="line-content-container">
-                  <div class="line-content">{{stringify(line, _fullJson)}}</div>
-                </div>
-              </div>
-              <div class="clearfix"></div>
-            </template>
+      .vertical-flex {
+        display: flex;
+        flex-flow: column nowrap;
+      }
+      .horizontal-flex {
+        display: flex;
+        flex-flow: row nowrap;
+      }
+      .end-flex {
+        justify-content: flex-end;
+      }
 
+    </style>
+    <template is="dom-if" if="{{showResponse}}">
+      
+      <div class="right">
+        <div class="vertical-flex">
+          <div>Full JSON</div>
+          <paper-toggle-button checked="{{_fullJson}}"></paper-toggle-button>
+        </div>
+      </div>
+
+      <h3>Response:</h3>
+      <!--    
+        <paper-tabs selected="{{selected}}">
+          <paper-tab>Raw</paper-tab>
+          <paper-tab>Json Tree</paper-tab>
+        </paper-tabs>
+        <iron-pages selected="{{selected}}">
+          <div>
+      -->
+      <div class="response-panel top-10">
+        <div class="right" on-click="hide">X</div>
+        <div class="clearfix"></div>
+        <template is="dom-repeat" items="{{data}}" as="line">
+          <div class="line">
+            <div class="line-number">{{index}}:</div>
+            <div class="line-content-container">
+              <div class="line-content">{{stringify(line, _fullJson)}}</div>
+            </div>
           </div>
-      <!--       </div>
+          <div class="clearfix"></div>
+        </template>
+      </div>
+          <!--
+           </div>
              <div>
                <div class="response-panel">
                  <div id="jsonTree"></div>
                </div>
              </div>
-           </iron-pages>-->
+           </iron-pages>
+          -->
 
     </template>
   </template>
