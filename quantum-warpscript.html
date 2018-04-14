@@ -519,7 +519,7 @@
   </template>
 
   <script>
-    /* globals Warp10,looseJSON */
+    /* globals Warp10QuantumModuleMixin,looseJSON */
     // eslint-disable-next-line new-cap
     class QuantumWarpscript extends Warp10QuantumModuleMixin(Polymer.Element) {
       static get is() {
@@ -658,8 +658,8 @@
       ready() {
         super.ready();
         /*
-         * Attaching dialog to main body to make it live over the gray div 
-         * Bug that will be corrected 
+         * Attaching dialog to main body to make it live over the gray div
+         * Bug that will be corrected
          * https://github.com/PolymerElements/polymer-starter-kit/issues/154
          * https://github.com/PolymerElements/paper-dialog/issues/7
          */
@@ -760,16 +760,15 @@
       // Event Listeners
       // ************************************************************************
       _handleResponse(event, response) {
-        console.log(event, response)
+        if (this.debug) {
+          console.debug('[quantum-warpscript] _handleResponse', event, response);
+        }
         if (!response.stack || !(response.stack instanceof Array)) {
           return;
         }
         this.elapsed = response.options.elapsed;
         this._fetched = response.options.fetched;
         this._operations = response.options.operations;
-        if (this.debug) {
-          console.debug('[quantum-warpscript] _handleResponse', response.options);
-        }
         this.stack = response.stack;
         this._hasAResponse = true;
         this._hasAnError = false;
@@ -793,17 +792,14 @@
           if (error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)) {
             this.errorMsg = error.request.xhr.responseText.match(/<pre>\s*(.*)\s*<\/prse>/)[1];
           } else {
-            if(!error.request.xhr.statusText || '' === error.request.xhr.statusText) {
-              this.errorMsg = 'Unable to reach ' + error.request.url
+            if (!error.request.xhr.statusText || '' === error.request.xhr.statusText) {
+              this.errorMsg = 'Unable to reach ' + error.request.url;
             } else {
               this.errorMsg = error.request.statusText;
             }
           }
         } else {
           this.errorMsg = 'ERROR line #' + error.errorLine + ': ' + error.errorMsg;
-          if (this.debug) {
-            console.debug('[quantum-warpscript] _handleError', this.errorMsg);
-          }
         }
         if (this.debug) {
           console.debug('[quantum-warpscript] _handleError', {error: error, errorMsg: this.errorMsg});
@@ -814,10 +810,6 @@
         this._operations = error.operations;
         this._hasAResponse = false;
         this._hasAnError = true;
-
-        if (this.debug) {
-          console.debug('[quantum-warpscript] _handleError - _hasAResponse', this._hasAResponse);
-        }
       }
 
       editorChangeAction(value, oldValue) {
