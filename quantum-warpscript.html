@@ -408,6 +408,7 @@
       wrap="true"
       value="{{warpscript}}"
       placeholder="Type your WarpScript here..."
+      on-editor-content="editorChangeAction"
       initial-focus></ace-widget>
 
 
@@ -671,7 +672,6 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this.$.editor.addEventListener('editor-content', this.editorChangeAction.bind(this));
         if (this.showPermalink) {
           if (!this._updateLocationDebouncer) {
             this.debouncer = window.setTimeout(() => {
