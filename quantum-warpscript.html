@@ -292,25 +292,25 @@
     <warp10-warpscript-caller
       id="warpscriptcaller"
       debug="[[debug]]"
-      url="{{_baseUrl}}" warpscript="{{warpscript}}"
+      url="[[_baseUrl]]" warpscript="[[warpscript]]"
       on-response="_handleResponse" on-error="_handleError"
       loading="{{loading}}">
     </warp10-warpscript-caller>
 
     <iron-ajax
-      id="shareCodeRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
+      id="shareCodeRequest" url="[[czdBackend.url]][[czdBackend.execEndpoint]]"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
-      method='POST' body='{{_codeToShare}}'
+      method='POST' body='[[_codeToShare]]'
       handle-as="text" on-response="_handleShareCodeResponse" on-error="_handleShareCodeError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}">
+      loading="{{loading}}" debounce-duration="[[debounceDuration]]">
     </iron-ajax>
 
     <iron-ajax
-      id="shareResponseRequest" url="{{czdBackend.url}}{{czdBackend.execEndpoint}}"
+      id="shareResponseRequest" url="[[czdBackend.url]][[czdBackend.execEndpoint]]"
       content-type="application/x-www-form-urlencoded; charset=UTF-8"
-      method='POST' body='{{_responseToShare}}'
+      method='POST' body='[[_responseToShare]]'
       handle-as="text" on-response="_handleShareResponseResponse" on-error="_handleShareResponseError"
-      loading="{{loading}}" debounce-duration="{{debounceDuration}}">
+      loading="{{loading}}" debounce-duration="[[debounceDuration]]">
     </iron-ajax>
 
     <paper-dialog
@@ -322,9 +322,9 @@
 
       <div class="actions">
         <granite-file-saver
-          filename="{{_filename}}"
+          filename="[[_filename]]"
           id="warpscriptFileSaver"
-          text="{{warpscript}}"
+          text="[[warpscript]]"
           on-file-saved="_closeSaveDialog">
           <paper-button>To a file</paper-button>
         </granite-file-saver>
@@ -406,14 +406,13 @@
       mode="ace/mode/warpscript"
       softtabs="true"
       wrap="true"
-      value="{{warpscript}}"
       placeholder="Type your WarpScript here..."
       on-editor-content="editorChangeAction"
       initial-focus></ace-widget>
 
 
     <granite-spinner
-      active="{{loading}}"
+      active="[[loading]]"
       size="200"
       hover></granite-spinner>
 
