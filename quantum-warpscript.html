@@ -292,7 +292,7 @@
     <warp10-warpscript-caller
       id="warpscriptcaller"
       debug="[[debug]]"
-      url="{{_baseUrl}}" warpscript="{{warpscriptScript}}"
+      url="{{_baseUrl}}" warpscript="{{warpscript}}"
       on-response="_handleResponse" on-error="_handleError"
       loading="{{loading}}">
     </warp10-warpscript-caller>
@@ -884,7 +884,6 @@
         if (this.showPermalink) {
           this._updateLocation();
         }
-        this.warpscriptScript = this.warpscript;
         this.$.warpscriptcaller.generateRequest();
       }
 
