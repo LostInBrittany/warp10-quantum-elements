@@ -15,8 +15,7 @@
 
   <template>
     <style>
-      :host {
-      }
+      :host {}
 
       .right {
         float: right;
@@ -62,9 +61,12 @@
         word-wrap: break-word;
       }
 
-      .clearfix:before, .clearfix:after {
-        content: " "; /* 1 */
-        display: table; /* 2 */
+      .clearfix:before,
+      .clearfix:after {
+        content: " ";
+        /* 1 */
+        display: table;
+        /* 2 */
       }
 
       .clearfix:after {
@@ -108,6 +110,7 @@
         color: white;
         text-decoration: none;
       }
+
       paper-tabs {
         background-color: var(--app-primary-color);
         color: #fff;
@@ -119,17 +122,18 @@
         display: flex;
         flex-flow: column nowrap;
       }
+
       .horizontal-flex {
         display: flex;
         flex-flow: row nowrap;
       }
+
       .end-flex {
         justify-content: flex-end;
       }
-
     </style>
     <template is="dom-if" if="{{showResponse}}">
-      
+
       <div class="right">
         <div class="vertical-flex">
           <div>Full JSON</div>
@@ -153,13 +157,13 @@
           <div class="line">
             <div class="line-number">{{index}}:</div>
             <div class="line-content-container">
-              <div class="line-content">{{stringify(line, _fullJson)}}</div>
+              <div class="line-content">{{stringify(line,_fullJson)}}</div>
             </div>
           </div>
           <div class="clearfix"></div>
         </template>
       </div>
-          <!--
+      <!--
            </div>
              <div>
                <div class="response-panel">
@@ -190,6 +194,10 @@
             type: Boolean,
             value: false,
           },
+          data: {
+            type: Array,
+            value: () => [],
+          },
           _fullJson: {
             type: Boolean,
             value: false,
@@ -214,7 +222,7 @@
       }
 
       responseChanged() {
-     //   this.root.querySelector('#jsonTree').appendChild(renderjson.set_icons('+', '-')({}));
+        //   this.root.querySelector('#jsonTree').appendChild(renderjson.set_icons('+', '-')({}));
         if (this.debug) {
           console.log('[quantum-response-container] responseChanged', this.response);
         }
@@ -230,7 +238,7 @@
         this.showResponse = this.data !== undefined && (this.data !== null);
         window.setTimeout(() => {
           if (this.root.querySelector('#jsonTree')) {
-           // this.root.querySelector('#jsonTree').appendChild(renderjson.set_icons('+', '-')(this.data));
+            // this.root.querySelector('#jsonTree').appendChild(renderjson.set_icons('+', '-')(this.data));
           }
         });
       }
@@ -239,8 +247,19 @@
         this.showResponse = false;
       }
 
-      stringify(line, truncated) {
-        return looseJSON.stringify(line, truncated);
+      stringify(line, _fullJson) {
+        if (_fullJson || looseJSON.stringify(line).length <= 500) {
+          return looseJSON.stringify(line);
+        }
+        return looseJSON.stringify(line).substring(0, 500) + ' [...]';
+      }
+
+      _dataset(data, _fullJson) {
+        console.log('[quantum-response-container] _dataset');
+        if (_fullJson || data.length<=5) {
+          return data;
+        }
+        return data.slice(0, 5).push('...');
       }
     }
 
